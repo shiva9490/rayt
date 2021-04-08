@@ -1,0 +1,398 @@
+@font-face {
+  font-family: SFpro;
+  src: url('font/regular.ttf');
+}
+
+body {
+    font-family: "SFpro" !important;
+  }
+  .b-g{
+    
+  }
+  thead th{
+    background-color: #EEE!important;
+    border:0px !important;
+  }
+  th{
+    border:0px !important;
+    padding:8px !important;
+  }
+  td{
+    background-color: #F3F3F3 !important;
+    border:0px !important;
+    padding:8px !important;
+  }
+  tr:nth-child(odd) td {
+    background-color: #FFF !important;
+  }
+  tr:hover td{
+    background-color: #F0F0F0 !important;
+  }
+  .sidenav {
+    height: 100vh;
+    width: 100%;
+    padding-top:20px;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #E5E5E5;
+    display:block;
+    overflow-x: hidden;
+    transition: 0.5s;
+  }
+  .sidenav::-webkit-scrollbar {
+    display: none;
+  }
+  #main_content::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .sidenav a {
+    padding: 0.7vw 2vw;
+    text-decoration: none;
+    font-size:0.9rem;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+    white-space: nowrap;
+      overflow: hidden;
+  }
+  
+  .sidenav a:hover {
+    color: #a42cff;
+    font-weight:bold;
+  }
+  .sidenav .active {
+    color: #a42cff;
+    font-weight:bold;
+  }
+  .closebtn{
+    display:none !important;
+  }
+  /* Style the tab */
+  .tab {
+    overflow: hidden;
+  }
+  
+  /* Style the buttons inside the tab */
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border:0px;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+  }
+  
+  /* Change background color of buttons on hover */
+  .tab button:hover {
+    background-color: #f0f0f0;
+  }
+  
+  /* Create an active/current tablink class */
+  .tab button.active {
+    border-bottom: 2px solid black;
+  }
+  
+  /* Style the tab content */
+  .tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border-top: none;
+  }
+  .btn{
+      border-radius: 0%;
+      padding: 5px 35px;
+      /*margin-bottom:10px;*/
+      font-weight: 500;
+      font-size: 14px;
+  }
+  .b-success{
+      background-color:#008000;
+      color:white;
+  }
+  .b-light{
+    background-color:#F6F6F6;
+  }
+  .b-dark{
+    background-color:#000;
+    padding: 10px 35px;
+    color:white;
+  }
+  .b-dark:hover{
+    background-color:#000;
+    color:white;
+  }
+  .b-grey{
+    background-color:#eee !important;
+  }
+  .bb-grey{
+    border-bottom: 2px solid #c0c0c3;
+  }
+  #main_content{
+    padding-left: 20px !important;
+    height:100vh;
+    top: 0;
+    left: 0;
+    display:block;
+    overflow-x: hidden;
+    transition: 0.5s;
+  }
+  .hc-4{
+    min-height: 100px;
+  }
+  .form-control{
+    display: inline;
+    background-color: #f6f6f6;
+    border-radius:opx;
+      float: right;
+      width: 50%;
+      padding: 10px;
+      border:0px;
+  }
+  .form-control:focus{
+    box-shadow: 0px 0px 0px 0px;
+    border-bottom: 1px;
+  }
+  .form-group label{
+    padding:7px;
+    font-size:14px;
+  }
+  .width-100{
+    width:100% !important;
+  }
+  
+  @media only screen and (max-width: 600px) {
+    .closebtn{
+      display:block !important;
+    }
+    .sidenav {
+      width: 100vw;
+      display:none;
+    }
+    .col-mdc-2{
+      display: flex;
+      width: 100%;
+    }
+  }
+  @media only screen and (min-width: 600px) {
+    #menu{
+      display:none;
+    }
+    .col-mdc-2{
+      display: flex;
+      width: 13%;
+    }
+  }
+  .sticky{
+    position: sticky;
+    top: 0px;
+    background: white;
+    z-index: 2;
+  }
+  a{
+      text-decoration:none;
+  }
+  .fonn{
+          font-size: 15px;
+  }
+  .fonn a{
+      padding-top:10px;
+      padding-bottom:10px;
+  }
+  .sear{
+      float:none;
+      background:#eee !important;
+      width:48%;
+      padding:4px;
+  }
+  .fr{
+      float:right !important;
+  }
+  .fl{
+      float:left !important;
+  }
+  .wa{
+      width: auto;
+  }
+  .t_div{
+      overflow-x: scroll;
+  }
+.arabic_feild{
+    width:48%;
+    margin-left:3px;
+}
+
+
+
+/*---------------------cusom style------------------------------*/
+input[type="checkbox"],
+input[type="radio"] {
+  opacity: 0;
+  z-index: -1;
+  width: 0px;
+}
+input[type="radio"] + label ,input[type="checkbox"] + label {
+  position: relative;
+  display: inline-block;
+  padding: 0 0 0 2em;
+  height: 1.5em;
+  line-height: 1.5;
+  margin:10px;
+  cursor: pointer;
+}
+.home_check label {
+    font-size:15px;
+}
+input[type="radio"] + label::before ,input[type="checkbox"] + label::before,
+input[type="radio"] + label::after ,input[type="checkbox"] + label::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 1.4em;
+  height: 1.4em;
+}
+.home_check label::before , .home_check label::after {
+   width: 1.3em !important;
+  height: 1.3em !important;
+}
+input[type="radio"] + label::before ,input[type="checkbox"] + label::before {
+  content: " ";
+  border: 2px solid #757575;
+  border-radius: 10%;
+}
+/* Checkbox */
+input[type="checkbox"] + label::after {
+  content: "\2714";
+   border: 2px solid #000;
+   border-radius: 20%;
+  color: #2c3e50;
+  line-height: 1.0;
+  background-color:black;
+  color:white;
+  text-align: center;
+}
+/* Radio */
+input[type="radio"] + label::before {
+  border-radius: 50%;
+}
+input[type=radio] + label::after {
+  content: "";
+  top: .30em;
+  left: .30em;
+  width: 0.8em;
+  height: 0.8em;
+  background: #00f;
+  /*border: .2em solid #fff;*/
+  border-radius: 50%;
+}
+/* :checked */
+input[type="checkbox"]:checked + label::before,
+input[type="radio"]:checked + label::before {
+  background: #fff;
+  border-color: #00f;
+}
+input[type="checkbox"] + label::after,
+input[type=radio] + label::after {
+  -webkit-transform: scale(0);
+  -ms-transform: scale(0);
+  -o-transform: scale(0);
+  transform: scale(0);
+}
+input[type="checkbox"]:checked + label::after,
+input[type=radio]:checked + label::after {
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  -o-transform: scale(1);
+  transform: scale(1);
+}
+/* Transition */
+input[type="radio"] + label::before ,input[type="checkbox"] + label::before ,
+input[type="radio"] + label::after ,input[type="checkbox"] + label::after {
+  -webkit-transition: .25s all ease;
+  -o-transition: .25s all ease;
+  transition: .25s all ease;
+}
+
+
+
+/*------------checkbox ui end -------------*/
+
+#result{
+    max-height: 100px;
+    max-width:100%;
+    overflow-X: scroll;
+    OVERFLOW-Y: HIDDEN;
+    display: inline-flex;
+}
+
+
+
+/*--------------select box ui--------------*/
+.custom-select {
+  position: relative;
+  font-family: Arial;
+  padding:0px;
+}
+
+.custom-select select {
+  display: none; /*hide original SELECT element:*/
+}
+
+.select-selected {
+  background-color: #F6F6F6;
+  border:1px solid #ccc;
+}
+
+/*style the arrow inside the select element:*/
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 14px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #fff transparent transparent transparent;
+}
+
+/*point the arrow upwards when the select box is open (active):*/
+.select-selected.select-arrow-active:after {
+  border-color: transparent transparent #fff transparent;
+  top: 7px;
+}
+
+/*style the items (options), including the selected item:*/
+.select-items div,.select-selected {
+  color: #000;
+  padding: 9px 16px;
+  border-bottom-width: 0px;
+  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  cursor: pointer;
+  user-select: none;
+}
+
+/*style items (options):*/
+.select-items {
+  position: absolute;
+  background-color: #F6F6F6;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+
+/*hide the items when the select box is closed:*/
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+/*----------------select box ui end------------*/
+
+
