@@ -9,8 +9,9 @@ if($ur  == 1 || $dr == '1'){
 ?>
 <div class="row layout-top-spacing">
     <div class="col-lg-12">
+    <?php $this->load->view("admin/success_error");?>
       <div class="card">
-          <div class="card-header">View Roles</div>
+          <div class="card-header">Country List</div>
          <div class="card-body">
             <?php $this->load->view("admin/search");?>
          </div>

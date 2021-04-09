@@ -62,7 +62,7 @@ class Customers_model extends CI_Model{
     }
     public function activedeactive($uri,$status){
         $dta    =   array(
-            //"customer_status"        =>      $status,
+            "customer_abc"              =>      $status,
             "customer_modified_on"     =>      date("Y-m-d h:i:s"),
             "customer_modified_by"   =>      $this->session->userdata("login_id")
         );

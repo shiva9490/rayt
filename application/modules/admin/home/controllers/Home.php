@@ -11,7 +11,7 @@ class Home extends CI_Controller{
 			"title"     =>  "Dashboard",
 			"content"  =>  'home'
 		);
-		$this->load->view('admin/template',$dta);
+		$this->load->view('admin/inner_template',$dta);
 	}
 
 	

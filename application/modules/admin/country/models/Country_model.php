@@ -74,5 +74,20 @@ class Country_model extends CI_Model{
         }
         return FALSE;
     }
+    public function update_country($uri){
+        $dta    =   array(
+            "country_name"          => $this->input->post('name'), 
+            "country_symbol"        => $this->input->post('symbol'), 
+            "country_currencie"     => $this->input->post('currency'), 
+            "country_modify_by"     => date("Y-m-d h:i:s"),
+            "country_modified_by"   => $this->session->userdata("login_id")
+        );
+        $this->db->update("country",$dta,array("country_id" => $uri));
+        $vsp   =    $this->db->affected_rows();
+        if($vsp > 0){
+            return true;
+        }
+        return FALSE;
+    }
 }
 ?>

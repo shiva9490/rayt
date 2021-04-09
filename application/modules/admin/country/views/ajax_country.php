@@ -56,10 +56,12 @@ if($ur  == 1 || $dr == '1' || $sr == '1'){
                 <?php if($ct == '1'){?>
                 <td> 
                     <?php if($sr == '1'){?>
-                    <a class="<?php echo $textico;?>" href="javascript:void(0);" onclick="activeform($(this),'Ajax-Country-Active')" fields="<?php echo $ve->country_id;?>" data-toggle='tooltip' title="<?php echo $vadv;?>"><i class="zmdi zmdi-<?php echo $icon;?> m-r-5"></i></a>
+                    <a class="<?php echo $textico;?>" href="javascript:void(0);" onclick="activeform($(this),'Ajax-Country-Active')" fields="<?php echo $ve->country_id;?>" data-toggle='tooltip' title="<?php echo $vadv;?>">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    </a>
                     <?php }  if($ur == '1'){?>
                     <a href='<?php echo adminurl("Update-User/".$ve->country_id);?>' data-toggle='tooltip' data-original-title="Update Country" class="text-success tip-left">
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+						
 					</a>
                     <?php } if($dr == '1'){?>
                     <a href="javascript:void(0);" onclick="confirmationDelete($(this),'User')" data-toggle='tooltip' attrvalue="<?php echo adminurl("Delete-Country/".$ve->country_id);?>" data-original-title="Delete country" class="text-danger">

@@ -5,7 +5,8 @@ class Country extends CI_Controller{
 		if($this->session->userdata("login_id") == ""){
 			redirect(sitedata("site_admin")); 
 		}
-	}public function index(){
+	}
+	public function index(){
 		$dta    =   array(
 			"title"     =>  "Country",
 			"content"  =>  'country',
@@ -123,6 +124,30 @@ class Country extends CI_Controller{
         }
         fclose($file_handler);
 	}
+	public function update($uri){
+		$dta    =   array(
+			"title"     =>  "Country",
+			"content"  =>  'update_country',
+			"urlvalue"	=>	adminurl('viewCountry/'),
+		);
+		if($this->input->post('update')){
+			$this->form_validation->set_rules('name','Country Name','required');
+			$this->form_validation->set_rules('symbol','Country Symbol','required');
+			$this->form_validation->set_rules('currency','Country Currency','required');
+			if($this->form_validation->run() == TRUE){
+				$res = $this->country_model->update_country($uri);     
+                if($res == TRUE){
+                    $this->session->set_flashdata("suc","Updated Country successfully.");
+					redirect(adminurl('Country'));
+                }else{
+					$this->session->set_flashdata("err","failed.");
+                }
+			}
+		}
+		$params["whereCondition"]   =   "country_id = '".$uri."'";
+		$dta['view']    =   $this->country_model->getCountry($params);
+		$this->load->view('admin/inner_template',$dta);
+	}    
 	
 }
 ?>

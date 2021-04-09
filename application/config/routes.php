@@ -124,6 +124,7 @@ $route['Rayt-Admin/Delete-Customers/(:any)']               =   'customers/delete
 $route['Rayt-Admin/Country']                                = 'country';
 $route['Rayt-Admin/viewCountry/(:any)']                     =   'country/viewCountry/$1';
 $route['Rayt-Admin/Ajax-Country-Active']                    =   'country/ajax_country_active';
+$route['Rayt-Admin/Update-Country/(:any)']                  =   'country/update/$1';
 $route['Rayt-Admin/Delete-Country/(:any)']                  =   'country/delete_country/$1'; 
 $route['Rayt-Admin/coutry_img']                             =   'country/coutry_img';
 $route['Rayt-Admin/coutry_names']                             =   'country/coutry_names';
