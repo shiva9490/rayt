@@ -1,16 +1,13 @@
-<?php
-$sr     =   $this->session->userdata("active-deactive-role");
-$cr     =   $this->session->userdata("create-role");
-$ur     =   $this->session->userdata("update-role");
-$dr     =   $this->session->userdata("delete-role");
-$ct     =   "0";
-if($ur  == 1 || $dr == '1' || $sr == 1){
-        $ct     =   1;
-}
-?>
-<div class="table-responsive"> 
-    <table class="table table-striped table-hover js-basic-example tablehrcover" id="myTable">
-        <thead>
+<?php
+$sr     =   $this->session->userdata("active-deactive-role");$cr     =   $this->session->userdata("create-role");$ur     =   $this->session->userdata("update-role");$dr     =   $this->session->userdata("delete-role");
+$ct     =   "0";
+if($ur  == 1 || $dr == '1' || $sr == 1){
+        $ct     =   1;
+}
+?>
+<div class="table-responsive"> 
+    <table class="table table-striped table-hover js-basic-example tablehrcover" id="myTable">
+        <thead>
             <tr id="filters">
                 <th>S.No</th>
                 <th><a href="javascript:void(0);" data-type="order" data-field="ut_name" urlvalue="<?php echo adminurl('viewRole/');?>" onclick="getdatafiled($(this))">Role Name <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>

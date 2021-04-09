@@ -31,7 +31,7 @@ class Login extends CI_Controller{
                     }
                 }
             }
-            $this->load->view("login",$darta);
+            $this->load->view("admin/outer_template",$darta);
         }
         public function checkusernameexist(){
                 $emailid    =   $this->input->post("username");

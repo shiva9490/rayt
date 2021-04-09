@@ -83,18 +83,18 @@ class Resturant extends CI_Controller{
 		$this->load->view("ajax_resturant",$dta);
 	}
 	public function ajax_resturant_active(){
-			$status     =   $this->input->post("status");
-			$uri        =   $this->input->post("fields");
-			$params["whereCondition"]   =   "resturant_id = '".$uri."'";
-			$vue    =   $this->resturant_model->getResturant($params);
-			if(is_array($vue) && count($vue) > 0){
-				$bt     =   $this->resturant_model->activedeactive($uri,$status); 
-				if($bt > 0){
-					$vsp    =   1;
-				}
-			}else{
-				$vsp    =   2;
+		$status     =   $this->input->post("status");
+		$uri        =   $this->input->post("fields");
+		$params["whereCondition"]   =   "resturant_id = '".$uri."'";
+		$vue    =   $this->resturant_model->getResturant($params);
+		if(is_array($vue) && count($vue) > 0){
+			$bt     =   $this->resturant_model->activedeactive($uri,$status); 
+			if($bt > 0){
+				$vsp    =   1;
 			}
+		}else{
+			$vsp    =   2;
+		}
 		echo $vsp;
 	}
 	

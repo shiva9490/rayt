@@ -1,14 +1,4 @@
- <div class="breadcrumbs-area">
-	<h3>Permissions</h3>
-	<ul>
-		<li>
-			<a href="<?php echo adminurl("Dashboard");?>">Home</a>
-		</li>
-		<li>Permissions</li>
-	</ul>
-</div>
-
-<div class="row">
+<div class="row layout-top-spacing">
    <div class="col-lg-12">
       <div class="card">
          <div class="card-body">

@@ -1,5 +1,4 @@
 <form method="POST" enctype="multipart/form-data" onsubmit="novalidate" name="myForm">
- 
         <div class="container-fluid py-3 pt-4 bb-grey sticky">
           <div class="row">
             <div class="col-md-2">
@@ -18,47 +17,45 @@
         <div class="container-fluid py-3 pt-4">
             <?php $this->load->view('admin/success_error');?>
           <div class="row">
-            <div class="col-md-8 mx-auto">
+            <div class="col-md-8 mx-auto box-shaow">
                 <!--<h5>English</h5>-->
-              <div class="row bb-grey">
-              <div class="col-md-12 m-3">
-                    <label >Resturant Main Image</label>
-                  <div class="form-group">
-                    <input type="file" class="form-control width-100"  name="main_image" onchange="document.getElementById('main_image').src = window.URL.createObjectURL(this.files[0]);"/>
-                    <img id="main_image" width="50px"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label >Resturant ID</label>
-                    <input type="text" class="form-control" name="id" value="15202112" disabled/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label >Password</label>
-                    <input type="text" class="form-control"  name="password" placeholder="Enter Password"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                    <label >Resturant Name</label>
-                    <div class="row">
-                        <div class="col-md-6">
-                          <div class="form-group b-grey">
-                            <input type="text" class="form-control width-100"  name="name" value="<?php set_value('name')?>" placeholder="Enter Resturant Name" required>
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div class="form-group b-grey">
-                            <input type="text" class="form-control arabic_feild width-100"  name="name_a" value="<?php set_value('name_a')?>" placeholder="أدخل اسم المطعم" required>
-                          </div>
-                            
-                        </div>
-                    </div>
-                    
-                  <span class="text-danger"><?php echo form_error('name_a'); ?></span>
-                  <span class="text-danger"><?php echo form_error('name'); ?></span>
-                </div>
+				<div class="row bb-grey">
+					<div class="col-md-12 m-3">
+						<label >Resturant Main Image</label>
+						<div class="form-group">
+							<input type="file" class="form-control width-100"  name="main_image" onchange="document.getElementById('main_image').src = window.URL.createObjectURL(this.files[0]);"/>
+							<img id="main_image" width="50px"/>
+						</div>
+					</div>
+					<div class="col-md-12 m-3">
+						<div class="form-group b-grey">
+							<label >Resturant ID</label>
+							<input type="text" class="form-control" name="id" value="15202112" disabled/>
+						</div>
+					</div>
+					<div class="col-md-12 m-3">
+						<div class="form-group b-grey">
+							<label >Password</label>
+							<input type="text" class="form-control"  name="password" placeholder="Enter Password"/>
+						</div>
+					</div>
+					<div class="col-md-12 m-3">
+						<label >Resturant Name</label>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group b-grey">
+									<input type="text" class="form-control width-100"  name="name" value="<?php set_value('name')?>" placeholder="Enter Resturant Name" required>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group b-grey">
+									<input type="text" class="form-control arabic_feild width-100"  name="name_a" value="<?php set_value('name_a')?>" placeholder="أدخل اسم المطعم" required>
+								</div>								
+							</div>
+						</div>
+						<span class="text-danger"><?php echo form_error('name_a'); ?></span>
+						<span class="text-danger"><?php echo form_error('name'); ?></span>
+					</div>
               </div>
               <div class="row bb-grey">
                 <div class="col-md-12 m-3">

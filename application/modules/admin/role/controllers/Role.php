@@ -1,5 +1,4 @@
 <?php
-
 class Role extends CI_Controller{
         public function __construct() {
                 parent::__construct();
@@ -34,7 +33,7 @@ class Role extends CI_Controller{
                     $dta['tipoOrderby']    =   $tipoOrderby; 
                 } 
                 $dta["urlvalue"]     =   adminurl('viewRole/');
-                $this->load->view("admin/inner_template",$dta); 
+                $this->load->view("admin/inner_template",$dta);
         }
         public function unique_role_name(){
                 echo $this->role_model->unique_role($this->input->post("role_name"));

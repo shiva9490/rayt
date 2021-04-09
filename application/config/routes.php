@@ -81,14 +81,14 @@ $route['Rayt-Admin/Login']                  =   'login/index';
 $route['Rayt-Admin']                        =   'login/index';   
 $route['Rayt-Admin/Users']      	        =   'users/index';
 $route['Rayt-Admin/country']      	        =   'country/country';
-$route['Rayt-Admin/Create-Resturant']        = 'resturant/create';
-$route['Rayt-Admin/Resturant']               = 'resturant';
-$route['Rayt-Admin/Create-Orders']           = 'orders/create';
-$route['Rayt-Admin/Orders']                  = 'orders';
-$route['Rayt-Admin/Zones']                   = 'zones';
-$route['Rayt-Admin/Drivers']                 = 'drivers';
-$route['Rayt-Admin/Home']                    = 'home';
-$route['Rayt-Admin/Address-Evalution']       = 'address';
+$route['Rayt-Admin/Create-Resturant']       = 	'resturant/create';
+$route['Rayt-Admin/Resturant']              = 	'resturant';
+$route['Rayt-Admin/Create-Orders']          = 	'orders/create';
+$route['Rayt-Admin/Orders']                 = 	'orders';
+$route['Rayt-Admin/Zones']                  = 	'zones';
+$route['Rayt-Admin/Drivers']                = 	'drivers';
+$route['Rayt-Admin/Home']                   = 	'home';
+$route['Rayt-Admin/Address-Evalution']      = 	'address';
 
 
 /*-------customer restaurant----------*/

@@ -3,13 +3,13 @@
         <thead>
             <tr id="filters">
                 <th>S.No</th>
-                <th><a href="javascript:void(0);" data-type="order" data-field="resturant_id" urlvalue="<?php echo base_url('Admin/Resturant/');?>" onclick="getdatafiled($(this))">Resturant Id <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
-                <th><a href="javascript:void(0);" data-type="order" data-field="resturant_name" urlvalue="<?php echo base_url('Admin/Resturant/');?>" onclick="getdatafiled($(this))">Resturant Name <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
+                <th><a href="javascript:void(0);" data-type="order" data-field="resturant_id" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this))">Resturant Id <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
+                <th><a href="javascript:void(0);" data-type="order" data-field="resturant_name" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this))">Resturant Name <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
                 <th>Address </th>
-                <th><a href="javascript:void(0);" data-type="order" data-field="resturant_contact_no" urlvalue="<?php echo base_url('Admin/Resturant/');?>" onclick="getdatafiled($(this))">Phone No<i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
+                <th><a href="javascript:void(0);" data-type="order" data-field="resturant_contact_no" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this))">Phone No<i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
                 <th>Menu Hours (closed)</th>
                 <th>Total Branches</th>
-                <th><a href="javascript:void(0);" data-type="order" data-field="resturant_status" urlvalue="<?php echo base_url('Admin/Resturant/');?>" onclick="getdatafiled($(this))">Status <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
+                <th><a href="javascript:void(0);" data-type="order" data-field="resturant_status" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this))">Status <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -48,7 +48,7 @@
                 <?php
                 }
             }else {
-                echo '<tr class="text-center text-danger"><td colspan="5"><i class="zmdi zmdi-info-outline"></i> Resturants are  not available</td></tr>';
+                echo '<tr class="text-center text-danger"><td colspan="9"><i class="zmdi zmdi-info-outline"></i> Resturants are  not available</td></tr>';
             }
             ?>
         </tbody>

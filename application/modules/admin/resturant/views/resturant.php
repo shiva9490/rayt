@@ -1,29 +1,23 @@
-<?php $this->load->view('admin/search');?>
-       
-  <!--<div class="col-md-12 mt-5 t_div">
-      <table class="table b-g">
-        <thead>
-        <tr>
-                <th >Resturant Id</th>
-                <th scope="col">Resturant Name</th>
-                <th scope="col">Address</th>
-                <th scope="col">Phone Number</th>
-                <th scope="col">Menu Hours</th>
-                <th scope="col">Total branches</th>
-        </tr>
-        </thead>
-        <tbody> 
-        <?php foreach($view as $v){?>
-            <tr>
-                <th class="fonn"><?php echo $v->resturant_id;?><i class="fa fa-clone" aria-hidden="true"></i></th>
-                <td><a href="#"><?php echo $v->resturant_name;?></a></td>
-                <td><?php echo $v->resturant_area.','.$v->resturant_block.','.$v->resturant_street.','.$v->resturant_jaada.','.$v->resturant_house.','.$v->resturant_building;?></td>
-                <td><?php echo $v->resturant_contact_no;?></td>
-                <td><?php echo $v->resturant_menu_hours;?></td>
-                <td>-</td>
-        </tr>
-        <?php } ?>
-                    
-      </tbody>
-    </table>
-  </div> -->
+<?php
+$cr     =   $this->session->userdata("manage-resturant");
+$ur     =   $this->session->userdata("update-resturant");
+$dr     =   $this->session->userdata("delete-resturant");
+$ct     =   "0";
+if($ur  == 1 || $dr == '1'){
+        $ct     =   1;
+}
+?>
+
+<div class="row layout-top-spacing">
+    <?php if($cr == "1") { ?>
+   
+    <?php } ?>
+    <div class="col-lg-12">
+      <div class="card">
+          <div class="card-header">View Resturant</div>
+         <div class="card-body">
+            <?php $this->load->view("admin/search");?>
+         </div>
+      </div>
+   </div>
+</div>

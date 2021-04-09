@@ -1,3 +1,13 @@
+<?php
+$sr     =   $this->session->userdata("active-deactive-customers");
+$cr     =   $this->session->userdata("create-customers");
+$ur     =   $this->session->userdata("update-customers");
+$dr     =   $this->session->userdata("delete-customers");
+$ct     =   "0";
+if($ur  == 1 || $dr == '1'){
+        $ct     =   1;
+}
+?>
 <div class="col-md-12 mt-5 t_div">
     <table class="table b-g">
         <thead>
@@ -16,13 +26,13 @@
             if(count($view) > 0){ 
                 foreach($view as $ve){
                     $vad    =   ucwords($ve->customer_status);
-                    if($vad == "Active"){
+                    if($vad == "1"){
                         $icon   =   "times-circle";
                         $vadv   =   "Deactive";
                         $textico    =   "text-warning";
-                        $vdata  =   "<label class='badge abelsctive badge-success'>".$vad."</label>";
+                        $vdata  =   "<label class='badge abelsctive badge-success'>Active</label>";
                     }else{
-                        $vdata  =   "<label class='badge abelsctive badge-danger'>".$vad."</label>";
+                        $vdata  =   "<label class='badge abelsctive badge-danger'>Deactive</label>";
                         $vadv   =   "Active";
                         $textico    =   "text-primary";
                         $icon   =   "check-circle";
@@ -35,10 +45,21 @@
                 <td><?php echo $ve->customer_email_id;?></td>
                 <td><?php echo $ve->customer_mobile;?></td>
                 <td><?php echo $vdata;?></td>
-                <td>
-                    <a class="<?php echo $textico;?>" href="javascript:void(0);" onclick="activeform($(this),'Ajax-Customers-Active')" fields="<?php echo $ve->customer_id;?>" data-toggle='tooltip' title="<?php echo $vadv;?>"><i class="fa fa-<?php echo $icon;?> m-r-5"></i></a>
-                    <a href="javascript:void(0);" onclick="confirmationDelete($(this),'Class')"  data-toggle='tooltip' attrvalue="<?php echo adminurl("Delete-Customers/".$ve->customer_id);?>"   data-original-title="Delete Class" class="text-danger"><i class="fa fa-trash"></i></a>
+                <?php if($ct == '1'){?>
+                <td> 
+                    <?php if($sr == '1'){?>
+                    <a class="<?php echo $textico;?>" href="javascript:void(0);" onclick="activeform($(this),'Ajax-Customers-Active')" fields="<?php echo $ve->customer_id;?>" data-toggle='tooltip' title="<?php echo $vadv;?>"><i class="zmdi zmdi-<?php echo $icon;?> m-r-5"></i></a>
+                    <?php }  if($ur == '1'){?>
+                    <a href='<?php echo adminurl("Update-User/".$ve->customer_id);?>' data-toggle='tooltip' data-original-title="Update Customers" class="text-success tip-left">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+					</a>
+                    <?php } if($dr == '1'){?>
+                    <a href="javascript:void(0);" onclick="confirmationDelete($(this),'Customers')" data-toggle='tooltip' attrvalue="<?php echo adminurl("Delete-Customers/".$ve->customer_id);?>" data-original-title="Delete country" class="text-danger">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-octagon table-cancel"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+					</a>
+                    <?php }  ?>
                 </td>
+                <?php }  ?>
             </tr>
                 <?php
                 }

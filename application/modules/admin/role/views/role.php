@@ -7,16 +7,8 @@ if($ur  == 1 || $dr == '1'){
         $ct     =   1;
 }
 ?>
-<div class="row pt-2 pb-2">
-   <div class="col-sm-12">
-      <h4 class="page-title">Roles</h4>
-      <ol class="breadcrumb">
-         <li class="breadcrumb-item"><a href="<?php echo adminurl("Dashboard");?>">Home</a></li>
-         <li class="breadcrumb-item active" aria-current="page">Roles</li>
-      </ol>
-   </div>
-</div>
-<div class="row">
+
+<div class="row layout-top-spacing">
     <?php if($cr == "1") { ?>
    <div class="col-lg-4">
       <div class="card">
