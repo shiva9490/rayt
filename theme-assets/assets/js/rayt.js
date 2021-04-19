@@ -1,4 +1,4 @@
-var adminurl    = '/rayt/Rayt-Admin';
+var adminurl    = '/Rayt-Admin';
 var formInit    =   function(){
     $(".validform").validate({
         rules: {
@@ -217,6 +217,12 @@ var input_rest = function(){
                 $(this).css("text-transform","capitalize"); 
         });
 };
+
+function itemslist(url,id){
+	var url = $('#urlvalue').val();
+	var vale = $('.nav-link').attr('data-valu'+id);
+	searchFilter('',url,id);
+}
 function getdatafiled(event) {   
         initPart();
         $("#tipoOrderby").val(event.data("field"));
@@ -225,9 +231,20 @@ function getdatafiled(event) {
         $("#vorderby").val(event.data("order")); 
         searchFilter('',event.attr("urlvalue"));
 }
-function searchFilter(page_num,url) {
+/*
+function menuactive(id){
+    $(".nav-link").removeClass("list-actions active");*/
+    $(".nav-link").on('click', function (){
+        $(".nav-link").removeClass("list-actions active");
+        $(this).toggleClass('list-actions active');
+    });
+//}
+function searchFilter(page_num,url,id){
+        if(id !="undefined"){
+           // menuactive(id);
+        }
         page_num        =   page_num?page_num:0; 
-        var keywords    =   $('#FilterTextBox').val();      
+        var keywords    =   $('#FilterTextBox').val();
         var secserach   =   $('.secserach option:selected').val();   
         var classserch  =   $('.classserch option:selected').val();   
         var schoolserch =   $('.schoolserch option:selected').val();   
@@ -236,6 +253,7 @@ function searchFilter(page_num,url) {
         var vspcalss    =   "postList";
         var topv        =   $("#tipoOrderby").val();
         var orderby     =   $("#orderby").val();
+		var category 	= 	id;//$('#all-list').attr('all-list'+id);
         var clf     =   "pageloaderwrapper";
         if(vspvalue == 1){
             vspcalss    =   "perpostList";
@@ -247,25 +265,26 @@ function searchFilter(page_num,url) {
         }
         $('.'+vspcalss).html(""); 
         $.ajax({
-                type    :   'POST',
-                url     :   url+page_num,
-                data:{ 
-                        tipoOrderby :   topv,
-                        orderby     :   orderby,
-                        secserach   :   secserach,
-                        schoolserch :   schoolserch,
-                        classserch  :   classserch,
-                        limitvalue  :   limitvalue,
-                        keywords    :   keywords
-                },
-                beforeSend: function(){
-                        $('.'+clf).show();
-                }, 
-                success: function (html) { 
-                        $('.'+clf).hide();
-                        $('.'+vspcalss).html(html); 
-                        initPart();
-                }
+            type    :   'POST',
+            url     :   url+page_num,
+            data:{ 
+                    tipoOrderby :   topv,
+                    orderby     :   orderby,
+                    secserach   :   secserach,
+                    schoolserch :   schoolserch,
+                    classserch  :   classserch,
+                    limitvalue  :   limitvalue,
+                    keywords    :   keywords,
+					category	:	category
+            },
+            beforeSend: function(){
+                    $('.'+clf).show();
+            }, 
+            success: function (html) { 
+                    $('.'+clf).hide();
+                    $('.'+vspcalss).html(html); 
+                    initPart();
+            }
         });   
 }  
 function user_role(){
@@ -478,8 +497,79 @@ function verifyrstatus(evt,pafv){
         loadpage();
     });
 }
+function itemamount(){
+    var prince  =   $('.prince').val();
+    var packing =   $('.packing').val();
+    var vat     =   $('.vat option:selected').val();  
+    if(prince !="" && packing!="" && vat !=""){
+        var total = prince+packing;
+        var vata = (total*vat)/100;
+        $('.vat').val(total+vata);
+    }
+}
+function timmes(eve){
+    if(eve=="alltime"){
+        $('#alldays').css('display','none');
+        $('.differentdays').css('display','none');
+    }else if(eve=="alldays"){
+        $('#alldays').css('display','block');
+        $('.differentdays').css('display','none');
+    }else if(eve=="differentdays"){
+        $('#alldays').css('display','none');
+        $('.differentdays').css('display','block');
+    }
+}
+function myevent(action){
+    var eve = $(".alltime").attr('data-value');
+    var eve2 = $("#inncer").attr('data-value');
+	localStorage.i = Number(1);
+    var i = Number(localStorage.i);
+    var div = document.createElement('div');
+    if(action.id == "add"){
+        var category_id = $(".alltime").val();
+        //localStorage.i = Number(localStorage.i) + Number(1);
+        var i = parseInt(eve)+parseInt(1);
+        var j = parseInt(eve2)-parseInt(1);
+        var id = i;
+        var ids = i;
+        div.id = id;
+        $(".alltime").attr('data-value',i);
+        if(i=="3"){
+            $('#add').css('display','none');
+        }else if(i!="3"){
+            $('#add').css('display','block');
+        }
+        $("#inncer").html(j);
+        $("#inncer").attr('data-value',j);
+        div.innerHTML = '<div class="row m-3"><div class="col-md-3"></div>'+
+                        '<div class="col-md-3">'+
+                            '<input id="timepicker'+i+'" class="form-control flatpickr flatpickr-input" type="text" placeholder="Select Date..">'+
+                        '</div>'+
+                        '<div class="col-md-3">'+
+                            '<input id="timepicker1'+i+'" class="form-control flatpickr flatpickr-input" type="text" placeholder="Select Date.." >'+
+                        '</div>'+
+                        '<div class="col-md-3">'+
+                            '<a href="javascript:void(0);" id='+id+' class="remCF" onclick="myevent(this)">Remove</a>'+
+                        '</div></div>';
+            document.getElementById('AddDel').appendChild(div);
+    }else{
+        var i = parseInt(eve)-parseInt(1);
+        var j = parseInt(eve2)-parseInt(1);
+        var element = document.getElementById(action.id);
+        $(".alltime").attr('data-value',i);
+        $("#inncer").html(j);
+        $("#inncer").attr('data-value',j);
+        if(i=="3"){
+            $('#add').css('display','none');
+        }else if(i!="3"){
+            $('#add').css('display','block');
+        }
+        element.parentNode.removeChild(element);
+    }
+}
+
 $(function(){ 
-        menudepth();
+        //menudepth();
         menuInit();
 });
 function cusountry(evt){
@@ -554,6 +644,7 @@ var sumInitvalue  = function(){
         }
     });
 };
+
 $(function(){ 
         travelthis();
         pageform();
@@ -561,5 +652,5 @@ $(function(){
         //sumInitvalue();
         loadpage();
         initPart();
-        formInit();
+        //formInit();
 });

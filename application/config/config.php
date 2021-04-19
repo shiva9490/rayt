@@ -31,11 +31,15 @@ $config["docextensions"]    =   array("doc","docx");
 $config["xlsextensions"]    =   array("xlsx");
 $config["pdfextensions"]    =   array("pdf");
 $config['admin_assets'] 	=   $config['base_url']."theme-assets/";
+$config['admin_upload'] 	=   $config['base_url']."upload/resturants/";
 $config['limit_values']     =   array(30,45,60,75,100,200,"all");
 $config['menu_hours']       =   array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
 $config['gender']           =   array("Male","Female","Transgender");
 $config['academic_year']    =   array("2020-21");
 $config['marital_status']   =   array("Single","Married");
+$config['zone']   			=   array("15Mints","20Mints","30Mints","45mints","1Hour");
+$config['subzone']   		=   array("15Mints","20Mints","30Mints","45mints","1Hour");
+$config['veg']   		    =   array("Veg","Non-veg","Egg");
 
 /*
 |--------------------------------------------------------------------------

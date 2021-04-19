@@ -7,21 +7,24 @@ class Resturant extends CI_Controller{
 		}
 	}
 	public function create(){
+		$number = rand(111,999);
+		$id = 'RAYT'.date('ym').$number;
 		$dta    =   array(
 			"title"     =>  "Create Resturant Form",
-			"content"  =>  'create_resturant'
+			"content"  =>  'create_resturant',
+			"id"		=> $id,
 		);
 		if($this->input->post('publish')){
+			//echo '<pre>';print_r($this->input->post());exit;
 			$this->form_validation->set_rules('name','Resturant Name','required');
 			$this->form_validation->set_rules('name_a','Resturant Name in arabic','required');
 			$this->form_validation->set_rules('preparation_time','Preparation Time','required');
 			$this->form_validation->set_rules('Percentage','Percentage','required');
 			if($this->form_validation->run() == TRUE){
-				$res = $this->resturant_model->create();
+				$res = $this->resturant_model->create($id);
                 if($res != ''){
-                    $this->session->set_flashdata("suc","Created Resturant successfully.Update menu and items on bottom of the page");
-                     redirect(adminurl('Update-Resturant/'.$res));
-                    
+                    $this->session->set_flashdata("suc","Created Resturant successfully."); //Update menu and items on bottom of the page
+                     redirect(adminurl('Resturant'));
                 }else{
 					$this->session->set_flashdata("err","failed.");
                 }
@@ -34,7 +37,7 @@ class Resturant extends CI_Controller{
 			"title"     =>  "Resturants",
 			"content"  =>  'resturant',
 			"urlvalue"	=>	adminurl('viewResturant/'),
-			"create"    => 'Create-Resturant/'
+			"create"    => 'Create-Resturant/',
 		);
 		$conditions=array();
 		$dta["view"]            =   $this->resturant_model->viewResturant($conditions); 

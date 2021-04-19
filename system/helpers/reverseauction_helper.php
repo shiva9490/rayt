@@ -16,6 +16,10 @@ if ( ! function_exists('adminurl')){
     function adminurl($uri){ 
         return base_url(sitedata("site_admin")."/".$uri);
     }
+}if ( ! function_exists('partnerurl')){ 
+    function partnerurl($uri){ 
+        return base_url(sitedata("site_partner")."/".$uri);
+    }
 }  
 if ( ! function_exists('contenturl')){ 
     function contenturl($uri){ 

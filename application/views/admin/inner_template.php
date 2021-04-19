@@ -20,6 +20,14 @@
     <link href="<?php echo $this->config->item('admin_assets');?>plugins/sweetalerts/sweetalert2.min.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo $this->config->item('admin_assets');?>plugins/sweetalerts/sweetalert.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo $this->config->item('admin_assets');?>assets/css/components/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+	<?php } if($this->uri->segment(2) =="Create-Resturant"){?>
+	<link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+	<link href="<?php echo $this->config->item('admin_assets');?>assets/css/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $this->config->item('admin_assets');?>plugins/file-upload/file-upload-with-preview.min.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $this->config->item('admin_assets');?>plugins/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
+    <link href="<?php echo $this->config->item('admin_assets');?>plugins/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
+    <link href="<?php echo $this->config->item('admin_assets');?>plugins/noUiSlider/custom-nouiSlider.css" rel="stylesheet" type="text/css">
+    <link href="<?php echo $this->config->item('admin_assets');?>plugins/bootstrap-range-Slider/bootstrap-slider.css" rel="stylesheet" type="text/css">
 	<?php } ?>
 </head>
 <body>
@@ -64,6 +72,84 @@
 	<script src="<?php echo $this->config->item('admin_assets');?>assets/js/scrollspyNav.js"></script>
     <script src="<?php echo $this->config->item('admin_assets');?>plugins/sweetalerts/sweetalert2.min.js"></script>
     <script src="<?php echo $this->config->item('admin_assets');?>plugins/sweetalerts/custom-sweetalert.js"></script>
+	<?php } if($this->uri->segment(2) =="Create-Resturant"){?>
+	<script src="<?php echo $this->config->item('admin_assets');?>plugins/file-upload/file-upload-with-preview.min.js"></script>
+	<script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+    <script>
+        //First upload
+        var firstUpload = new FileUploadWithPreview('myFirstImage')
+        //Second upload
+        var secondUpload = new FileUploadWithPreview('mySecondImage')
+		//3rd upload
+        var threeUpload = new FileUploadWithPreview('mythreeImage')
+    </script>
+	 <script>
+        $('#timepicker0').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+		$('#timepicker1').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+		$('#timepicker2').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+		$('#timepicker3').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+		$('#timepicker4').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+		$('#timepicker5').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+		$('#timepicker6').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+		
+		$('#timepicker10').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+		$('#timepicker11').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+		$('#timepicker12').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+		$('#timepicker13').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+		$('#timepicker14').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+		$('#timepicker15').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+		$('#timepicker16').timepicker({
+            uiLibrary: 'bootstrap4'
+        });
+    </script>
+    <script>
+		window.addEventListener('load', function() {
+			// Fetch all the forms we want to apply custom Bootstrap validation styles to
+			var forms = document.getElementsByClassName('needs-validation');
+			// Loop over them and prevent submission
+			var validation = Array.prototype.filter.call(forms, function(form) {
+			  form.addEventListener('submit', function(event) {
+				if (form.checkValidity() === false) {
+				  event.preventDefault();
+				  event.stopPropagation();
+				}
+				form.classList.add('was-validated');
+			  }, false);
+			});
+		}, false);
+    </script>	
+	<script src="<?php echo $this->config->item('admin_assets');?>assets/js/scrollspyNav.js"></script>
+    <script src="<?php echo $this->config->item('admin_assets');?>plugins/flatpickr/flatpickr.js"></script>
+    <script src="<?php echo $this->config->item('admin_assets');?>plugins/noUiSlider/nouislider.min.js"></script>
+    <script src="<?php echo $this->config->item('admin_assets');?>plugins/flatpickr/custom-flatpickr.js"></script>
+    <script src="<?php echo $this->config->item('admin_assets');?>plugins/noUiSlider/custom-nouiSlider.js"></script>
+    <script src="<?php echo $this->config->item('admin_assets');?>plugins/bootstrap-range-Slider/bootstrap-rangeSlider.js"></script>
 	<?php } ?>
 	<script src="<?php echo $this->config->item('admin_assets');?>assets/js/rayt.js"></script>
 </body>
