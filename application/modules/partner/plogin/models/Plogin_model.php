@@ -33,28 +33,25 @@ class Plogin_model extends CI_Model{
 //            $this->db->get();echo $this->db->last_query();exit;
             return $this->db->get();
         }
-        public function checkLogin(){ 
+        public function checkLogin(){
             $password       =   $this->input->post("password");
             $emails         =   $this->input->post("username");
-            $parms['whereCondition']    =   "restraint_login_username ='".$emails."' AND
-                    restraint_login_password = '".($password)."' AND restraint_login_abc = 'Active'";
+            $parms['whereCondition']    =   "restraint_login_username ='".$emails."' AND restraint_login_password = '".($password)."' AND restraint_login_abc = 'Active'";
             $vsp    =    $this->queryrestraintlogin($parms)->row_array();
-			//print_r($vsp);exit;
             if(count($vsp) > 0){
                 $ins   =   $vsp;
                 $this->session->set_userdata("restraint_id",$ins['restraint_id']);
                 $this->session->set_userdata("resturant_name",$ins['resturant_name']);
                 $this->session->set_userdata("resturant_type",$ins['restraint_login_type']);
-                $login_type = $ins['restraint_logintype'];
-                $roles         =    $this->permission_model->get_permission($login_type);   
+                $login_type  =  $ins['restraint_logintype'];
+                $roles       =  $this->permission_model->get_permission($login_type);   
                 if(count($roles) > 0){
                     foreach($roles  as $vp){
                         $this->session->set_userdata($vp->page_name,$vp->per_status);
                     }
                 }
-				//echo 	exit;
                 return TRUE;
-            } 
+            }
         } 
         public function checkvalueemail($username){
                 $params["whereCondition"]   =   "restraint_login_username='".$username."'";

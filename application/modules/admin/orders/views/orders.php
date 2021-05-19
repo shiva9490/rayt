@@ -1,191 +1,37 @@
-       
-<div class="tab">
-  <button class="tablinks active" onclick="openCity(event, 'today')">Today Orders</button>
-  <button class="tablinks" onclick="openCity(event, 'una')">Unassigned Orders</button>
-  <button class="tablinks" onclick="openCity(event, 'pen')">Pending Orders</button>
-  <button class="tablinks" onclick="openCity(event, 'pen')">Received Orders</button>
-  <button class="tablinks" onclick="openCity(event, 'pen')">Ready for Pickup</button>
-  <button class="tablinks" onclick="openCity(event, 'pen')">Completed Pickup</button>
-  <button class="tablinks" onclick="openCity(event, 'pen')">Arraived at customer</button>
-  <button class="tablinks" onclick="openCity(event, 'pen')">Delivered</button>
-  
-</div>
-<div id="today" class="tabcontent" style="display:block;">
-  <div class="col-md-12 mt-3">
-     <div class="row">
-         <div class="col-md-6">
-             <h4>Orders</h4>
-         </div>
-         <div class="col-md-6">
-         <a href="<?php echo base_url('Admin/Create-Orders');?>" class="btn b-success mx-2 ">+ New</a>
-         <input type="text" class="form-control sear" placeholder="Search"><input type="submit" value="Search" class="btn b-dark py-1">
-         </div>
-     </div>
- </div>
-        
-  <div class="col-md-12 mt-3 t_div">
-      <table class="table b-g">
-        <thead>
-        <tr>
-                <th >Order Id</th>
-                <th scope="col">Order Type</th>
-                <th scope="col">Date</th>
-                <th scope="col">Order Status</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Payment Type</th>
-                <th scope="col">Driver</th>
-                <th scope="col">Resturant</th>
-                <th scope="col">Branch</th>
-                <th scope="col">Customer Location</th>
-                <th scope="col">ETA to Resturant</th>
-                <th scope="col">ETA to Customer</th>
-                <th scope="col">ETA Countdown</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-                <th class="fonn"><a href="#">00013 <i class="fa fa-clone" aria-hidden="true"></i></a></th>
-                <td>online</td>
-                <td>18/03/21</td>
-                <td>Order Placed</td>
-                <td>5.5</td>
-                <td>Cash</td>
-                <td>-</td>
-                <td>Kuwait Resturant</td>
-                <td>sharq</td>
-                <td></td>
-                <td>-</td>
-                <td>-</td>
-                <td>0</td>
-        </tr>
-                    
-      </tbody>
-    </table>
-  </div>      
-
-</div>
-
-<div id="una" class="tabcontent">
-      <div class="col-md-12 mt-3">
-     <div class="row">
-         <div class="col-md-6">
-             <h4>Orders</h4>
-         </div>
-         <div class="col-md-6">
-          <a href="<?php echo base_url('Admin/Create-Orders');?>" class="btn b-success mx-2 ">+ New</a>
-         <input type="text" class="form-control sear" placeholder="Search"><input type="submit" value="Search" class="btn b-dark py-1">
-         </div>
-     </div>
- </div>
-        
-  <div class="col-md-12 mt-3 t_div">
-      <table class="table b-g">
-        <thead>
-        <tr>
-                <th >Order Id</th>
-                <th scope="col">Order Type</th>
-                <th scope="col">Date</th>
-                <th scope="col">Order Status</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Payment Type</th>
-                <th scope="col">Driver</th>
-                <th scope="col">Resturant</th>
-                <th scope="col">Branch</th>
-                <th scope="col">Customer Location</th>
-                <th scope="col">ETA to Resturant</th>
-                <th scope="col">ETA to Customer</th>
-                <th scope="col">ETA Countdown</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-                <th class="fonn"><a href="#">00013 <i class="fa fa-clone" aria-hidden="true"></i></a></th>
-                <td>online</td>
-                <td>18/03/21</td>
-                <td>Order Placed</td>
-                <td>5.5</td>
-                <td>Cash</td>
-                <td>-</td>
-                <td>Kuwait Resturant</td>
-                <td>sharq</td>
-                <td></td>
-                <td>-</td>
-                <td>-</td>
-                <td>0</td>
-        </tr>
-                    
-      </tbody>
-    </table>
-  </div>     
-</div>
-
-<div id="pen" class="tabcontent">
-      <div class="col-md-12 mt-3">
-     <div class="row">
-         <div class="col-md-6">
-             <h4>Orders</h4>
-         </div>
-         <div class="col-md-6">
-          <a href="<?php echo base_url('Admin/Create-Orders');?>" class="btn b-success mx-2 ">+ New</a>
-         <input type="text" class="form-control sear" placeholder="Search"><input type="submit" value="Search" class="btn b-dark py-1">
-         </div>
-     </div>
- </div>
-        
-  <div class="col-md-12 mt-3 t_div">
-      <table class="table b-g">
-        <thead>
-        <tr>
-                <th >Order Id</th>
-                <th scope="col">Order Type</th>
-                <th scope="col">Date</th>
-                <th scope="col">Order Status</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Payment Type</th>
-                <th scope="col">Driver</th>
-                <th scope="col">Resturant</th>
-                <th scope="col">Branch</th>
-                <th scope="col">Customer Location</th>
-                <th scope="col">ETA to Resturant</th>
-                <th scope="col">ETA to Customer</th>
-                <th scope="col">ETA Countdown</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-                <th class="fonn"><a href="#">00013 <i class="fa fa-clone" aria-hidden="true"></i></a></th>
-                <td>online</td>
-                <td>18/03/21</td>
-                <td>Order Placed</td>
-                <td>5.5</td>
-                <td>Cash</td>
-                <td>-</td>
-                <td>Kuwait Resturant</td>
-                <td>sharq</td>
-                <td></td>
-                <td>-</td>
-                <td>-</td>
-                <td>0</td>
-        </tr>
-                    
-      </tbody>
-    </table>
-  </div>     
-</div>
-
-<script>
-function openCity(evt, cityName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-  document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.className += " active";
-}
-</script>
-        
+        <div class="widget-content widget-content-area border-top-tab">
+            <ul class="nav nav-tabs mb-3 mt-3" id="borderTop" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="border-top-home-tab" data-toggle="tab" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Today Orders')" href="#border-top-home" role="tab" aria-controls="border-top-home" aria-selected="true">Today Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="border-top-profile-tab" data-toggle="tab" href="#border-top-profile" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Unassigned')" role="tab" aria-controls="border-top-profile" aria-selected="false">Unassigned</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="border-top-contact-tab" data-toggle="tab" href="#border-top-contact" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Pending')" role="tab" aria-controls="border-top-contact" aria-selected="false">Pending</a>
+                </li>
+                <!--<li class="nav-item">
+                    <a class="nav-link" id="border-top-setting-tab" data-toggle="tab" href="#border-top-setting" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Received')" role="tab" aria-controls="border-top-setting" aria-selected="false">Received</a>
+                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link" id="border-top-setting-tab" data-toggle="tab" href="#border-top-setting" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Ready for Pickup')" role="tab" aria-controls="border-top-setting" aria-selected="false">Ready for Pickup</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="border-top-setting-tab" data-toggle="tab" href="#border-top-setting" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Completed Pickup')" role="tab" aria-controls="border-top-setting" aria-selected="false">Completed Pickup</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="border-top-setting-tab" data-toggle="tab" href="#border-top-setting" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Arraived at customes')" role="tab" aria-controls="border-top-setting" aria-selected="false">Arraived at customer</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="border-top-setting-tab" data-toggle="tab" href="#border-top-setting" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Delivered')" role="tab" aria-controls="border-top-setting" aria-selected="false">Delivered</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="borderTopContent">
+                <div class="tab-pane fade show active" id="border-top-home" role="tabpanel" aria-labelledby="border-top-home-tab">
+                    <?php $this->load->view("admin/search");?>
+                    <input type="hidden" id="orders" name="orders" value="<?php echo 'orders';?>"> 
+                    <input type="hidden" id="urlvalue" name="urlvalue" value="<?php echo $urlvalue;?>"> 
+					<input type="hidden" id="orderby" name="orderby" value="<?php echo isset($orderby)?$orderby:'';?>">
+					<input type="hidden" id="tipoOrderby" name="tipoOrderby" value="<?php echo isset($tipoOrderby)?$tipoOrderby:'';?>">
+                </div>
+            </div>
+        </div>

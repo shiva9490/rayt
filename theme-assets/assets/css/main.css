@@ -87,7 +87,7 @@ select.form-custom::-ms-expand {
 /*blockquote*/
 blockquote.blockquote { 
     color: #0e1726;
-    padding: 20px 20px 20px 14px;
+    padding: 3px 16px 3px 16px;/*20px 20px 20px 14px;*/
     font-size: 0.875rem;
     background-color: #ffffff;
     border-bottom-right-radius: 8px;

@@ -37,9 +37,17 @@ $config['menu_hours']       =   array('Sunday','Monday','Tuesday','Wednesday','T
 $config['gender']           =   array("Male","Female","Transgender");
 $config['academic_year']    =   array("2020-21");
 $config['marital_status']   =   array("Single","Married");
-$config['zone']   			=   array("15Mints","20Mints","30Mints","45mints","1Hour");
-$config['subzone']   		=   array("15Mints","20Mints","30Mints","45mints","1Hour");
+$config['zone']   			=   array("15 Mints","20 Mints","30 Mints","45 Mints","60 Mints");
+$config['subzone']   		=   array("15 Mints","20 Mints","30 Mints","45 Mints","60 Mints");
 $config['veg']   		    =   array("Veg","Non-veg","Egg");
+$config['orderstatus']      =   array(
+    "Order Placed","Preparing","Ready for pickup","Out for delivery","Completed Pickup","Delivered","Order Cancelled"
+);
+$config['vehicle_type']     =   array("Car","Bike"); 
+$config['category']         =   array("Part Time","Full Time"); 
+$config['gender']           =   array("Male","Female"); 
+$config['rating']           =   array("Good","Average","Below Average","Bad");
+$config['cancleorderstatus']=   array("Order not available","Food finished","Very busy");
 
 /*
 |--------------------------------------------------------------------------

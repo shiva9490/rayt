@@ -16,14 +16,19 @@ class Resturant extends CI_Controller{
 		);
 		if($this->input->post('publish')){
 			//echo '<pre>';print_r($this->input->post());exit;
-			$this->form_validation->set_rules('name','Resturant Name','required');
-			$this->form_validation->set_rules('name_a','Resturant Name in arabic','required');
+			$this->form_validation->set_rules('name','Restaurant Name','required');
+			$this->form_validation->set_rules('name_a','Restaurant Name in arabic','required');
 			$this->form_validation->set_rules('preparation_time','Preparation Time','required');
 			$this->form_validation->set_rules('Percentage','Percentage','required');
+			$this->form_validation->set_rules('Percentage','Percentage','required');
+			$this->form_validation->set_rules('Percentage','Percentage','required');
+			$this->form_validation->set_rules('strt_time[]','start Time','required');
+			$this->form_validation->set_rules('end_time[]','End Time','required');
+		
 			if($this->form_validation->run() == TRUE){
 				$res = $this->resturant_model->create($id);
                 if($res != ''){
-                    $this->session->set_flashdata("suc","Created Resturant successfully."); //Update menu and items on bottom of the page
+                    $this->session->set_flashdata("suc","Created Restaurant successfully."); //Update menu and items on bottom of the page
                      redirect(adminurl('Resturant'));
                 }else{
 					$this->session->set_flashdata("err","failed.");
@@ -63,7 +68,7 @@ class Resturant extends CI_Controller{
 		if(!empty($keywords)){
 			$conditions['keywords'] = $keywords;
 		}
-		$perpage        =    $this->input->post("limitvalue")?$this->input->post("limitvalue"):'5';    
+		$perpage        =    $this->input->post("limitvalue")?$this->input->post("limitvalue"):sitedata("site_pagination"); 
 		$orderby        =    $this->input->post('orderby')?$this->input->post('orderby'):"ASC";
 		$tipoOrderby    =    $this->input->post('tipoOrderby')?str_replace("+"," ",$this->input->post('tipoOrderby')):"resturantid";  
 		$totalRec               =   $this->resturant_model->cntviewResturant($conditions);  
@@ -102,35 +107,148 @@ class Resturant extends CI_Controller{
 	}
 	
 	public function update_resturant($str){
+		if($this->session->userdata("update-resturant") != '1'){
+			redirect(sitedata("site_admin")."/Dashboard");
+	    }
+	    $str    =   $this->uri->segment("3");
         $pmrs["whereCondition"]  =   "resturant_id LIKE  '".$str."'";
         $vsp	=	$this->resturant_model->getResturant($pmrs);
+		//echo '<pre>';print_r($vsp);exit;
         if($vsp){
     	    $dta    =   array(
     			"title"     =>  "update resturant",
     			"content"   =>  "update_resturant",
     			"view"      =>  $vsp
     		);
-    	    if($this->input->post('update')){
-    			$this->form_validation->set_rules('name','Resturant Name','required');
-    			$this->form_validation->set_rules('name_a','Resturant Name','required');
+    	    if($this->input->post("submit")){
+				//echo '<pre>';print_r($this->input->post());exit;	
+    			$this->form_validation->set_rules('name','Restaurant Name','required');
+    			$this->form_validation->set_rules('name_a','Restaurant Name','required');
     			$this->form_validation->set_rules('preparation_time','Preparation Time','required');
     			$this->form_validation->set_rules('Percentage','Percentage','required');
     			if($this->form_validation->run() == TRUE){
                     $res = $this->resturant_model->update_resturant($str);     
                     if($res){
-                        $this->session->set_flashdata("suc","update Resturant succfully.");
+                        $this->session->set_flashdata("suc","update Restaurant succfully.");
                         redirect(adminurl('Resturant'));
                     }else{
-                        $this->session->set_flashdata("err","update Resturant failed.");
+                        $this->session->set_flashdata("err","update Restaurant failed.");
                     }
     	        }
     	    }
     	    $conditions=array();
     	    $conditions['id']=$str;
-    	    $dta['images']=$this->resturant_model->viewResImages($conditions); 
+			$dta['resttime']=$this->resturant_model->viewResTime($conditions); 
+			//echo '<pre>';print_r($dta['resttime']);exit;	
 		    $this->load->view("admin/inner_template",$dta); 
         }
 	}
+	public function update_resturant_document($str){	
+		if($this->session->userdata("update-resturant") != '1'){
+			redirect(sitedata("site_admin")."/Dashboard");
+	}
+	$str    =   $this->uri->segment("3"); 
+        $pmrs["whereCondition"]  =   "resturant_id LIKE  '".$str."'";
+        $vsp	=	$this->resturant_model->getResturant($pmrs);
+		//	echo '<pre>';print_r($vsp);exit;
+        if($vsp){
+    	    $dta    =   array(
+    			"title"     =>  "update resturant documnet",
+    			"content"   =>  "update_resturant_document",
+    			"view"      =>  $vsp
+    		);
+    	    if($this->input->post("submit")){				
+    			if($this->form_validation->run() == TRUE){
+                    $res = $this->resturant_model->update_resturant($str);     
+                    if($res){
+                        $this->session->set_flashdata("suc","update Restaurant succfully.");
+                        redirect(adminurl('Resturant'));
+                    }else{
+                        $this->session->set_flashdata("err","update Restaurant failed.");
+                    }
+    	        }
+    	    }
+    	    $conditions=array();
+    	    $conditions['id']=$str;
+    	    $dta['images']=$this->resturant_model->viewResImages($conditions); 		
+			//echo '<pre>';print_r($dta['resttime']);exit;	
+		    $this->load->view("admin/inner_template",$dta); 
+        }
+	}
+
+	public function update_res_image_doc($str){	
+
+		
+		if($this->session->userdata("update-resturant") != '1'){
+			redirect(sitedata("site_admin")."/Dashboard");
+			}
+			$str    =   $this->uri->segment("3"); 
+		
+        $pmrs["whereCondition"]  =   "resturant_images_id LIKE  '".$str."'";
+        $vsp	=	$this->resturant_model->getResImages($pmrs);
+		if($vsp){
+    	    $dta    =   array(
+    			"title"     =>  "update resturant image documnet",
+    			"content"   =>  "update_res_image_doc",
+    			"view"      =>  $vsp
+    		);	
+			$res=$vsp['resturant_id'];
+			echo $res;	
+			if($this->input->post("submit")){
+				
+				$ress = $this->resturant_model->update_Res_Images($str);     
+				if($ress){					
+					$this->session->set_flashdata("suc","update Restaurant succfully.");
+					redirect(adminurl('Update-Resturant-Document/'.$res));
+				}else{
+					$this->session->set_flashdata("err","update Restaurant failed.");
+				}
+			
+		}
+		//print_r($vsp);exit;
+		$this->load->view("admin/inner_template",$dta); 
+		}
+	}
+	public function add_res_image_doc($str){	
+			
+		if($this->session->userdata("update-resturant") != '1'){
+			redirect(sitedata("site_admin")."/Dashboard");
+			}
+			$str    =   $this->uri->segment("3"); 
+			$pmrs["whereCondition"]  =   "resturant_id LIKE  '".$str."'";
+			$vsp	=	$this->resturant_model->getResturant($pmrs);
+        // $pmrs["whereCondition"]  =   "resturant_images_id LIKE  '".$str."'";
+        // $vsp	=	$this->resturant_model->getResImages($pmrs);
+		if($vsp){
+    	    $dta    =   array(
+    			"title"     =>  "Add resturant image documnet",
+    			"content"   =>  "add_res_image_doc",
+    			"view"      =>  $vsp
+    		);	
+			$res=$vsp['resturant_id'];
+		//	echo $res;	
+			if($this->input->post("submit")){
+				
+				$ress = $this->resturant_model->add_Res_Images($str);     
+				if($ress){					
+					$this->session->set_flashdata("suc","Added Restaurant images succfully.");
+					redirect(adminurl('Update-Resturant-Document/'.$res));
+				}else{
+					$this->session->set_flashdata("err","update Resturant failed.");
+				}			
+			}
+	
+		$this->load->view("admin/inner_template",$dta); 
+		}
+	}
+	public function update_res_images(){	
+		$str    =   $this->input->post('imageid');
+        $pmrs["whereCondition"]  =   "resturant_images_id LIKE  '".$str."'";
+        $vsp['images']	=	$this->resturant_model->getResImages($pmrs);
+		//print_r($vsp['images']);exit;
+		$this->load->view('update_resturant_documents',$vsp);
+	}
+	
 	public function delete_resturant(){
 		$uri    =   $this->uri->segment("3");
 		$params["whereCondition"]   =   "resturant_id = '".$uri."'";
@@ -146,7 +264,8 @@ class Resturant extends CI_Controller{
 		echo $vsp;
 	}
 	
-	public function delete_res_image(){
+	public function delete_res_image_doc(){
+	
 		$uri    =   $this->uri->segment("3");
 		$params["whereCondition"]   =   "resturant_images_id = '".$uri."'";
 		$vue    =   $this->resturant_model->getResImages($params);
@@ -156,7 +275,7 @@ class Resturant extends CI_Controller{
 			unlink($vue['resturant_images_path']);
 			if($bt > 0){
 			    $this->session->set_flashdata("suc","image deleted sucessfully");
-				redirect(adminurl('Update-Resturant/'.$res));
+				redirect(adminurl('Update-Resturant-Document/'.$res));
 			}
 		}else{
 			$this->session->set_flashdata("err","Unable to delete");
@@ -164,6 +283,7 @@ class Resturant extends CI_Controller{
 		} 
 		echo $vsp;
 	}
+
 	
 }
 ?>

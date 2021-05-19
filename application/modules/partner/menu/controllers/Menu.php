@@ -1,37 +1,10 @@
 <?php
 class Menu extends CI_Controller{
-	public function __construct() {
+	public function __construct(){
 		parent::__construct();
-		//echo $this->session->userdata("restraint_id");exit;
 		if($this->session->userdata("restraint_id") == ''){
-			redirect(sitedata("site_partner")."/Login"); 
+			redirect(sitedata("site_partner")."/Login");
 		}
-	}
-	public function create(){
-		$number = rand(111,999);
-		$id = 'RAYT'.date('ym').$number;
-		$dta    =   array(
-			"title"     =>  "Create Resturant Form",
-			"content"  =>  'create_resturant',
-			"id"		=> $id,
-		);
-		if($this->input->post('publish')){
-			//echo '<pre>';print_r($this->input->post());exit;
-			$this->form_validation->set_rules('name','Resturant Name','required');
-			$this->form_validation->set_rules('name_a','Resturant Name in arabic','required');
-			$this->form_validation->set_rules('preparation_time','Preparation Time','required');
-			$this->form_validation->set_rules('Percentage','Percentage','required');
-			if($this->form_validation->run() == TRUE){
-				$res = $this->resturant_model->create($id);
-                if($res != ''){
-                    $this->session->set_flashdata("suc","Created Resturant successfully."); //Update menu and items on bottom of the page
-                     redirect(adminurl('Resturant'));
-                }else{
-					$this->session->set_flashdata("err","failed.");
-                }
-			}
-		}
-		$this->load->view('admin/inner_template',$dta);
 	}
 	public function index(){
 		$restid = $this->session->userdata("restraint_id");
@@ -59,6 +32,32 @@ class Menu extends CI_Controller{
 		$dta['urlvalue']		=   partnerurl('ViewItems/');
 		$this->load->view('partner/inner_template',$dta);
 	}
+	public function create(){
+		$number = rand(111,999);
+		$id = 'RAYT'.date('ym').$number;
+		$dta    =   array(
+			"title"     =>  "Create Resturant Form",
+			"content"  =>  'create_resturant',
+			"id"		=> $id,
+		);
+		if($this->input->post('publish')){
+			//echo '<pre>';print_r($this->input->post());exit;
+			$this->form_validation->set_rules('name','Resturant Name','required');
+			$this->form_validation->set_rules('name_a','Resturant Name in arabic','required');
+			$this->form_validation->set_rules('preparation_time','Preparation Time','required');
+			$this->form_validation->set_rules('Percentage','Percentage','required');
+			if($this->form_validation->run() == TRUE){
+				$res = $this->resturant_model->create($id);
+                if($res != ''){
+                    $this->session->set_flashdata("suc","Created Resturant successfully."); //Update menu and items on bottom of the page
+                     redirect(adminurl('Resturant'));
+                }else{
+					$this->session->set_flashdata("err","failed.");
+                }
+			}
+		}
+		$this->load->view('admin/inner_template',$dta);
+	}
 	public function ViewItems(){
 		$conditions =   array();
 		$page       =   $this->uri->segment('3');
@@ -67,7 +66,12 @@ class Menu extends CI_Controller{
 		$restid = $this->session->userdata("restraint_id");
 		$par['whereCondition'] = "resturant_id = '".$restid."'";
 		$cat = $this->menu_model->viewCategory($par);
-		$category = ($this->input->post('category')!="")?$this->input->post('category'):'';
+		$c='';$b='';
+		if(is_array($cat) && count($cat)>0){
+		    $b= $cat[0];
+		    $c= $cat[0]->resturant_category_id;
+		}
+		$category = ($this->input->post('category')!="")?$this->input->post('category'):$c;
 		$restid = $this->session->userdata("restraint_id");
 		if(!empty($keywords)){
 			$conditions['keywords'] = $keywords;
@@ -87,8 +91,12 @@ class Menu extends CI_Controller{
 			$conditions['limit']   		 =   $perpage; 
 		}
 		$dta["view"]                     =   $this->menu_model->viewItems($conditions); 
-		$dta["category"]                 =   $category;
-		$dta["cate_id"]                  =   $cat[0];
+		$d='';
+		if(is_array($dta["view"]) && count($dta["view"]) >0){
+		    $d= $dta["view"][0]->resturant_category_id;
+		}
+		$dta["category"]                 =   ($category!="")?$category:$d;
+		$dta["cate_id"]                  =   $b;
 		$this->load->view('ajax_items_list',$dta);
 	}
 	public function resturant($str){
@@ -209,18 +217,197 @@ class Menu extends CI_Controller{
 			}
 		}else{
 			$this->session->set_flashdata("err","Unable to delete");
-				redirect(adminurl('Resturant'));
+			redirect(adminurl('Resturant'));
 		} 
 		echo $vsp;
 	}
 	public function add_items($id){
+	    if($this->session->userdata("tempid") != ""){
+	        $t = $this->session->userdata("tempid");
+	    }else{
+	        $this->session->set_userdata("tempid",date('Ymdhis'));
+	        $t = $this->session->userdata("tempid");
+	    }
 	    $dta    =   array(
 			"title"     =>  "Add Item",
 			"content"   =>  "add_item",
+			"tempid"    =>  $t,
 		);
+		if($this->input->post('publish')){
+		    $this->form_validation->set_rules('veg_type','Item Type','required');
+			$this->form_validation->set_rules('itemname_a','Item Name','required');
+			$this->form_validation->set_rules('itemname','Item Name English','required');
+			$this->form_validation->set_rules('details','Basic Details','required');
+			$this->form_validation->set_rules('item_price','Item Price','required');
+			$this->form_validation->set_rules('final_amount','Final Amount','required');
+			$this->form_validation->set_rules('timings','Item timings','required');
+			$fname      =   $_FILES['main_image']['name'];
+            if (empty($fname)){
+                $this->form_validation->set_rules('main_image', 'Item Image', 'required');
+            }
+			if($this->form_validation->run() == TRUE){
+                $res = $this->menu_model->additem();
+                if($res){
+                    $this->session->set_flashdata("suc","image deleted sucessfully");
+				    redirect(adminurl('Update-Resturant/'.$res));
+                }
+			}
+		}
 		$this->load->view("partner/inner_template",$dta); 
-        
+	}
+	public function Update_items($id){
+	    $this->session->set_userdata("tempid",date('Ymdhis'));
+		$parms['whereCondition']="resturant_items_id = '".$id."'";
+		$vue	= $this->menu_model->getItems($parms);
+	    $dta    =   array(
+			"title"     =>  "Update Item",
+			"content"   =>  "update_item",
+			"tempid"    =>  $this->session->userdata("tempid"),
+			"view"		=> $vue
+		);
+		if($this->input->post('publish')){
+		    $this->form_validation->set_rules('veg_type','Item Type','required');
+			$this->form_validation->set_rules('itemname_a','Item Name','required');
+			$this->form_validation->set_rules('itemname','Item Name English','required');
+			$this->form_validation->set_rules('details','Basic Details','required');
+			$this->form_validation->set_rules('item_price','Item Price','required');
+			$this->form_validation->set_rules('final_amount','Final Amount','required');
+			$this->form_validation->set_rules('timings','Item timings','required');
+			$fname      =   $_FILES['main_image']['name'];
+            if (empty($fname)){
+                $this->form_validation->set_rules('main_image', 'Item Image', 'required');
+            }
+			if($this->form_validation->run() == TRUE){
+                $res = $this->menu_model->updateitem($id);
+                if($res){
+                    $this->session->set_flashdata("suc","Resturant Item Updated");
+				    redirect(partnerurl('Menu'));
+                }
+			}
+		}
+		$this->load->view("partner/inner_template",$dta); 
+	}
+	public function weely_avaliable(){
+		$data = array(
+			'eve'=>$this->input->post('eve'),
+		);
+		$this->load->view("weekly_available",$data); 
+	}
+	public function addon_model(){
+	    $fr = "ra.resturant_id LIKE '".$this->session->userdata("restraint_id")."' AND ra.resturant_addon_temp_id LIKE '".$this->input->post('tempid')."'";
+	    //if($this->input->post('ids') != "0"){
+	    //    $fr .= "AND ra.resturant_addon_category LIKE '".$this->input->post('eve')."' OR ra.resturant_addon_category LIKE '".$this->input->post('eve')."'";
+	    //}
+	    $par['whereCondition'] = $fr;
+	    $res = $this->menu_model->viewAddon($par);
+		$data = array(
+			'eve'   => $this->input->post('eve'),
+			'title' => $this->input->post('title'),
+			'total' => $this->input->post('total'),
+			'tempid'=> $this->input->post('tempid'),
+			'datas' => $res,
+		);
+		$this->load->view("variant_model",$data);
+	}
+	public function variant_model(){
+	    $gr = "rv.resturant_id LIKE '".$this->session->userdata("restraint_id")."'";
+	    $gr .= "AND rv.resturant_variants_tempid LIKE '".$this->input->post('tempid')."'";
+	    if($this->input->post('ids') != "0"){
+	        $gr .= "AND rv.resturant_variants_category LIKE '".$this->input->post('eve')."' OR rv.resturant_variants_category LIKE '".$this->input->post('eve')."'";
+	    }
+	    $par['whereCondition'] = $gr;
+	    $datas = $this->menu_model->viewVariants($par);
+		$data = array(
+			'eve'   => $this->input->post('eve'),
+			'title' => $this->input->post('title'),
+			'total' => $this->input->post('total'),
+			'tempid'=> $this->input->post('tempid'),
+			'datas' => $datas
+		);
+		
+		$this->load->view("addon_model",$data); 
+	}
+	public function veg_types(){
+        $veg   =   $this->config->item("veg");
+        $option='<option value="">Select Veg</option>';
+	    foreach($veg as $key=>$veg){
+            $option.="<option value=".$veg.">".$veg."</option>";
+        }
+        print_r($option);
+	}
+	public function min_selection(){
+        $eve   =  $this->input->post('eve');
+        $option="";
+	    for($i=1; $i<=$eve; $i++ ){
+            $option.="<option value=".$i.">".$i."</option>";
+        }
+        print_r($option);
+	}
+	public function add_category(){
+	    $dat = array(
+	        'title' =>$this->input->post('title'),
+	    );
+	    $this->load->view('add_category',$dat);
+	}
+	public function adding_category(){
+	    
+	    if($this->input->post()){
+	        //$check = $this->checkcategory($this->input->post('category'));
+	        //if($check)
+			$res = $this->menu_model->addcategory();
+            if($res != ''){
+                echo "Created category successfully.";
+            }else{
+				echo "failed.";
+            }
+		}
 	}
 	
+	public function checkcategory($str){
+        $vsp    =   $this->menu_model->checkcategory($str); 
+        if(!$vsp){
+            $this->form_validation->set_message("category","Category Name does not exists.");
+            return FALSE;
+        }
+        return TRUE;
+    }
+    public function adding_variant(){
+        if($this->input->Post()!=""){
+            $vsp = $this->menu_model->adding_variant();
+            if($vsp){
+                echo 1;
+            }else{
+                echo 2;
+            }
+        }
+    }
+    public function adding_variants(){
+        if($this->input->Post()!=""){
+            $vsp = $this->menu_model->adding_variants();
+            if($vsp){
+                echo 1;
+            }else{
+                echo 2;
+            }
+        }
+    }
+    public function active_inactive_item(){
+        if($this->input->post()!=""){
+            $status = $this->input->post('status');
+            $uri = $this->input->post('eve');
+            $par['whereCondition'] ="resturant_items_id LIKE '".$uri."'";
+            $res = $this->menu_model->getItems($par);
+            if(is_array($res) && count($res) >0){
+                $vsp = $this->menu_model->active_inactive_item($uri,$status);
+                if($vsp){
+                    echo 1;
+                }else{
+                    echo 2;
+                }
+            }else{
+                echo 2;
+            }
+        }
+    }
 }
 ?>

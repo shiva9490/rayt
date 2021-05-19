@@ -129,7 +129,8 @@
     background: #ebedf2;
     border-top-right-radius: 30px;
     border-bottom-right-radius: 30px;
-    padding: 10px 12px 10px 14px;
+    padding: 10px 40px 10px 14px;
+    width: 90%;
 }
 .tab-title .nav-pills a.nav-link {
     position: relative;
@@ -139,6 +140,7 @@
     padding: 20px 0px 20px 15px;
     -webkit-transition: all 0.35s ease;
     transition: all 0.35s ease;
+    width: 90%;
 }
 .tab-title .nav-pills .nav-item:not(:last-child) a.nav-link {}
 .tab-title .nav-pills .nav-link .badge {
