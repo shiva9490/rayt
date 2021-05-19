@@ -316,6 +316,9 @@ class Menu_model extends CI_Model{
 	public function viewItems($params = array()){
         return $this->queryItems($params)->result();
     }
+    public function getItems($params = array()){
+        return $this->queryItems($params)->result_array();
+    }
 	public function queryItems($params = array()){
         $dt =   array(
             "resturant_items_open"  	=> '1',
@@ -397,6 +400,19 @@ class Menu_model extends CI_Model{
         $this->db->update("resturant",$dta,array("resturant_id" => $uri));
         if($this->db->affected_rows() >  0){
             return TRUE;
+        }
+        return FALSE;
+    }
+    public function activedeactiveitem($uri,$status){
+        $dat=array(
+			"resturant_items_abc"           => $status,
+			"resturant_items_modify_by"     => $this->input->post("restrant_id"),
+			"resturant_items_modify_date"   => date('Y-m-d H:i:s')
+		);
+        $this->db->where('resturant_items_id',$uri)->update("resturant_items",$dat);
+        $vsp   =    $this->db->affected_rows();
+        if($vsp > 0){
+            return true;
         }
         return FALSE;
     }
@@ -581,12 +597,11 @@ class Menu_model extends CI_Model{
 							'resturant_images_open'					=> 1,
 							"resturant_images_created_on"           => date("Y-m-d h:i:s"),
 							"resturant_images_created_by"           => $this->session->userdata("login_id")
-				
 						);
 						$this->db->insert("resturant_images",$data);
 						$vsp   =    $this->db->insert_id();
 						if($vsp > 0){
-							$dat=array(
+							    $dat=array(
 										"resturant_images_id" 				=> $vsp."RESI",
 										"resturant_id" 				        => $uro
 								);		
@@ -663,6 +678,415 @@ class Menu_model extends CI_Model{
         }
         return FALSE;
     }
-
+    public function additem(){
+        $direct = "upload/resturants";
+        $picture1 = '';
+		if(!empty($_FILES['main_image']['name'])){
+			$config['upload_path'] = $direct.'/';
+			$config['allowed_types'] = 'jpg|jpeg|png|gif';
+			$config['file_name'] = $_FILES['main_image']['name']; 
+			$config['encrypt_name'] = TRUE;
+			$this->load->library('upload',$config);
+			$this->upload->initialize($config);   
+			if($this->upload->do_upload('main_image')){
+				$uploadData = $this->upload->data();
+				$picture1 = $uploadData['file_name'];
+				$data = array('upload_data' => $this->upload->data());
+				 $img=$data['upload_data']['file_name'];
+				 $config['image_library'] = 'gd2';
+				 $config['source_image'] = $direct.'/'.$img;
+				 $config['new_image'] = 'upload/';
+				 $config['maintain_ratio'] = TRUE;
+				 $config['width']    = 135;
+				 $config['height']   = 135;
+				 $this->load->library('image_lib', $config); 
+				 if (!$this->image_lib->resize()) {
+					echo $this->image_lib->display_errors();
+				 }
+			}
+		}
+        $data  = array(
+            'resturant_id'             => $this->session->userdata("restraint_id"),
+            'resturant_temp_id'        => $this->input->post('tempid'),
+            'resturant_category_id'    => $this->input->post('categoty'),
+            'resturant_items_name'     => $this->input->post('itemname'),
+            'resturant_items_name_a'   => $this->input->post('itemname_a'),
+            'resturant_items_type'     => $this->input->post('veg_type'),
+            'resturant_items_desc'     => $this->input->post('details'),
+            'resturant_items_price'    => $this->input->post('item_price'),
+            'resturant_items_packing'  => $this->input->post('final_amount'),
+            'resturant_items_vat'      => $this->input->post('vat'),
+            'resturant_items_add_by'   => ($this->session->userdata("restraint_id")!="")?$this->session->userdata("restraint_id"):$this->session->userdata("login_type"),
+            'resturant_items_add_date' => date('Y-m-d H:i:s'),
+        );
+        if(!empty($_FILES['main_image']['name'])){
+            $data['resturant_items_image'] = $picture1;
+        }
+        $this->db->insert('resturant_items',$data);
+        $id = $this->db->insert_id();
+        $dat=array(
+			"resturant_items_id" => "RESTITEM".$id,
+		);
+        $this->db->where('resturant_itemid',$id)->update("resturant_items",$dat);
+        $vsp   =    $this->db->affected_rows();
+        if($vsp > 0){
+            if(!empty($this->input->post('timings'))){
+                if($this->input->post('timings')!='alltime'){
+                   $start   =    $this->input->post('strt_time');
+                   $end     =    $this->input->post('end_time');$i=0;
+                    foreach($start as $s){
+                        $data  = array(
+                            'resturant_timing_item_id'             => "RESTITEM".$id,
+                            'resturant_timing_type'    => $this->input->post('timings'),
+                            'resturant_timing_start'     => $s,
+                            'resturant_timing_end'   => $end[$i],
+                            'resturant_timing_cr_by'   => ($this->session->userdata("restraint_id")!="")?$this->session->userdata("restraint_id"):$this->session->userdata("login_type"),
+                            'resturant_timing_cr_on' => date('Y-m-d H:i:s'),
+                        );
+                        $this->db->insert('resturant_timings',$data);
+                        $id = $this->db->insert_id();
+                        $dat=array(
+                            "resturant_timing_id" => "RESTITEM".$id,
+                        );
+                        $this->db->where('resturant_timingid',$id)->update("resturant_timings",$dat);
+                        $i++;
+                    }
+                }
+            }
+            $this->session->unset_userdata('tempid');
+            return true;
+        }
+        return FALSE;
+    }
+    public function updateitem($id){
+        $direct = "upload/resturants";
+        $picture1 = '';
+		if(!empty($_FILES['main_image']['name'])){
+			$config['upload_path'] = $direct.'/';
+			$config['allowed_types'] = 'jpg|jpeg|png|gif';
+			$config['file_name'] = $_FILES['main_image']['name']; 
+			$config['encrypt_name'] = TRUE;
+			$this->load->library('upload',$config);
+			$this->upload->initialize($config);   
+			if($this->upload->do_upload('main_image')){
+				$uploadData = $this->upload->data();
+				$picture1 = $uploadData['file_name'];
+				$data = array('upload_data' => $this->upload->data());
+				 $img=$data['upload_data']['file_name'];
+				 $config['image_library'] = 'gd2';
+				 $config['source_image'] = $direct.'/'.$img;
+				 $config['new_image'] = 'upload/';
+				 $config['maintain_ratio'] = TRUE;
+				 $config['width']    = 135;
+				 $config['height']   = 135;
+				 $this->load->library('image_lib', $config); 
+				 if (!$this->image_lib->resize()) {
+					echo $this->image_lib->display_errors();
+				 }
+			}
+		}
+        $data  = array(
+            'resturant_items_name'     => $this->input->post('itemname'),
+            'resturant_items_name_a'   => $this->input->post('itemname_a'),
+            'resturant_items_type'     => $this->input->post('veg_type'),
+            'resturant_items_desc'     => $this->input->post('details'),
+            'resturant_items_price'    => $this->input->post('item_price'),
+            'resturant_items_packing'  => $this->input->post('final_amount'),
+            'resturant_items_vat'      => $this->input->post('vat'),
+            'resturant_items_add_by'   => ($this->session->userdata("restraint_id")!="")?$this->session->userdata("restraint_id"):$this->session->userdata("login_type"),
+            'resturant_items_add_date' => date('Y-m-d H:i:s'),
+        );
+        if(!empty($_FILES['main_image']['name'])){
+            $data['resturant_items_image'] = $picture1;
+        }
+        $this->db->where('resturant_items_id',$id)->update('resturant_items',$data);
+        $vsp   =    $this->db->affected_rows();
+        if($vsp > 0){
+            return true;
+        }
+        return FALSE;
+    } 
+    public function addcategory(){
+        $data = array(
+            'resturant_id'                => $this->session->userdata("restraint_id"),
+            'resturant_category_name'     => $this->input->Post("category"),
+            'resturant_category_name_a'   => $this->input->Post("category_a"),
+            'resturant_category_key'      => $this->input->Post("category"),
+            'resturant_category_add_by'   => $this->session->userdata("restraint_id"),
+            'resturant_category_add_date' => date('Y-m-d H:i:s'),
+        );
+        $this->db->insert('resturant_category',$data);
+        $id  = $this->db->insert_id();
+        $this->db->where('resturant_categoryid',$id)->update('resturant_category',array('resturant_category_id'=> "RESTCAT".$id));
+        $vsp   =    $this->db->affected_rows();
+        if($vsp > 0){
+            return true;
+        }
+        return FALSE;
+    }
+    public function checkcategory($username){
+        $params["whereCondition"]   =   "resturant_category_name = '".$username."'";
+        $rev        =   $this->queryCategory($params)->row_array();
+        if(is_array($rev) && count($rev) > 0){
+            return true; 
+        }
+        return false;
+    }
+    public function adding_variant(){
+        //print_r($this->input->post());exit;
+        if(is_array($this->input->post('addon_listid')) && count($this->input->post('addon_listid')) > 0){
+            $da = array(
+                'resturant_customisation'   => ($this->input->post("addonoption")!="")?$this->input->post("addonoption"):'',
+                'resturant_addon_option'      => ($this->input->post("selection")!="")?$this->input->post("selection"):'',
+                'resturant_addon_max'         => ($this->input->post("maxvalue")!="")?$this->input->post("maxvalue"):'',
+                'resturant_addon_min'         => ($this->input->post("minselection")!="")?$this->input->post("minselection"):'',
+                'resturant_addon_modify_by'   => ($this->session->userdata("restraint_id")!="")?$this->session->userdata("restraint_id"):'',
+                'resturant_addon_modify_date' => date('Y-m-d H:i:s'),
+            );
+            $this->db->where('resturant_addon_temp_id',$this->input->post('tempid'))->update('resturant_addon',$da);
+            $vsp   =    $this->db->affected_rows();
+            if($vsp > 0){
+                foreach($this->input->post('addon_listid') as $key=>$r){
+                    $d = array(
+                        'resturant_addonitem'               => $this->input->post('addonitem')[$key],
+                        'resturant_addonitem_amount'        => $this->input->post('addonitem_amount')[$key],
+                        'resturant_addon_list_modify_by'    => $this->session->userdata("restraint_id"),
+                        'resturant_addon_list_modify_date'  => date('Y-m-d H:i:s')
+                    );
+                    $this->db->where('resturant_addon_listid',$this->input->post('addon_listid')[$key])->update('resturant_addon_list',$d);
+                }
+                return true;
+            }
+            return false;
+        }else{
+            $da = array(
+                'resturant_addon_temp_id'   => $this->input->post('tempid'),
+                'resturant_id'              => ($this->session->userdata("restraint_id")!="")?$this->session->userdata("restraint_id"):'',
+                'resturant_addon_category'  => ($this->input->post("eve")!="")?$this->input->post("eve"):'',
+                'resturant_customisation'   => ($this->input->post("addonoption")!="")?$this->input->post("addonoption"):'',
+                'resturant_addon_option'    => ($this->input->post("selection")!="")?$this->input->post("selection"):'',
+                'resturant_addon_max'       => ($this->input->post("maxvalue")!="")?$this->input->post("maxvalue"):'',
+                'resturant_addon_min'       => ($this->input->post("minselection")!="")?$this->input->post("minselection"):'',
+                'resturant_addon_add_by'    => ($this->session->userdata("restraint_id")!="")?$this->session->userdata("restraint_id"):'',
+                'resturant_addon_date'      => date('Y-m-d H:i:s'),
+            );
+            $this->db->insert('resturant_addon',$da);
+            $id = $this->db->insert_id();
+            $this->db->where('resturant_addonid',$id)->update('resturant_addon',array('resturant_addon_id'=> 'ADON'.$id));
+            $vsp   =    $this->db->affected_rows();
+            if($vsp > 0){
+                foreach($this->input->post('addonitem') as $key=>$r){
+                    $d = array(
+                        'resturant_addon_id'            => 'ADON'.$id,
+                        'resturant_addonitem'           => $this->input->post('addonitem')[$key],
+                        'resturant_addonitem_amount'    => $this->input->post('addonitem_amount')[$key],
+                        'resturant_addon_list_addby'    => $this->session->userdata("restraint_id"),
+                        'resturant_addon_list_add_date' => date('Y-m-d H:i:s')
+                    );
+                    $this->db->insert('resturant_addon_list',$d);
+                    $ids = $this->db->insert_id();
+                    $this->db->where('resturant_addon_list_id',$ids)->update('resturant_addon_list',array('resturant_addon_listid'=> 'ADONITEM'.$ids));
+                }
+                return true;
+            }
+        }
+        return FALSE;
+    }
+    public function adding_variants(){
+       // print_r($this->input->post());exit;
+        $i=0;
+        foreach($this->input->post('addonoption') as $key=>$s){
+            $defelat ='';
+            if(isset($this->input->post("defelat")[$i])){
+                if($this->input->post("defelat")[$i] == $i){
+                    $defelat = "1";
+                }
+            }
+            if($this->input->post('variantsid')[$i] != ""){
+                $dat = array(
+                    'resturant_variants_tempid'      => $this->input->post('tempid'),  
+                    'resturant_id'                   => $this->session->userdata("restraint_id"),  
+                    'resturant_variants_category'    => $this->input->post("eve"),  
+                    'resturant_variants_title'       => ($this->input->post("customization")!="")?$this->input->post("customization"):'',
+                    'resturant_variants'             => $this->input->post("addonoption")[$i],
+                    'resturant_variants_veg'         => $this->input->post("veg")[$i],
+                    'resturant_variants_price'       => $this->input->post("addprince")[$i],
+                    'resturant_variants_defelat'     => $defelat,
+                    'resturant_variants_modifyby'    => $this->session->userdata("restraint_id"),
+                    'resturant_variants_modify_date' => date('Y-m-d H:i:s')
+                );
+                //print_r($dat);
+                $this->db->where('resturant_variants_id',$this->input->post('variantsid')[$i])->update('resturant_variants',$dat); 
+            }else{
+                $dat = array(
+                    'resturant_variants_tempid'     => $this->input->post('tempid'),  
+                    'resturant_id'                  => $this->session->userdata("restraint_id"),  
+                    'resturant_variants_category'   => $this->input->post("eve"),  
+                    'resturant_variants_title'      => ($this->input->post("customization")!="")?$this->input->post("customization"):'',
+                    'resturant_variants'            => $this->input->post("addonoption")[$i],
+                    'resturant_variants_veg'        => $this->input->post("veg")[$i],
+                    'resturant_variants_price'      => $this->input->post("addprince")[$i],
+                    'resturant_variants_defelat'    => ($defelat!="")?$defelat:'',
+                    'resturant_variants_add_by'     => $this->session->userdata("restraint_id"),
+                    'resturant_variants_add_date'   => date('Y-m-d H:i:s')
+                );
+                $this->db->insert('resturant_variants',$dat);
+                $id = $this->db->insert_id();
+                $this->db->where('resturant_variantsid',$id)->update('resturant_variants',array('resturant_variants_id'=>'VARI'.$id));
+            }
+            $i++;
+        }
+        return true;
+    }
+    /*
+    public function viewVariants($params = array()){
+        return $this->queryVariants($params)->result();
+    }
+    
+    public function queryVariants($params = array()){
+        $dt =   array(
+            "resturant_variants_open"  => '1'
+        );
+        $sel        =   "*";
+        if(array_key_exists("cnt",$params)){
+            $sel    =   "count(*) as cnt";
+        }
+        if(array_key_exists("columns",$params)){
+            $sel    =    $params["columns"];
+        }
+        $this->db->select($sel)
+                    ->from("resturant_variants")
+                    ->where($dt);
+        if(array_key_exists("keywords",$params)){
+                $this->db->where("(resturant_variants LIKE '%".$params["keywords"]."%')");
+        }
+        if(array_key_exists("whereCondition",$params)){
+                $this->db->where("(".$params["whereCondition"].")");
+        }
+        if(array_key_exists("id",$params)){
+                $this->db->where("(resturant_id = '".$params["id"]."')");
+        }
+        if(array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit'],$params['start']);
+        }elseif(!array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit']);
+        }
+        if(array_key_exists("tipoOrderby",$params) && array_key_exists("order_by",$params)){
+                $this->db->order_by($params['tipoOrderby'],$params['order_by']);
+        }
+         $this->db->get();echo $this->db->last_query();exit;
+        return  $this->db->get();
+    }
+    */
+    public function active_inactive_item($uri,$status){
+        $dta    =   array(
+            "resturant_items_abc"           =>  $status,
+            "resturant_items_modify_date"   =>  date("Y-m-d h:i:s"),
+            "resturant_items_modify_by"     =>  $this->session->userdata("login_id")
+        );
+        $this->db->update("resturant_items",$dta,array("resturant_items_id" => $uri));
+        if($this->db->affected_rows() >  0){
+            return TRUE;
+        }
+        return FALSE;
+    }
+    
+    public function getAddon($params = array()){
+        return $this->queryAddon($params)->result_array();
+    } 
+    public function viewAddon($params = array()){
+        return $this->queryAddon($params)->result();
+    } 
+    public function queryAddon($params = array()){
+        $dt =   array(
+            "resturant_addon_open"  => '1',
+            "resturant_items_open"  => '1',
+            "resturant_addon_list_open"  => '1',
+        );
+        $sel        =   "*";
+        if(array_key_exists("cnt",$params)){
+            $sel    =   "count(*) as cnt";
+        }
+        if(array_key_exists("columns",$params)){
+            $sel    =    $params["columns"];
+        }
+        $this->db->select($sel)
+                    ->from("resturant_addon as ra")
+                    ->join("resturant_items as rt","ra.resturant_addon_temp_id =rt.resturant_temp_id","inner")
+                    ->join("addon as an","an.addon_id = ra.resturant_addon_category","inner")
+                    ->join("resturant_addon_list as ral","ra.resturant_addon_id =ral.resturant_addon_id","inner")
+                    ->where($dt);
+        if(array_key_exists("keywords",$params)){
+                $this->db->where("(resturant_addon_option LIKE '%".$params["keywords"]."%')");
+        }
+        if(array_key_exists("whereCondition",$params)){
+                $this->db->where("(".$params["whereCondition"].")");
+        }
+        if(array_key_exists("id",$params)){
+                $this->db->where("(resturant_id = '".$params["id"]."')");
+        }
+        if(array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit'],$params['start']);
+        }elseif(!array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit']);
+        }
+        if(array_key_exists("tipoOrderby",$params) && array_key_exists("order_by",$params)){
+                $this->db->order_by($params['tipoOrderby'],$params['order_by']);
+        }
+        if(array_key_exists("group_by",$params)){
+                $this->db->group_by($params['group_by']);
+        }
+        // $this->db->get();echo $this->db->last_query();exit;
+        return  $this->db->get();
+    }
+    
+    public function viewVariants($params = array()){
+        return $this->queryVariants($params)->result();
+    } 
+    public function getVariants($params = array()){
+        return $this->queryVariants($params)->result_array();
+    } 
+    
+    public function queryVariants($params = array()){
+        $dt =   array(
+            "variant_open"              => '1',
+            "resturant_items_open"      => '1',
+            "resturant_variants_open"   => '1',
+        );
+        $sel        =   "*";
+        if(array_key_exists("cnt",$params)){
+            $sel    =   "count(*) as cnt";
+        }
+        if(array_key_exists("columns",$params)){
+            $sel    =    $params["columns"];
+        }
+        $this->db->select($sel)
+                    ->from("resturant_variants as rv")
+                    ->join("variant as vt","vt.variant_id = rv.resturant_variants_category","inner")
+                    ->join("resturant_items as rt","rv.resturant_variants_tempid = rt.resturant_temp_id","inner")
+                    ->where($dt);
+        if(array_key_exists("keywords",$params)){
+                $this->db->where("(resturant_addon_option LIKE '%".$params["keywords"]."%')");
+        }
+        if(array_key_exists("whereCondition",$params)){
+                $this->db->where("(".$params["whereCondition"].")");
+        }
+        if(array_key_exists("id",$params)){
+                $this->db->where("(resturant_id = '".$params["id"]."')");
+        }
+        if(array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit'],$params['start']);
+        }elseif(!array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit']);
+        }
+        if(array_key_exists("tipoOrderby",$params) && array_key_exists("order_by",$params)){
+                $this->db->order_by($params['tipoOrderby'],$params['order_by']);
+        }
+        if(array_key_exists("group_by",$params)){
+                $this->db->group_by($params['group_by']);
+        }
+        // $this->db->get();echo $this->db->last_query();exit;
+        return  $this->db->get();
+    }
 }
 ?>

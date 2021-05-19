@@ -57,7 +57,7 @@ if($ur  == 1 || $dr == '1' || $sr == '1'){
                 <td> 
                     <?php if($sr == '1'){?>
                     <a class="<?php echo $textico;?>" href="javascript:void(0);" onclick="activeform($(this),'Ajax-Country-Active')" fields="<?php echo $ve->country_id;?>" data-toggle='tooltip' title="<?php echo $vadv;?>">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle text-primary"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                     </a>
                     <?php }  if($ur == '1'){?>
                     <a href='<?php echo adminurl("Update-User/".$ve->country_id);?>' data-toggle='tooltip' data-original-title="Update Country" class="text-success tip-left">

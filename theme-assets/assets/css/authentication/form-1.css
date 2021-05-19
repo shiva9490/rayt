@@ -176,13 +176,13 @@ body {
     width: 50%;
 }
 .form-image .l-image {
-    background-image: url(../../../../../../../cdn.pixabay.com/photo/2015/12/10/16/39/shield-1086703_960_720.png);
+    background-image: url(/upload/rayt.png);
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #060818;
+    background-color: #9e0000;
     background-position: center center;
     background-repeat: no-repeat;
     background-size: 75%;

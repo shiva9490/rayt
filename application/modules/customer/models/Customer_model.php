@@ -199,6 +199,293 @@ class Customer_model extends CI_Model{
         }
         return FALSE;
     }
+    /*-------------------Address Details------------------------------*/
+    public function addaddress(){
+        $view           =   $this->api_model->checkcustomer(); 
+        $customer_id    =   $view["customer_id"];
+        $data  = array(
+            'customeraddress_customer'      => $customer_id,
+            'customeraddress_fullname'      => ($this->input->post('fullname')!="")?$this->input->post('fullname'):'',
+            'customeraddress_mobile'        => ($this->input->post('mobile')!="")?$this->input->post('mobile'):'',
+            'customeraddress_landline'      => ($this->input->post('landline')!="")?$this->input->post('landline'):'',
+            'customeraddress_add_type'      => ($this->input->post('address_type')!="")?$this->input->post('address_type'):'',
+            'customeraddress_area'          => ($this->input->post('area')!="")?$this->input->post('area'):'',
+            'customeraddress_blockno'       => ($this->input->post('blockno')!="")?$this->input->post('blockno'):'',
+            'customeraddress_streetno'      => ($this->input->post('streetno')!="")?$this->input->post('streetno'):'',
+            'customeraddress_jadda'         => ($this->input->post('jadda')!="")?$this->input->post('jadda'):'',
+            'customeraddress_buildingno'    => ($this->input->post('buildingno')!="")?$this->input->post('buildingno'):'',
+            'customeraddress_floorno'       => ($this->input->post('floorno')!="")?$this->input->post('floorno'):'',
+            'customeraddress_landmark'      => ($this->input->post('landmark')!="")?$this->input->post('landmark'):'',
+            'customeraddress_current_loc'   => ($this->input->post('current_loc')!="")?$this->input->post('current_loc'):'',
+            'customeraddress_add_lat'       => ($this->input->post('add_lat')!="")?$this->input->post('add_lat'):'',
+            'customeraddress_add_lot'       => ($this->input->post('add_lot')!="")?$this->input->post('add_lot'):'',
+            'customeraddress_created_on'    => $customer_id,
+            'customeraddress_created_date'  => date('Y-m-d H:i:s')
+        );
+        $this->db->insert('customer_address',$data);
+        $id = $this->db->insert_id();
+        $this->db->where('customeraddressid',$id)->update("customer_address",array("customeraddress_id" => 'CUSTADD'.$id));
+        if($this->db->affected_rows() >  0){
+            return TRUE;
+        }
+        return FALSE;
+    }
+    public function updateaddress($ids){
+        $view           =   $this->api_model->checkcustomer(); 
+        $customer_id    =   $view["customer_id"];
+        $data  = array(
+            'customeraddress_fullname'      => ($this->input->post('fullname')!="")?$this->input->post('fullname'):'',
+            'customeraddress_mobile'        => ($this->input->post('mobile')!="")?$this->input->post('mobile'):'',
+            'customeraddress_landline'      => ($this->input->post('landline')!="")?$this->input->post('landline'):'',
+            'customeraddress_add_type'      => ($this->input->post('address_type')!="")?$this->input->post('address_type'):'',
+            'customeraddress_area'          => ($this->input->post('area')!="")?$this->input->post('area'):'',
+            'customeraddress_blockno'       => ($this->input->post('blockno')!="")?$this->input->post('blockno'):'',
+            'customeraddress_streetno'      => ($this->input->post('streetno')!="")?$this->input->post('streetno'):'',
+            'customeraddress_jadda'         => ($this->input->post('jadda')!="")?$this->input->post('jadda'):'',
+            'customeraddress_buildingno'    => ($this->input->post('buildingno')!="")?$this->input->post('buildingno'):'',
+            'customeraddress_floorno'       => ($this->input->post('floorno')!="")?$this->input->post('floorno'):'',
+            'customeraddress_landmark'      => ($this->input->post('landmark')!="")?$this->input->post('landmark'):'',
+            'customeraddress_current_loc'   => ($this->input->post('current_loc')!="")?$this->input->post('current_loc'):'',
+            'customeraddress_add_lat'       => ($this->input->post('add_lat')!="")?$this->input->post('add_lat'):'',
+            'customeraddress_add_lot'       => ($this->input->post('add_lot')!="")?$this->input->post('add_lot'):'',
+            'customeraddress_modified_on'   => $customer_id,
+            'customeraddress_modified_by'   => date('Y-m-d H:i:s')
+        );
+        $this->db->where('customeraddress_id',$ids)->update("customer_address",$data);
+        if($this->db->affected_rows() >  0){
+            return TRUE;
+        }
+        return FALSE;
+    }
+    public function queryCustomerAddress($params = array()){
+        $dt =   array(
+            "customeraddress_open"      => '1',
+            "customeraddress_status"    => '1'
+        );
+        $sel        =   "*";
+        if(array_key_exists("cnt",$params)){
+            $sel    =   "count(*) as cnt";
+        }
+        if(array_key_exists("columns",$params)){
+            $sel    =    $params["columns"];
+        }
+        $this->db->select($sel)
+                    ->from("customer_address")
+                    ->where($dt);
+        if(array_key_exists("keywords",$params)){
+                $this->db->where("(customeraddress_add_type LIKE '%".$params["keywords"]."%')");
+        }
+        if(array_key_exists("whereCondition",$params)){
+                $this->db->where("(".$params["whereCondition"].")");
+        }
+        if(array_key_exists("image_inactive",$params)){
+                $this->db->where("(".$params["image_inactive"].")");
+        }
+        if(array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit'],$params['start']);
+        }elseif(!array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit']);
+        }
+        if(array_key_exists("tipoOrderby",$params) && array_key_exists("order_by",$params)){
+                $this->db->order_by($params['tipoOrderby'],$params['order_by']);
+        }
+    //     $this->db->get();echo $this->db->last_query();exit;
+        return  $this->db->get();
+    }
+    
+    public function getCustomerAddress($params = array()){
+        return $this->queryCustomerAddress($params)->row_array();
+    }
+    public function viewCustomerAddress($params = array()){
+        return $this->queryCustomerAddress($params)->result();
+    }
+    public function customeraddress(){
+        $view           =   $this->api_model->checkcustomer(); 
+        $customer_id    =   $view["customer_id"];
+        $par['whereCondition'] ="customeraddress_id LIKE '".$this->input->post('address_id')."' AND customeraddress_customer LIKE '".$customer_id."'";
+        $res = $this->viewCustomerAddress($par);
+        if(is_array($res) && count($res) >0){
+            return $res;
+        }
+    }
+    public function viewcustomeraddresslist(){
+        $view           =   $this->api_model->checkcustomer(); 
+        $customer_id    =   $view["customer_id"];
+        $par['whereCondition'] ="customeraddress_customer LIKE '".$customer_id."'";
+        $res = $this->viewCustomerAddress($par);
+        $data = array();
+        if(is_array($res) && count($res) > 0){
+            foreach($res as $key=>$r){
+                $data[$key]['customeraddress_id']           = $r->customeraddress_id;
+                $data[$key]['customeraddress_customer']     = $r->customeraddress_customer;
+                $data[$key]['customeraddress_fullname']     = $r->customeraddress_fullname;
+                $data[$key]['customeraddress_mobile']       = $r->customeraddress_mobile;
+                $data[$key]['customeraddress_add_type']     = $r->customeraddress_add_type;
+                $data[$key]['customeraddress_area']         = $r->customeraddress_area;
+                $data[$key]['customeraddress_blockno']      = $r->customeraddress_blockno;
+                $data[$key]['customeraddress_streetno']     = $r->customeraddress_streetno;
+                $data[$key]['customeraddress_jadda']        = $r->customeraddress_jadda;
+                $data[$key]['customeraddress_buildingno']   = $r->customeraddress_buildingno;
+                $data[$key]['customeraddress_floorno']      = $r->customeraddress_floorno;
+                $data[$key]['customeraddress_landmark']     = $r->customeraddress_landmark;
+                $data[$key]['customeraddress_current_loc']  = $r->customeraddress_current_loc;
+                $data[$key]['customeraddress_add_lat']      = $r->customeraddress_add_lat;
+                $data[$key]['customeraddress_add_lot']      = $r->customeraddress_add_lot;
+            }
+            return $data;
+        }
+    }
+    public function delete_address($customeraddress_id){
+        $view           =   $this->api_model->checkcustomer(); 
+        $customer_id    =   $view["customer_id"];
+        $dta    =   array( 
+            "customeraddress_open"         => "0",
+            "customeraddress_modified_on"  => date("Y-m-d H:i:s"),
+            "customeraddress_modified_by"  => $customer_id
+        );
+        $this->db->update("customer_address",$dta,array("customeraddress_id" => $customeraddress_id));
+        if($this->db->affected_rows() > 0){ 
+            return TRUE;
+        }
+        return FALSE;
+    }
+    /*-------------------Cart Details------------------------------*/
+    public function view_cart(){
+        $prms =array();
+        $view           =   $this->api_model->checkcustomer(); 
+        $customer_id    =   $view["customer_id"];
+        $par['whereCondition'] ="ct.cart_customer_id LIKE '".$customer_id."' AND ct.cart_acde LIKE '0'";
+        $dta  = $this->order_model->viewcartproducts($par);
+        $ds = array();
+        if(is_array($dta) && count($dta) >0){
+            $i=0;foreach($dta as $d){
+                $addons     = explode(",",$d->cart_addons);
+                $variants     = explode(",",$d->cart_variants);
+                $addonsamount = "0";
+                $data = array();$j=0;
+                foreach($addons as $a){
+                    $adds = $this->common_config->clean($a);
+                    $par['whereCondition'] = "rt.resturant_id LIKE '".$d->cart_resturant_id."' AND  rt.resturant_items_id LIKE '".$d->cart_resturant_item_id."' AND ral.resturant_addon_listid LIKE '".$adds."' ";
+                    $res = $this->menu_model->getAddon($par);
+                    if(is_array($res) && count($res) > 0){
+                        foreach($res as $res){
+                            $addonsamount = $addonsamount+$res['resturant_addonitem_amount'];
+                            $data[$j]['addon_listid']    = $res['resturant_addon_listid'];
+                            $data[$j]['addonitem']       = $res['resturant_addonitem'];
+                            $data[$j]['addonitem_amount']=  number_format((float)$res['resturant_addonitem_amount'], 3, '.', '');
+                        }
+                    }
+                $j++;}
+                
+                $variantsamount = "0";
+                $datas = array();$k=0;
+                foreach($variants as $v){
+                    $vans = $this->common_config->clean($v);
+                    $pars['whereCondition'] = "rv.resturant_id LIKE '".$d->cart_resturant_id."' AND  rv.resturant_variants_id LIKE '".$vans."'";
+                    $ress = $this->menu_model->getVariants($pars);
+                    if(is_array($ress) && count($ress) > 0){
+                        foreach($ress as $ress){
+                            $variantsamount = $variantsamount+$ress['resturant_variants_price'];
+                            $datas[$k]['variants_id']       = $ress['resturant_variants_id'];
+                            $datas[$k]['variants']          = $ress['resturant_variants'];
+                            $datas[$k]['variants_amount']   = number_format((float)$ress['resturant_variants_price'], 3, '.', '');
+                        }
+                    }
+                $k++;}
+                
+                $vat = ($d->resturant_items_price*$d->resturant_items_vat)/100;
+                $total = $d->resturant_items_price+$vat+$addonsamount+$variantsamount;
+                $ds[$i]['cart_id']                      = $d->cart_id;
+                $ds[$i]['cart_quantity']                = $d->cart_quantity;
+                $ds[$i]['cart_packing']                 = number_format((float)$d->cart_quantity*$d->resturant_items_packing, 3, '.', '');
+                $ds[$i]['cart_price']                   = number_format((float)$d->cart_price, 3, '.', '');
+                $ds[$i]['cart_total']                   = number_format((float)$total*$d->cart_quantity, 3, '.', '');
+                $ds[$i]['cart_resturant_id']            = $d->cart_resturant_id;
+                $ds[$i]['cart_resturant_item_id']       = $d->cart_resturant_item_id;
+                $ds[$i]['itemname']                     = $d->resturant_items_name;
+                $ds[$i]['itemname_a']                   = $d->resturant_items_name_a;
+                $ds[$i]['resturant']                    = $d->resturant_name;
+                $ds[$i]['resturant_a']                  = $d->resturant_name_a;
+                $ds[$i]['items_image']                  = base_url().'upload/resturants/'.$d->resturant_items_image;
+                $ds[$i]['items_type']                   = $d->resturant_items_type;
+                $ds[$i]['category_id']                  = $d->resturant_category_id;
+                $ds[$i]['category_name']                = $d->resturant_category_name;
+                $ds[$i]['category_name_a']              = $d->resturant_category_name_a;
+                $ds[$i]['addons']                       = ($data);
+                $ds[$i]['cart_variants']                = ($datas);
+            $i++;}
+        }
+        return $ds;
+    }
+    
+    public function view_payment(){
+        $prms =array();
+        $view           =   $this->api_model->checkcustomer(); 
+        $customer_id    =   $view["customer_id"];
+        $par['whereCondition'] ="ct.cart_customer_id LIKE '".$customer_id."' AND ct.cart_acde LIKE '0'";
+        $dta  = $this->order_model->viewcartproducts($par);
+        $ds = array();
+        if(is_array($dta) && count($dta) > 0){
+            $i=0;foreach($dta as $d){
+                $addons     = explode(",",$d->cart_addons);
+                $variants     = explode(",",$d->cart_variants);
+                $addonsamount = "0";
+                $data = array();$j=0;
+                foreach($addons as $a){
+                    $adds = $this->common_config->clean($a);
+                    $par['whereCondition'] = "rt.resturant_id LIKE '".$d->cart_resturant_id."' AND  rt.resturant_items_id LIKE '".$d->cart_resturant_item_id."' AND ral.resturant_addon_listid LIKE '".$adds."' ";
+                    $res = $this->menu_model->getAddon($par);
+                    if(is_array($res) && count($res) > 0){
+                        foreach($res as $res){
+                            $addonsamount = $addonsamount+$res['resturant_addonitem_amount'];
+                            $data[$j]       = $res['resturant_addonitem'];
+                        }
+                    }
+                    $j++;
+                }
+                
+                $variantsamount = "0";
+                $datas = array();$k=0;
+                foreach($variants as $v){
+                    $vans = $this->common_config->clean($v);
+                    $pars['whereCondition'] = "rv.resturant_id LIKE '".$d->cart_resturant_id."' AND  rv.resturant_variants_id LIKE '".$vans."'";
+                    $ress = $this->menu_model->getVariants($pars);
+                    if(is_array($ress) && count($ress) > 0){
+                        foreach($ress as $ress){
+                            $variantsamount = $variantsamount+$ress['resturant_variants_price'];
+                            $datas[$k]     = $ress['resturant_variants'];
+                        }
+                    }
+                $k++;}
+                
+                $vat = ($d->resturant_items_price*$d->resturant_items_vat)/100;
+                $total = $d->resturant_items_price+$d->resturant_items_packing+$vat+$addonsamount+$variantsamount;
+                $ds[$i]['cart_id']                      = $d->cart_id;
+                $ds[$i]['cart_quantity']                = $d->cart_quantity;
+                $ds[$i]['cart_packing']                 = number_format((float)$d->cart_quantity*$d->resturant_items_packing, 3, '.', '');
+                $ds[$i]['cart_price']                   = number_format((float)$d->cart_price, 3, '.', '');
+                $ds[$i]['cart_total']                   = number_format((float)$total*$d->cart_quantity, 3, '.', '');
+                $ds[$i]['cart_resturant_id']            = $d->cart_resturant_id;
+                $ds[$i]['cart_resturant_item_id']       = $d->cart_resturant_item_id;
+                $ds[$i]['itemname']                     = $d->resturant_items_name;
+                $ds[$i]['itemname_a']                   = $d->resturant_items_name_a;
+                $ds[$i]['resturant']                    = $d->resturant_name;
+                $ds[$i]['resturant_a']                  = $d->resturant_name_a;
+                $ds[$i]['items_image']                  = base_url().'upload/resturants/'.$d->resturant_items_image;
+                $ds[$i]['items_type']                   = $d->resturant_items_type;
+                $ds[$i]['category_id']                  = $d->resturant_category_id;
+                $ds[$i]['category_name']                = $d->resturant_category_name;
+                $ds[$i]['category_name_a']              = $d->resturant_category_name_a;
+                $ds[$i]['addons']                       = implode(',',$data);
+                $ds[$i]['variants']                     = implode(',',$datas);
+            $i++;}
+        }
+        return $ds;
+    }
+    
+    /*-------------------Cart Details------------------------------*/
+    /*-------------------Address Details------------------------------*/
+    
     public function forgotpassword($customer_id){
             $par['whereCondition'] = "lower(customer_email_id) LIKE '".strtolower($this->input->post("email"))."' OR lower(customer_mobile) LIKE '".strtolower($this->input->post("email"))."'";
             $vsp    =   $this->customer_model->getCustomer($par);

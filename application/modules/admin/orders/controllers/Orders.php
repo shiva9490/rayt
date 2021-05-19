@@ -6,62 +6,55 @@ class Orders extends CI_Controller{
 			//redirect(base_url('Admin/Login'));
 		}
 	}
-	public function create(){
-		$dta    =   array(
-			"title"     =>  "Create Orders Form",
-			"content"  =>  'create_orders'
-		);
-		if($this->input->post('publish')){
-			$this->form_validation->set_rules('name','Orders Name','required');
-			$this->form_validation->set_rules('preparation_time','Preparation Time','required');
-			$this->form_validation->set_rules('Percentage','Percentage','required');
-			if($this->form_validation->run() == TRUE){
-				$res = $this->orders_model->create();     
-                if($res == TRUE){
-                    $this->session->set_flashdata("suc","Created Orders successfully.");
-                }else{
-					$this->session->set_flashdata("err","failed.");
-                }
-			}
-		}
-		$this->load->view('admin/template',$dta);
-	}
 	public function index(){
 		$dta    =   array(
 			"title"     =>  "Orders",
-			"content"  =>  'orders',
-			"urlvalue"	=>	base_url('viewOrders')
+			"content"   =>  'orders',
+			"urlvalue"	=>	adminurl('viewOrders/')
 		);
-		$this->load->view('admin/template',$dta);
-	}/*
-	public function orders($str){
-        //$vsp	=	$this->orders_model->unique_id_orders($str); 
-        // if($vsp){
-        //     $this->form_validation->set_message("orders","Orders Name already exists.");
-        //     return FALSE;
-        // }
-        return TRUE; 
-    }
+		$this->load->view("admin/inner_template",$dta);
+	}
 	public function viewOrders($str){
-	    $conditions =   array();
-		$page       =   $this->uri->segment('2');
+	    $page       =   $this->uri->segment('3');
 		$offset     =   (!$page)?"0":$page;
 		$keywords   =   $this->input->post('keywords');
-		//$types      =   $this->input->post('types');
-		//$status      =   $this->input->post('status');
-		//$school_id  =    $this->session->userdata("login_types")?$this->session->userdata("login_types"):'';
+		$ids        =   $this->input->post('category');
 		if(!empty($keywords)){
 			$conditions['keywords'] = $keywords;
 		}
+		$group  = "or.order_id";
+		$ht = "or.order_status LIKE 'Active'";
+		if($ids == "Today Orders"){
+		    $ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
+		}elseif($ids == "Unassigned"){
+		    $ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Order Placed'";
+		}elseif($ids == "Pending"){
+		    $ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Preparing'";
+		}elseif($ids == "Received" || $ids == "Ready for Pickup"){
+		    $ht  = "ord.orderdetails_rest_staus LIKE 'Ready for pickup'";
+		}elseif($ids == "Completed Pickup"){
+		    $ht  = "ord.orderdetails_rest_staus LIKE 'Completed Pickup'";
+		}elseif($ids == "Arraived at customes"){
+		   //$ht  = "ord.orderdetails_rest_staus LIKE 'Completed Pickup'";
+		   //$group  = "or.order_id";
+		}elseif($ids == "Delivered"){
+		    $ht  = "ord.orderdetails_rest_staus LIKE 'Delivered'";
+		}else{
+		    $ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
+		}
+		$orderstatus = $this->config->item('orderstatus');
+		$conditions['whereCondition']   = $ht;
+		$conditions['group_by']         = $group;
+		$orders   =   $this->input->post('orders');
 		$perpage        =    $this->input->post("limitvalue")?$this->input->post("limitvalue"):'5';    
 		$orderby        =    $this->input->post('orderby')?$this->input->post('orderby'):"DESC";
-		$tipoOrderby    =    $this->input->post('tipoOrderby')?str_replace("+"," ",$this->input->post('tipoOrderby')):"ordersid";  
-		$totalRec               =   $this->orders_model->cntviewOrders($conditions);  
+		$tipoOrderby    =    $this->input->post('tipoOrderby')?str_replace("+"," ",$this->input->post('tipoOrderby')):"orderid";  
+		$totalRec               =   $this->order_model->cntviewOrders($conditions);
 		if(!empty($orderby) && !empty($tipoOrderby)){
 			$dta['orderby']        =   $conditions['order_by']      =   $orderby;
 			$dta['tipoOrderby']    =   $conditions['tipoOrderby']   =   $tipoOrderby; 
 		}
-		$config['base_url']     =   base_url('viewOrders');
+		$config['base_url']     =   adminurl('viewOrders');
 		$config['total_rows']   =   $totalRec;
 		$config['per_page']     =   $perpage; 
 		$config['link_func']    =   'searchFilter';
@@ -70,25 +63,11 @@ class Orders extends CI_Controller{
 		if($perpage != "all"){
 			$conditions['limit']    =   $perpage;
 		}
+		$dta["orders"]          =   $this->input->post('orders')?$this->input->post('orders'):'';
 		$dta["limit"]           =   $offset+1;
-		$dta["urlvalue"]        =   base_url("viewOrders/");
-		$dta["view"]            =   $this->orders_model->viewOrders($conditions); 
-		$this->load->view("orders/ajax_orders",$dta);
-	}
-	public function ajax_orders_active(){
-			$status     =   $this->input->post("status");
-			$uri        =   $this->input->post("fields");
-			$params["whereCondition"]   =   "orders_id = '".$uri."'";
-			$vue    =   $this->orders_model->getOrders($params);
-			if(is_array($vue) && count($vue) > 0){
-				$bt     =   $this->orders_model->activedeactive($uri,$status); 
-				if($bt > 0){
-					$vsp    =   1;
-				}
-			}else{
-				$vsp    =   2;
-			}
-		echo $vsp;
+		$dta["urlvalue"]        =   adminurl("viewOrders/");
+		$dta["view"]            =   $this->order_model->viewOrders($conditions); 
+		$this->load->view("ajax_orders",$dta);
 	}
 	
 	public function update_orders($str){
@@ -128,7 +107,60 @@ class Orders extends CI_Controller{
 			$vsp    =   2;
 		} 
 		echo $vsp;
-	}*/
+	}
+	
+	public function payment(){
+	    $extraMerchantsData = array(
+                            'amounts' => array(10,20),
+                            'charges' => array(1,5),
+                            'chargeType' => array('percentage','percentage'),
+                            'cc_charges' => array(1,5),
+                            'cc_chargeType' => array('percentage','percentage'),
+                            'ibans' => array('iban_number_of_vendor_1','iban_number_of_vendor_2')
+                        );
+	    
+	    $fields = array(
+            'merchant_id'=>'15304',
+             'username' => 'test',
+            'password'=>stripslashes('test'), 
+            'api_key'=>'BlZr7kEXC597bxhjS3iEMQ6M242wvK01LMSGYOcd', // in sandbox request
+             //'api_key' =>password_hash('jtest123',PASSWORD_BCRYPT), //In production mode, please pass
+            //API_KEY with BCRYPT function
+            'order_id'=>time(), // MIN 30 characters with strong unique function (like hashing function with time)
+            'total_price'=>'10',
+            'CurrencyCode'=>'KWD',//only works in production mode
+            'CstFName'=>'Test Name',
+            'CstEmail'=>'test@test.com',
+            'CstMobile'=>'12345678',
+            'success_url'=> base_url().'.success.html',
+            'error_url'=> base_url().'error.html',
+            'test_mode'=>1, // test mode enabled
+            'whitelabled'=>true, // only accept in live credentials (it will not work in test)
+            'payment_gateway'=>'knet',// only works in production mode
+            'ProductName'=>json_encode(['computer','television']),
+            'ProductQty'=>json_encode([2,1]),
+            'ProductPrice'=>json_encode([150,1500]),
+            'reference'=>'Ref00001', // Reference that you want to show in invoice in ref column
+            'ExtraMerchantsData'=>json_encode($extraMerchantsData)
+        );
+        $fields_string = http_build_query($fields);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,"https://api.upayments.com/payment-request");
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,$fields_string);
+        // receive server response ...
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $server_output = curl_exec($ch);
+        curl_close($ch);
+        $server_output = json_decode($server_output,true);
+        print_r($server_output);exit;
+        ?>
+        <script>
+            window.location.href= <?php $server_output['paymentURL']; ?> // javascript
+        </script>
+        <?php 
+        header('Location:'.$server_output['paymentURL']); // PHP
+	}
 	
 }
 ?>

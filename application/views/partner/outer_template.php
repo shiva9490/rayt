@@ -7,7 +7,7 @@
       <meta name="description" content=""/>
       <meta name="author" content=""/>
       <title><?php echo sitedata("site_name");?> :: <?php echo $title;?></title>
-		<link rel="icon" type="image/x-icon" href="<?php echo $this->config->item('admin_assets');?>assets/img/logo.png"/>
+		<link rel="icon" type="image/x-icon" href="<?php echo base_url().'upload/favrayt.png';?>"/>
 		<!-- BEGIN GLOBAL MANDATORY STYLES -->
 		<link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
 		<link href="<?php echo $this->config->item('admin_assets');?>bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />

@@ -1,397 +1,622 @@
-<form method="POST" enctype="multipart/form-data" onsubmit="novalidate" name="myForm">
- 
-        <div class="container-fluid py-3 pt-4 bb-grey sticky">
-          <div class="row">
-            <div class="col-md-2">
-                <a href="<?php echo adminurl('Resturant');?>">
-              <i class="fa fa-arrow-left" aria-hidden="true"></i></a>
-            </div>
-            <div class="col-md-6">
-              <h4><?php echo $title;?></h4>
-            </div>
-            <div class="col-md-3 d-flex justify-content-between ml-3">
-              <a href="<?php echo adminurl('Resturant');?>" class="btn b-light"> Cancel</a>
-              <input type="submit" class="btn b-success" name="update" value="Update"/>
-            </div>
-          </div>
-        </div>
-        <div class="container-fluid py-3 pt-4">
-            <?php $this->load->view('admin/success_error');?>
-          <div class="row">
-            <div class="col-md-8 mx-auto">
-                <!--<h5>English</h5>-->
-              <div class="row bb-grey">
-              <div class="col-md-12 m-3">
-                    <label >Resturant Main Image</label>
-                  <div class="form-group">
-                    <input type="file" class="form-control width-100"  name="main_image" onchange="document.getElementById('main_image').src = window.URL.createObjectURL(this.files[0]);"/>
-                    <img id="main_image" width="50px"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label >Resturant ID</label>
-                    <input type="text" class="form-control" name="id" value="<?php echo $view['resturant_id'];?>" disabled/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label >Password</label>
-                    <input type="text" class="form-control"  name="password" value="<?php echo base64_decode ($view['resturant_password']);?>" placeholder="Enter Password"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                    <label >Resturant Name</label>
-                     <div class="row">
-                        <div class="col-md-6">
-                          <div class="form-group b-grey">
-                            <input type="text" class="form-control width-100"  name="name" value="<?php echo $view['resturant_name'];?>" placeholder="Enter Resturant Name" required>
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div class="form-group b-grey">
-                            <input type="text" class="form-control arabic_feild width-100"  name="name_a" value="<?php echo $view['resturant_name_a'];?>" placeholder="أدخل اسم المطعم" required>
-                          </div>
-                            
-                        </div>
-                    </div>
-                  <span class="text-danger"><?php echo form_error('name'); ?></span>
-                </div>
-              </div>
-              <div class="row bb-grey">
-                <div class="col-md-12 m-3">
-                    <label >Resturant Images <span>( Select multiple images)</span></label>
-                  <div class="form-group">
-                    <input type="file" class="form-control width-100" name="files[]" id='files' multiple="" onchange="imagesShow()"/>
-                    <output id='result' />
-                  </div>
-                </div>
-              </div>
-              <div class="row bb-grey">
-                  <div class="col-md-12 m-3">
-                      <label>Contact Person</label>
-                    <div class="form-group b-grey">
-                      <input type="text" class="form-control  arabic_feild" name="contact_person_a" value="<?php echo $view['resturant_contact_a'];?>" placeholder="أدخأدخل اسم جهة الاتصال"/>
-                      <input type="text" class="form-control" name="contact_person" value="<?php echo $view['resturant_contact'];?>" placeholder="Enter Contact Person Name"/>
-                    </div>
-                  </div>
-                  <div class="col-md-12 m-3">
-                      <label>Position</label>
-                    <div class="form-group b-grey">
-                      <input type="text" class="form-control arabic_feild"  name="position_a" value="<?php echo $view['resturant_position_a'];?>" placeholder="أدخل الوظيفة"   />
-                      <input type="text" class="form-control"  name="position" value="<?php echo $view['resturant_position'];?>" placeholder="Enter Position"/>
-                    </div>
-                  </div>
-                  <div class="col-md-12 m-3">
-                    <div class="form-group b-grey">
-                      <label>Contact No</label>
-                      <input type="text" class="form-control"  name="contact_no" value="<?php echo $view['resturant_contact_no'];?>" placeholder="Enter Contact number"/>
-                    </div>
-                  </div>
-              </div>
-              <div class="row bb-grey">
-                <div class="col-md-12 m-3">
-                    <label>Area</label>
-                  <div class="form-group b-grey">
-                    <input type="text" class="form-control arabic_feild" value="<?php echo $view['resturant_area_a'];?>"  name="area_a" placeholder="أدخل المنطقة"   />
-                    <input type="text" class="form-control"  name="area" value="<?php echo $view['resturant_area'];?>" placeholder="Enter Area"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                    <label>Block No</label>
-                  <div class="form-group b-grey">
-                    <input type="text" class="form-control arabic_feild" value="<?php echo $view['resturant_block_a'];?>"  name="block_a" placeholder="أدخل الكتلة"  />
-                    <input type="text" class="form-control"  name="block" value="<?php echo $view['resturant_block'];?>" placeholder="Enter block"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                    <label>Street</label>
-                  <div class="form-group b-grey">
-                    <input type="text" class="form-control arabic_feild" value="<?php echo $view['resturant_street_a'];?>"  name="street_a"  placeholder="أدخل الشارع"  />
-                    <input type="text" class="form-control"  name="street" value="<?php echo $view['resturant_street'];?>"  placeholder="Enter street"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                    <label>Jaada</label>
-                  <div class="form-group b-grey">
-                    <input type="text" class="form-control arabic_feild" value="<?php echo $view['resturant_jaada_a'];?>"  name="jaada_a"  placeholder="أدخل الجادة"  />
-                    <input type="text" class="form-control"  name="jaada" value="<?php echo $view['resturant_jaada'];?>"  placeholder="Enter jaada"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                    <label>House No</label>
-                  <div class="form-group b-grey">
-                    <input type="text" class="form-control arabic_feild"  name="house_a" value="<?php echo $view['resturant_house_a'];?>" placeholder="ادخل المنزل"  />
-                    <input type="text" class="form-control"  name="house" value="<?php echo $view['resturant_house'];?>" placeholder="Enter house"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                    <label>Building No</label>
-                  <div class="form-group b-grey">
-                    <input type="text" class="form-control arabic_feild" value="<?php echo $view['resturant_building_a'];?>"  name="building_a"  placeholder="أدخل المبنى"  />
-                    <input type="text" class="form-control"  name="building" value="<?php echo $view['resturant_building'];?>"  placeholder="Enter building"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label>Lattitude</label>
-                    <input type="text" class="form-control"  name="latitude" value="<?php echo $view['resturant_latitude'];?>"  placeholder="Enter latitude"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label>Longitude</label>
-                    <input type="text" class="form-control"  name="longitude" value="<?php echo $view['resturant_longitude'];?>"  placeholder="Enter longitude"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                    <label>Landmark</label>
-                  <div class="form-group b-grey">
-                    <input type="text" class="form-control arabic_feild" value="<?php echo $view['resturant_landmark_a'];?>"  name="landmark_a"  placeholder="أدخل المَعلم" />
-                    <input type="text" class="form-control"  name="landmark" value="<?php echo $view['resturant_landmark'];?>"  placeholder="Enter landmark"/>
-                  </div>
-                </div>
-              </div>
-              <div class="row bb-grey">
-                <div class="col-md-12 m-3">
-                  <h5>Menu hours</h5>
-                  <?php $menu   =   $this->config->item("menu_hours");
-                  $mm   = explode(',',$view['resturant_menu_hours']);
-                  foreach($menu as $m){?>
-                    <div class="form-group b-grey">
-                        <label><?php echo $m;?> - </label>
-                        <input type="checkbox" class="" name="menu_hours[]" value="<?php echo $m;?>" id="<?php echo $m;?>" 
-                        <?php if(in_array($m, $mm)){echo 'checked';}?>/>
-                        <label for="<?php echo $m;?>">closed</label>
-                      </div>
-                 <?php }
-                  ?>
-                </div>
-              </div>
-              <div class="row bb-grey">
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label >Preparation Time</label> 
-                    <input type="text" class="form-control"  name="preparation_time" value="<?php echo $view['resturant_preparation'];?>"  placeholder="Enter Preparation Time">
-                  </div>
-                  <span class="text-danger"><?php echo form_error('preparation_time'); ?></span>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label>Delivery Fee</label>
-                    <input type="text" class="form-control"  name="delivery_fee" value="<?php echo $view['resturant_delivery'];?>" placeholder="Enter Delivery Fee"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label >Discount</label>
-                    <input type="text" class="form-control"  name="discount" value="<?php echo $view['resturant__discount'];?>" placeholder="Enter Discount"/>
-                  </div>
-                </div>
-              </div>
-              <div class="row bb-grey">
-                <div class="col-md-12 m-3">
-                  <h5>Cuisine</h5>
-                  <div class="form-group b-grey">
-                    <input type="checkbox" id="8" name="cusine[]" value="1"/>
-                    <label for="8">Kuwait</label>
-                  </div>
-                  <div class="form-group b-grey">
-                    <input type="checkbox" id="9" name="cusine[]" value="2"/>
-                    <label for="9">Indian</label>
-                  </div>
-                  <div class="form-group b-grey">
-                    <input type="checkbox" id="10" name="cusine[]" value="3"/>
-                    <label for="10">Arabian</label>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label>Zone</label>
-                    <div class="custom-select form-control">
-                        <select class="form-control" name="zone">
-                            <option value=""> Select</option>
-                            <option value="1"> 1</option>
-                        </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label >Set delivery time for Zone</label>
-                    <div class="custom-select form-control">
-                        <select class="form-control" name="zone_time">
-                            <option value=""> Select</option>
-                            <option value="1"> 1</option>
-                        </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label >Sub Zone</label>
-                    <div class="custom-select form-control">
-                        <select class="form-control"  name="sub_zone">
-                            <option value=""> Select</option>
-                            <option value="1"> 1</option>
-                        </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label >Set delivery time for subzone</label>
-                    <div class="custom-select form-control">
-                        <select class=""  name="sub_zone_time">
-                            <option value=""> Select</option>
-                            <option value="1"> 1</option>
-                        </select>
-                    </div>
-                    
-                  </div>
-                </div>
-              </div>
-              <div class="row bb-grey py-2">
-                  <h5>Legal Information</h5>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label >Contract Date</label>
-                    <input type="date" class="form-control"  name="contact_date" value="<?php echo $view['resturant_contract'];?>"/>
-                  </div>
-                </div>
-                 <div class="col-md-12 m-3">
-                  <div class="form-group">
-                    <input type="file" class="form-control width-100"  name="legal_doc" onchange="document.getElementById('doc').src = window.URL.createObjectURL(this.files[0]);"/>
-                    <img id="doc" width="50px"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label >Commercial License Number</label>
-                    <input type="number" class="form-control"  name="license_no" value="<?php echo $view['resturant_commertial_license'];?>" placeholder="Enter License Number"/>
-                  </div>
-                </div>
-              </div>
-              <div class="row bb-grey py-2">
-                  <h5>Signature Authority (Front/Back)</h5>
-                 <div class="col-md-12 m-3">
-                  <div class="form-group">
-                    <input type="file" class="form-control width-100"  name="sign" onchange="document.getElementById('sign').src = window.URL.createObjectURL(this.files[0]);"/>
-                    <img id="sign" width="50px"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label >Civil Id</label>
-                    <input type="text" class="form-control" placeholder="owner civil id" value="<?php echo $view['resturant_civil_id'];?>"  name="civil_id"/>
-                  </div>
-                </div>
-                <div class="col-md-12 m-3">
-                  <div class="form-group b-grey">
-                    <label >Percentage</label>
-                    <input type="text" class="form-control"  name="Percentage" value="<?php echo $view['resturant_percentage'];?>"  placeholder="Enter Percentage">
-                  </div>
-                  <span class="text-danger"><?php echo form_error('Percentage'); ?></span>
-                </div>
-                <div class="col-md-12 m-3">
-                    <label >Sales Person Name</label>
-                  <div class="form-group b-grey">
-                    <input type="text" class="form-control arabic_feild"  name="person_name_a" value="<?php echo $view['resturant_sales_person_a'];?>" placeholder="أدخل مندوب المبيعات"  />
-                    <input type="text" class="form-control"  name="person_name" value="<?php echo $view['resturant_sales_person'];?>" placeholder="Enter Sales Person Name"/>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-12">
-                       
-                <div class="tab">
-                  <button class="tablinks active" onclick="openCity(event, 'today')">Images</button>
-                  <button class="tablinks" onclick="openCity(event, 'una')">Menu</button>
-                  <button class="tablinks" onclick="openCity(event, 'pen')">Items</button>
-                  
-                </div>
-                <div id="today" class="tabcontent" style="display:block;">
-                  <div class="col-md-12 mt-3">
-                     <div class="row">
-                         <div class="col-md-6">
-                             <h4>Images</h4>
-                         </div>
-                         <!--<div class="col-md-6">-->
-                         <!--<a href="<?php echo base_url('Admin/Create-Orders');?>" class="btn b-success mx-2 ">+ New</a>-->
-                         <!--<input type="text" class="form-control sear" placeholder="Search"><input type="submit" value="Search" class="btn b-dark py-1">-->
-                         <!--</div>-->
-                     </div>
-                     <table class="table b-g">
-                        <thead>
-                            <tr>
-                                <th>S.No</th>
-                                <th>Image</th>
-                                <th>Action</th>
-                            </tr>
-                            
-                        </thead>
-                        <tbody>
-                            <?php $n=1; foreach($images as $i){?>
-                            <tr>
-                               <td><?php echo $n;?></td> 
-                               <td><img src="<?php echo base_url($i->resturant_images_path);?>" width="200px"/></td>
-                               <td><a href="<?php echo adminurl('Delete-Res-Image/'.$i->resturant_images_id);?>"><i class="fa fa-trash text-danger"></i></a></td>
-                              </tr>
-                            <?php $n++; }?>
-                        </tbody>
-                        </table>
-                 </div>
-                    
-                
-                </div>
-                
-                <div id="una" class="tabcontent">
-                  <div class="col-md-12 mt-3">
-                     <div class="row">
-                         <div class="col-md-6">
-                             <h4>Menus</h4>
-                         </div>
-                         <div class="col-md-6">
-                         <a href="<?php echo base_url('Admin/Create-Orders');?>" class="btn b-success mx-2 ">+ New</a>
-                         <input type="text" class="form-control sear" placeholder="Search"><input type="submit" value="Search" class="btn b-dark py-1">
-                         </div>
-                     </div>
-                 </div>
-                </div>
-                
-                <div id="pen" class="tabcontent">
-                     <div class="col-md-12 mt-3">
-                     <div class="row">
-                         <div class="col-md-6">
-                             <h4>Items</h4>
-                         </div>
-                         <div class="col-md-6">
-                         <a href="<?php echo base_url('Admin/Create-Orders');?>" class="btn b-success mx-2 ">+ New</a>
-                         <input type="text" class="form-control sear" placeholder="Search"><input type="submit" value="Search" class="btn b-dark py-1">
-                         </div>
-                     </div>
-                 </div> 
-                </div>
-                
-                <script>
-                function openCity(evt, cityName) {
-                  var i, tabcontent, tablinks;
-                  tabcontent = document.getElementsByClassName("tabcontent");
-                  for (i = 0; i < tabcontent.length; i++) {
-                    tabcontent[i].style.display = "none";
-                  }
-                  tablinks = document.getElementsByClassName("tablinks");
-                  for (i = 0; i < tablinks.length; i++) {
-                    tablinks[i].className = tablinks[i].className.replace(" active", "");
-                  }
-                  document.getElementById(cityName).style.display = "block";
-                  evt.currentTarget.className += " active";
-                  evt.preventDefault();
-                }
-                </script>
-                        
-            </div>
-          </div>
+       
+<?php
+$sr     =   $this->session->userdata("active-deactive-resturant");
+$cr     =   $this->session->userdata("create-resturant");
+$ur     =   $this->session->userdata("update-resturant");
+$dr     =   $this->session->userdata("delete-resturant");
+$ct     =   "0";
+if($ur  == 1 || $dr == '1'){
+        $ct     =   1;
+}
+?>
 
-        </div>
-</form>
+<div class="row layout-top-spacing">
+    <?php if($cr == "1") { ?>
+   
+    <?php } ?>
+    <div class="col-lg-12">
+      <div class="card">
+
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-12">Resturant update</div>
+                   
+                </div>
+            </div>
+         <div class="card-body">
+                    <!--  BEGIN CONTENT AREA  -->
+            <div  class="main-content">
+                <div class="layout-px-spacing">                
+                        
+                    <div class="account-settings-container layout-top-spacing">
+
+                        <div class="account-content">
+                            <div class="scrollspy-example" data-spy="scroll" data-target="#account-settings-scroll" data-offset="-100">
+                            <form action="" method="post" class="validform formssample forms-sample" id="role" novalidate=""  enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">                                   
+                                        <div  class="section general-info mb-4">
+                                          <div class="info">
+                                              <h6 class="">General Information</h6>
+                                              <div class="row">                                              
+                                                    <div class="col-lg-11 mx-auto">
+                                                        <div class="form">
+                                                            <div class="row">
+                                                                <div class="col-md-12 m-3">
+                                							        <label for="Resturantname" >Resturant Logo *</label>
+                                									<div class="row">
+                                										<div class="upload col-md-12">
+                                                                            <input type="file" name="restlogo" id="input-file-max-fs" class="dropify" data-default-file="<?php echo base_url().'upload/resturants/'.$view['resturant_logo_image'];?>" data-max-file-size="2M" />
+                                                                            <p class="mt-2"><i class="flaticon-cloud-upload mr-1"></i> Upload Logo</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12 m-3">
+                                									<label for="Resturantname" >Resturant Name *</label>
+                                									<div class="row">
+                                										<div class="col-md-12">
+                                											<div class="form-group b-grey">
+                                											    <input type="text" class="form-control arabic_feild width-100"  name="name_a" value="<?php echo $view['resturant_name_a'];?>" placeholder="أدخل اسم المطعم" required>	
+                                												<div class="invalid-feedback">
+                                													Please provide a valid Resturant Arabic Name.
+                                												</div>
+                                												<input type="text" class="form-control width-100"  id="Resturantname" name="name" value="<?php echo $view['resturant_name'];?>" placeholder="Enter Resturant Name" required>
+                                												<div class="invalid-feedback">
+                                													Please provide a valid Resturant Name.
+                                												</div>
+                                											</div>								
+                                										</div>
+                                									</div>
+                                									<span class="text-danger"><?php echo form_error('name_a'); ?></span>
+                                									<span class="text-danger"><?php echo form_error('name'); ?></span>
+                                								</div>
+                                                            </div>  
+                                                        </div>
+                                                        <div class="form">
+                                                            <div class="row">
+                                                                <div class="col-md-12 m-3">
+                                                                    <div class="custom-file-container" data-upload-id="myFirstImage">
+                                                                        <label>Resturant Main Image (Single File)  <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
+                                                                        <label class="custom-file-container__custom-file" >
+                                                                            <input type="file" class="custom-file-container__custom-file__custom-file-input"  name="main_image" accept="image/*">
+                                                                            <input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
+                                                                            <span class="custom-file-container__custom-file__custom-file-control"></span>
+                                                                            <div class="invalid-feedback">
+                                                                                Please provide a valid Resturant Main Image.
+                                                                            </div>
+                                                                        </label>                                                                       
+                                                                        <div class="custom-file-container__image-preview"> <img src="<?php echo base_url().'upload/resturants/'.$view['resturant_image']?>" />  </div>
+                                                                      
+                                                                    </div>
+                                                                </div>                                                               
+                                                            </div> 
+                                                        </div>
+
+                                                        <!-- <div class="form">
+                                                            <div class="row">
+                                                                 <div class="col-md-12 m-3">
+                                                                    <div class="custom-file-container" data-upload-id="mySecondImage">
+                                                                        <label>Resturant Images (Allow Multiple) * <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
+                                                                        <label class="custom-file-container__custom-file" >
+                                                                            <input type="file" class="custom-file-container__custom-file__custom-file-input" name="files[]" multiple required>
+                                                                            <input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
+                                                                            <span class="custom-file-container__custom-file__custom-file-control"></span>
+                                                                            <div class="invalid-feedback">
+                                                                                Please provide a valid Resturant Images.
+                                                                            </div>
+                                                                        </label>
+                                                                        <?php foreach($images as $i){
+                                                                            if($i->resturant_images_path){?>                                                                            
+                                                                            <img src="<?php echo base_url($i->resturant_images_path);?>" width="200px"/>
+                                                                            <?php }else{ ?>
+                                                                                <div class="custom-file-container__image-preview"></div>                                                                           </div>
+                                                                        <?php } }?>
+                                                                    </div>						  
+                                                                </div>                                                                                                                           
+                                                            </div> 
+                                                        </div> -->
+                                                    </div>                                                       
+                                              </div>
+                                          </div>
+                                      </div>
+                                    </div>
+
+                                    <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
+                                        <div id="about" class="section about">
+                                            <div class="info">
+                                                <h5 class="">Contact Person</h5>
+                                                <div class="row">
+                                                    <div class="col-md-11 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label for="fullName">Contact Person</label>
+                                                                    <input type="text" class="form-control  arabic_feild" name="contact_person_a" value="<?php echo $view['resturant_contact_a'];?>" placeholder="أدخأدخل اسم جهة الاتصال" required/>
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Contact Person Arabic.
+                                                                    </div>
+                                                                    <input type="text" class="form-control" name="contact_person" placeholder="Enter Contact Person Name" value="<?php echo $view['resturant_contact'];?>" required/>
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Contact Person.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label class="dob-input">Position </label>
+                                                                    <input type="text" class="form-control arabic_feild"  name="position_a" value="<?php echo $view['resturant_position_a'];?>" placeholder="أدخل الوظيفة"  required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Position Arabic.
+                                                                    </div>
+                                                                    <input type="text" class="form-control"  name="position" value="<?php echo $view['resturant_position'];?>" placeholder="Enter Position" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Position.
+                                                                    </div>
+                                                                </div>                                                                                                                                           
+                                                            </div>
+                                                          
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label class="dob-input">Contact No</label>
+                                                                    <input type="text" class="form-control"  name="contact_no" value="<?php echo $view['resturant_contact_no'];?>" placeholder="Enter Contact number" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Contact No.
+                                                                    </div>
+                                                                </div>                                                                                                                                           
+                                                            </div>
+
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label class="dob-input">Area </label>
+                                                                    <input type="text" class="form-control arabic_feild"  name="area_a" value="<?php echo $view['resturant_area_a'];?>" placeholder="أدخل المنطقة"  required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Area Arabic.
+                                                                    </div>
+                                                                    <input type="text" class="form-control"  name="area" value="<?php echo $view['resturant_area'];?>" placeholder="Enter Area" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Area.
+                                                                    </div>
+                                                                </div>                                                                                                                                           
+                                                            </div>
+
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label class="dob-input">Block No </label>
+                                                                    <input type="text" class="form-control arabic_feild"  name="block_a" value="<?php echo $view['resturant_block_a'];?>" placeholder="أدخل الكتلة"  required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Block No Arabic.
+                                                                    </div>
+                                                                    <input type="text" class="form-control"  name="block" value="<?php echo $view['resturant_block'];?>" placeholder="Enter block" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Block No.
+                                                                    </div>
+                                                                </div>                                                                                                                                           
+                                                            </div>
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label class="dob-input">Street </label>
+                                                                    <input type="text" class="form-control arabic_feild"  name="street_a" value="<?php echo $view['resturant_street_a'];?>"  placeholder="أدخل الشارع" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Street Arabic.
+                                                                    </div>
+                                                                    <input type="text" class="form-control"  name="street"  value="<?php echo $view['resturant_street'];?>" placeholder="Enter street" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Street.
+                                                                    </div>
+                                                                </div>                                                                                                                                           
+                                                            </div>
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label class="dob-input">Jaada </label>
+                                                                    <input type="text" class="form-control arabic_feild"  name="jaada_a" value="<?php echo $view['resturant_jaada_a'];?>" placeholder="أدخل الجادة" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Jaada Arabic.
+                                                                    </div>
+                                                                    <input type="text" class="form-control"  name="jaada" value="<?php echo $view['resturant_jaada'];?>" placeholder="Enter jaada" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Jaada.
+                                                                    </div>
+                                                                </div>                                                                                                                                           
+                                                            </div>
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label class="dob-input">House No </label>
+                                                                    <input type="text" class="form-control arabic_feild"  name="house_a" value="<?php echo $view['resturant_house_a'];?>" placeholder="ادخل المنزل" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant House No Arabic.
+                                                                    </div>
+                                                                    <input type="text" class="form-control"  name="house" value="<?php echo $view['resturant_house'];?>" placeholder="Enter house" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant House No.
+                                                                    </div>
+                                                                </div>                                                                                                                                           
+                                                            </div>
+
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label class="dob-input">Building No </label>
+                                                                    <input type="text" class="form-control arabic_feild"  name="building_a" value="<?php echo $view['resturant_building_a'];?>"  placeholder="أدخل المبنى" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Building No Arabic.
+                                                                    </div>
+                                                                    <input type="text" class="form-control"  name="building" value="<?php echo $view['resturant_building'];?>"  placeholder="Enter building" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Building No.
+                                                                    </div>
+                                                                </div>                                                                                                                                           
+                                                            </div>
+
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label class="dob-input">Lattitude </label>
+                                                                    <input type="text" class="form-control"  name="latitude" value="<?php echo $view['resturant_latitude'];?>"  placeholder="Enter latitude" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Lattitude.
+                                                                    </div>
+                                                                </div>                                                                                                                                           
+                                                            </div>
+
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label class="dob-input">Longitude </label>
+                                                                    <input type="text" class="form-control"  name="longitude" value="<?php echo $view['resturant_longitude'];?>" placeholder="Enter longitude" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Longitude.
+                                                                    </div>
+                                                                </div>                                                                                                                                           
+                                                            </div>
+
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label class="dob-input">Landmark </label>
+                                                                    <input type="text" class="form-control arabic_feild"  name="landmark_a"  value="<?php echo $view['resturant_landmark_a'];?>" placeholder="أدخل المَعلم" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Landmark Arabic.
+                                                                    </div>
+                                                                    <input type="text" class="form-control"  name="landmark" value="<?php echo $view['resturant_landmark'];?>" placeholder="Enter landmark" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Landmark.
+                                                                    </div>
+                                                                </div>                                                                                                                                           
+                                                            </div>
+                                                        </div>    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>                                 
+
+                                    <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
+                                        <div id="contact" class="section contact">
+                                            <div class="info">
+                                                <h5 class="">Menu hours</h5>
+                                                <div class="row">
+                                                    <div class="col-md-11 mx-auto">
+                                                        <div class="row">
+                                                        <div class="col-md-12 m-3">   
+                                                                                                        
+                                                            <?php 
+                                                          // print_r($resttime[0]->resturant_start_time);exit;
+                                                              $menu   =   $this->config->item("menu_hours");
+                                                            //   $mm   = explode(',',$view['resturant_menu_hours']);
+                                                              
+                                                            //   $mstart   = explode(',',$resttime[0]->resturant_start_time);
+                                                            //   $mend   = explode(',',$resttime[0]->resturant_end_time);
+                                                             // print_r($mstart);exit;
+
+                                                           $j=1; foreach($resttime as $key=>$i){
+                                                               // echo "<pre>";print_r($i);exit;
+                                                            ?>
+                                                            <div class="form-group b-grey">
+                                                              <div class="row">
+                                                                <div class="col-md-2">
+                                                                <label><?php echo $i->resturant_weekly;?> -
+												                <input type="hidden"  name="resturant_weekly[]" value="<?php echo $i->resturant_weekly;?>"  />
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                <input class="form-control" type="hidden" name="resturanttime_id[]" value="<?php echo $i->resturanttime_id;?>" required />
+                                                                  <input class="form-control" id="timepicker<?php echo $j;?>" name="strt_time[]" value="<?php echo $i->resturant_start_time;?>" />
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                  <input id="timepicker1<?php echo $j;?>" name="end_time[]" value="<?php echo $i->resturant_end_time;?>"  class="form-control"/>
+                                                                </div>
+                                                               
+                                                                <div class="col-md-2">		
+                                                                <input type="checkbox" class="" name="menu_hours[<?php echo $key; ?>]" value="0" id="<?php echo $i->resturant_close_time;?>" 
+                                                                <?php if($i->resturant_close_time == '0'){echo 'checked';}?>/>
+                                                                <?php if($i->resturant_close_time == '0'){?>
+                                                                    <label >Open</label>	
+                                                                <?php } else{?>  <label >closed</label>	 <?php }?>
+                                                               							
+                                                                
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                            <?php 
+                                                             $j++;
+                                                              }
+                                                            
+                                                            ?>
+                                                          </div>
+                                                          
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label >Preparation Time *</label> 
+                                                                    <input type="text" class="form-control"  name="preparation_time" value="<?php echo $view['resturant_preparation'];?>"  placeholder="Enter Preparation Time" required >
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Preparation Time.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label >Delivery Fee</label>
+                                                                    <input type="text" class="form-control"  name="delivery_fee" value="<?php echo $view['resturant_delivery'];?>" placeholder="Enter Delivery Fee"/>
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a Delivery Fee.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-4">
+                                                                    <label >Discount</label>
+                                                                    <input type="text" class="form-control"  name="discount" value="<?php echo $view['resturant__discount'];?>" placeholder="Enter Discount" required />
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Discount.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                            									<div class="form-group mb-4">
+                            										<label for="exampleFormControlSelect1">Rating *</label>
+                            										<select class="form-control" name="rating" id="exampleFormControlSelect1"required >
+                            											<option value="">Select Rating</option>
+                            											<?php 
+                            												$rating   =   $this->config->item("rating");
+                            												foreach($rating as $ra){
+                            											?>
+                            											<option value="<?php echo $ra;?>" <?php if($view['resturant_rating'] == $ra){echo 'selected';} ?>><?php echo $ra;?></option>
+                            											<?php } ?>
+                            										</select>
+                            										<div class="invalid-feedback">
+                            											Please provide a valid Zone.
+                            										</div>
+                            									</div>
+                            								</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                     </div>
+                                     <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
+                                        <div id="contact" class="section contact">
+                                            <div class="info">
+                                                <h5 class="">Cuisine </h5>
+                                                <div class="row">
+                                                    <div class="col-md-11 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-md-12 m-3">                                                                                                     
+                                                          
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid Resturant Main Image.
+                                                                    </div>
+                                                                    <?php
+                                                                         $cuisine   = explode(',',$view['resturant_menu_hours']);
+                                                                        //$par['whereCondition']="cuisine_acde LIKE 'Active'";
+                                                                        $cuisine = $this->cuisine_model->view_cuisine();
+                                                                        if(is_array($cuisine) && count($cuisine) >0){
+                                                                            foreach($cuisine as $cui){
+                                                                    ?>
+                                                                            <div class="form-group b-grey">
+                                                                                <input type="checkbox" id="8" name="cusine[]" value="<?php echo $cui->cuisine_id;?>" <?php if(in_array([0],$cuisine)){echo 'checked';}?>/>
+                                                                                <label for="8"><?php echo $cui->cuisine_name;?></label>
+                                                                            </div>
+                                                                    <?php
+                                                                            }
+                                                                        }
+                                                                    ?>
+                                                          </div>
+                                                          
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                     </div>
+                                       <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
+                                        <div class="section contact">
+                                            <div class="info">
+                                                <h5 class="">Zone Information </h5>
+                                                <div class="row">
+                                                    <div class="col-lg-11 mx-auto">
+                                                        <div class="row">                                                          
+                                                            <div class="col-xl-12 col-lg-12 col-md-8 mt-md-0 mt-4">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group  mb-4">
+                                                                        <label >Zone*</label>
+                                                                         <select class="form-control" name="zone" id="exampleFormControlSelect1"required >
+                                                                            
+                                                                            <?php 
+                                                                                $pars['group_by']       = "zones.zone_name";
+                                                                                $pars['whereCondition'] = "zone_abc LIKE 'Active'";
+                                                                                $zone   =   $this->zone_model->viewZones($pars);
+                                                                              $i=0;foreach($zone as $z){
+                                                                            ?>
+                                                                            <option value="<?php echo $z->zone_id;?>" <?php if($view['resturant_zone'] == $z->zone_id){echo 'selected';} ?>><?php echo $z->zone_name;?></option>
+                                                                            <?php } ?>
+                                                                          </select>
+                                                                          <div class="invalid-feedback">
+                                                                            Please provide a valid Zone.
+                                                                          </div>                                                                           
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group mb-4">
+                                                                            <label >Set delivery time for Zone *</label>
+                                                                            <select class="form-control" name="zone_time" id="exampleFormControlSelect1" required>
+                                                                              <option value="">Select delivery time for Zone</option>
+                                                                              <?php 
+                                                                                $zone   =   $this->config->item("subzone");
+                                                                                $i=0;foreach($zone as $sz){
+                                                                              ?>
+                                                                              <option value="<?php echo $sz;?>" <?php if($view['resturant_zone_time'] == $sz){echo 'selected';} ?>><?php echo $sz;?></option>
+                                                                              <?php } ?>
+                                                                            </select>
+                                                                            <div class="invalid-feedback">
+                                                                              Please provide a valid Set delivery time for Zone.
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group mb-4">
+                                                                          <label for="exampleFormControlSelect1">Sub Zone *</label>
+                                                                          <select class="form-control" name="sub_zone" id="exampleFormControlSelect1" required >                                                                          
+                                                                            <?php 
+                                                                                $pars['group_by']       = "zones.zone_name";
+                                                                                $pars['whereCondition'] = "zone_abc LIKE 'Active'";
+                                                                              $zones   =   $this->zone_model->viewZones($pars);
+                                                                              foreach($zones as $z){
+                                                                            ?>
+                                                                            <option value="<?php echo $z->zone_id;?>" <?php if($view['resturant_subzone'] == $z->zone_id){echo 'selected';} ?>><?php echo $z->zone_name;?></option>
+                                                                            <?php } ?>
+                                                                          </select>
+                                                                          <div class="invalid-feedback">
+                                                                            Please provide a valid Sub Zone.
+                                                                          </div>
+                                                                        </div>
+                                                                    </div>     
+
+                                                                     <div class="col-md-12">
+                                                                        <div class="form-group mb-4">
+                                                                          <label for="exampleFormControlSelect1">Set delivery time for subzone *</label>
+                                                                          <select class="form-control" name="sub_zone_time" id="exampleFormControlSelect1" required>                                                                             
+                                                                            <?php 
+                                                                              $zone   =   $this->config->item("subzone");
+                                                                              $i=0;foreach($zone as $sz){
+                                                                            ?>
+                                                                            <option value="<?php echo $sz;?>" <?php if($view['resturant_subzone_time'] == $sz){echo 'selected';} ?>><?php echo $sz;?></option>
+                                                                            <?php } ?>
+                                                                          </select>
+                                                                          <div class="invalid-feedback">
+                                                                            Please provide a valid Set delivery time for subzone.
+                                                                          </div>
+                                                                        </div>
+                                                                    </div>                                 
+                                                                                                                        
+                                                                </div>
+                                                            </div>
+                                                         </div>
+                                                    </div>    
+                                                </div>
+                                            </div>
+                                        </div>
+                                     </div>
+                                     <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
+                                        <div class="section contact">
+                                            <div class="info">
+                                                <h5 class="">Legal Information </h5>
+                                                <div class="row">
+                                                    <div class="col-lg-11 mx-auto">
+                                                        <div class="row">                                                           
+                                                            <div class="col-xl-10 col-lg-12 col-md-8 mt-md-0 mt-4">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group mb-4">
+                                                                            <label >Contract Date *</label>
+                                                                            <input id="basicFlatpickr" value="<?php echo $view['resturant_contract'];?>" class="form-control flatpickr flatpickr-input active" type="text" name="contact_date" required />
+                                                                            <div class="invalid-feedback">
+                                                                                Please provide a valid Contract Date.
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group mb-4">
+                                                                        <label >Commercial License Number *</label>
+                                                                            <input type="number" class="form-control"  name="license_no" value="<?php echo $view['resturant_commertial_license'];?>" placeholder="Enter License Number" required />
+                                                                            <div class="invalid-feedback">
+                                                                                Please provide a valid Commercial License Number .
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>                                 
+                                                                                                                        
+                                                                </div>
+                                                            </div>
+                                                         </div>
+                                                    </div>    
+                                                </div>
+                                            </div>
+                                        </div>
+                                     </div>
+                                   
+                                     <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
+                                        <div id="edu-experience" class="section edu-experience">
+                                            <div class="info">
+                                                <h5 class="">Signature Authority</h5>
+                                                <div class="row">                                                   
+                                                    <div class="col-md-11 mx-auto">
+                                                        <div class="edu-section">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-4">
+                                                                        <label >Civil Id *</label>
+                                                                        <input type="text" class="form-control" placeholder="owner civil id"  name="civil_id" value="<?php echo $view['resturant_civil_id'];?>" required />
+                                                                        <div class="invalid-feedback">
+                                                                            Please provide a valid Civil Id .
+                                                                        </div>
+                                                                    </div>
+                                                                </div>    
+
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-4">
+                                                                        <label >Percentage *</label>
+                                                                        <input type="text" class="form-control"  name="Percentage" value="<?php echo $view['resturant_percentage'];?>"  placeholder="Enter Percentage" required>
+                                                                        <div class="invalid-feedback">
+                                                                            Please provide a valid Percentage.
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group mb-4">
+                                                                        <label >Sales Person Name *</label>
+                                                                        <input type="text" class="form-control arabic_feild"  name="person_name_a" placeholder="أدخل مندوب المبيعات" value="<?php echo $view['resturant_sales_person_a'];?>" required />
+                                                                        <div class="invalid-feedback">
+                                                                            Please provide a valid Sales Person Name Arabic.
+                                                                        </div>
+                                                                        <input type="text" class="form-control"  name="person_name" placeholder="Enter Sales Person Name" value="<?php echo $view['resturant_sales_person'];?>" required />
+                                                                        <div class="invalid-feedback">
+                                                                            Please provide a valid Sales Person Name.
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                                                                                                   
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                             </div>
+                                          </div>                                         
+                                      </div>                                   
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <div class="ml-4">
+                                                <button type="submit" value="Submit" name="submit" class="btn btn-dark">Save Changes</button>
+                                                <a  class="btn btn-primary" href="<?php echo base_url().'Rayt-Admin/Resturant'; ?>">Return Back</a>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </form>    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--  END CONTENT AREA  -->    
+           
+         </div>
+      </div>
+   </div>
+</div>

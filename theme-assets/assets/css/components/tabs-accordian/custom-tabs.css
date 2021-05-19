@@ -430,7 +430,7 @@ h4 { font-size: 1.125rem; }
 .border-top-tab .nav-tabs { border-bottom: 1px solid transparent; }
 .border-top-tab .nav-tabs li a {
     border-radius: 0px;
-    padding: 12px 30px;
+    padding: 12px 17px;
     background: #f6f7f8;
     color: #0e1726;
     border-right: 1px solid transparent;

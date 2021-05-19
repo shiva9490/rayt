@@ -5,7 +5,7 @@
             <ul class="navbar-item theme-brand flex-row  text-center">
                 <li class="nav-item theme-logo">
                     <a href="<?php echo adminurl('Dashboard');?>">
-                        <img src="<?php echo $this->config->item('admin_assets');?>assets/img/logo.png" class="navbar-logo" alt="logo">
+                        <img src="<?php echo base_url().'upload/favrayt.png';?>" class="navbar-logo" alt="logo">
                     </a>
                 </li>
                 <li class="nav-item theme-text">

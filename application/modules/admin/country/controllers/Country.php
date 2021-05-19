@@ -27,6 +27,7 @@ class Country extends CI_Controller{
 		if(!empty($keywords)){
 			$conditions['keywords'] = $keywords;
 		}
+		//$conditions['whereCondition'] = "country_name LIKE 'Kuwait'";
 		$perpage        =    $this->input->post("limitvalue")?$this->input->post("limitvalue"):'5';    
 		$orderby        =    $this->input->post('orderby')?$this->input->post('orderby'):"ASC";
 		$tipoOrderby    =    $this->input->post('tipoOrderby')?str_replace("+"," ",$this->input->post('tipoOrderby')):"countryid";  

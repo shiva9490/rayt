@@ -29,7 +29,7 @@
     <div class="row">
         <input type="hidden" id="urlvalue" name="urlvalue" value="<?php echo $urlvalue;?>"> 
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <?php $this->load->view("admin/loader");?>                        
+            <?php $this->load->view("admin/load");?>
             <div class="postList"></div>
         </div>
     </div>
