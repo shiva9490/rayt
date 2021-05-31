@@ -313,7 +313,7 @@ class Order_model extends CI_Model{
                         ->join("customer_address as cadd","cadd.customeraddress_id = or.customeraddress_id","INNER")
                         ->where($dta);
                 if(array_key_exists("keywords", $params)){
-                    $this->db->where("(orders LIKE '%".$params["keywords"]."%')");
+                    $this->db->where("(order_unique_id LIKE '%".$params["keywords"]."%' or customer_name LIKE '%".$params["keywords"]."%' or customer_mobile LIKE '%".$params["keywords"]."%' or order_type LIKE '%".$params["keywords"]."%' or orderdetails_rest_staus LIKE '%".$params["keywords"]."%')");
                 }
                 if(array_key_exists("whereCondition", $params)){
                     $this->db->where("(".$params["whereCondition"].")");
@@ -613,6 +613,75 @@ class Order_model extends CI_Model{
                 }
                 //$this->db->get();echo $this->db->last_query();exit;
                 return $this->db->get();
+        }
+
+        public function download_autogen_excel($conditions = array()){
+            $filename = $conditions['file_name'];
+            $usersData = $this->order_model->viewOrders($conditions); 
+            header("Content-Description: File Transfer"); 
+            header("Content-Disposition: attachment; filename=$filename"); 
+            header("Content-Type: application/csv; ");
+            // file creation 
+            //print_r($usersData);exit;
+            $file = fopen('php://output','w');
+            $header = array("Order Id","Customer","Mobile","Payment","Amount","Status","Order Placed");
+            fputcsv($file, $header);
+            foreach ($usersData as $key=>$line){
+                $line=  (array) $line;
+                if($line['order_type']==''){
+                    $line['order_type'] = 'Online Payment';
+                }if($line['order_amount']!=''){
+                    $line['order_amount']   =   number_format((float) $line['order_amount'], 3, '.', '');
+                }
+                
+                fputcsv($file,$line); 
+            }
+            fclose($file); 
+            exit; 
+        }
+        public function download_pdf($conditions = array()){
+            $filename = $conditions['file_name'];
+            $usersData = $this->order_model->viewOrders($conditions);
+            $html_string="";
+            if($usersData!=null)
+            {
+                $html_string ='<table border="1">';
+                    $html_string.='';
+                    $html_string.='
+                            <tr  style=font-weight:bold>
+                            <th>Order Id</th>
+                            <th>Customer</th>
+                            <th>Mobile</th>
+                            <th>Payment</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Order Placed</th>
+                            </tr>';
+                foreach($usersData as $q)
+                {
+                    $html_string .= '<tr>';
+                    $html_string .= '<td>'.$q->order_unique_id.'</td>';
+                    $html_string .= '<td>'.$q->customer_name.'</td>';
+                    $html_string .= '<td>'.$q->customer_mobile.'</td>';
+                    $html_string .= '<td>'.($q->order_type!="")?$q->order_type:'Online Payment'.'</td>';
+                    $html_string .= '<td>'.number_format((float)$q->order_amount, 3, '.', '').'</td>';
+                    $html_string .= '<td>'.$q->orderdetails_rest_staus.'</td>';
+                    $html_string .= '<td>'.$q->orderdetail_created_on.'</td>';
+                    $html_string .= '</tr>';
+                }
+                $html_string.='</table>';
+            }
+            else{
+                $html_string="<p>No data available</p>";
+            }
+            //print_r($html_string);
+            $mpdf = $this->mpdf->indexval();
+            $html   =   $html_string;
+            $logo_url	=base_url().'upload/favrayt.png';
+            $mpdf->WriteHTML('<img src="'.$logo_url.'" height="50px"></img> <h2 style="text-align:center;">Order Reports</h2>');
+            $mpdf->WriteHTML($html);
+            $mpdf->Output($filename, 'D');
+            exit; 
         }
         
         /*----------------------/orderassons ------------------------*/

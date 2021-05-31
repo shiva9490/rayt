@@ -128,6 +128,7 @@ $route['Rayt-Admin/Category-Rest-Delete/(:any)']            =   'resturant/menus
 $route['Rayt-Admin/Orders']                 			    = 	'orders';
 $route['Rayt-Admin/payment']                 			    = 	'orders/payment';
 $route['Rayt-Admin/viewOrders/(:any)']                 	    = 	'orders/viewOrders/$1';
+$route['Rayt-Admin/Counts']                 	            = 	'orders/counts';
     
 $route['Rayt-Admin/Drivers']                			    = 	'drivers';
 $route['Rayt-Admin/Home']                   			    = 	'home';

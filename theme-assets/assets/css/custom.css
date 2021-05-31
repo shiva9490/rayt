@@ -669,5 +669,14 @@ hr {
 .custtab .nav-link.active h6 {
     color: #fff;
 }
+.alert-danger {
+    background-color: red;
+    color:#fff;
+    animation: danger 2s  infinite;
+}
+@keyframes danger {
+    from {background-color: red;color:#fff;}
+    to {background-color: #f6f7f8;color:#000;}
+}
 
     

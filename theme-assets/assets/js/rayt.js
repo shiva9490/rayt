@@ -1,5 +1,5 @@
-var adminurl    = '/Rayt-Admin';
-var partnerurl    = '/Partner-Admin';
+var adminurl    = '/raytt/Rayt-Admin';
+var partnerurl    = '/raytt/Partner-Admin';
 var formInit    =   function(){
     $(".validform").validate({
         rules: {
@@ -231,7 +231,8 @@ function getdatafiled(event,ids){
         $("#vtipoOrderby").val(event.data("field"));
         $("#vorderby").val(event.data("order"));
         var id = ids;//$('.text-center.list-actions.active').attr('data-type');
-        searchFilter('',event.attr("urlvalue"),id);
+        $('#category').val(id);
+        searchFilter('',event.attr("urlvalue"),'');
 }
 /*
 function menuactive(id){
@@ -254,12 +255,13 @@ function searchFilter(page_num,url,id){
         var classserch  =   $('.classserch option:selected').val();   
         var schoolserch =   $('.schoolserch option:selected').val();   
         var limitvalue  =   $('.limitvalue option:selected').val();   
-        var vspvalue    =   $("#vspvalue").val();
+        var vspvalue    =   $("#vspvalue").val();   
+        var date        =   $("input[name='date']").val();
         var vspcalss    =   "postList";
         var orders      =   $("#orders").val();
         var topv        =   $("#tipoOrderby").val();
         var orderby     =   $("#orderby").val();
-		var category 	= 	id;//$('#all-list').attr('all-list'+id);
+		var category 	= 	$('#category').val();//id;//$('#all-list').attr('all-list'+id);
         var clf         =   "pageloaderwrapper";
         if(vspvalue == 1){
             vspcalss    =   "perpostList";
@@ -283,6 +285,7 @@ function searchFilter(page_num,url,id){
                     keywords    :   keywords,
 					category	:	category,
 					orders      :   orders,
+                    date        :   date,
             },
             beforeSend: function(){
                     $('.'+clf).show();
@@ -294,7 +297,7 @@ function searchFilter(page_num,url,id){
                     initPart();
             }
         });   
-}  
+}   
 function user_role(){
         var vale = [];
         var modiul   =   [];
@@ -1393,8 +1396,7 @@ function alertmsg(eve){
     x.className = "show";
     setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
 }
-
-
+/**
 function timer(){
     var i = 60;
     (function timer(){
@@ -1407,12 +1409,13 @@ function timer(){
             }
         }, 1000);
     })();
-}
+}*/
+
 
 $(document).ready(function() {
     setInterval(function() {
       loadorders();
-      timer();
+      //timer();
     }, 60000);
 });
 
@@ -1516,6 +1519,62 @@ function updatedriloca(){
         setInterval(updatedriloca, 20000);
     });
 }
+// setInterval(function(){ 
+//     OrderRefresh();
+// }, 5000);
+function OrderRefresh(){
+    url = $('#urlvalue').val();
+    searchFilter('',url,'');
+    counts();//alert(interval);
+    //clearInterval(interval);
+    //timer();
+   // timer();
+}
+function timer(){
+    var counter = 60;
+    var interval = setInterval(function() {
+        counter--;
+        // Display 'counter' wherever you want to display it.
+        if (counter <= 0) {
+                clearInterval(interval);
+                OrderRefresh();
+                timer();
+            return;
+        }else{
+            $('#time').text(counter);
+        console.log("Timer --> " + counter);
+        }
+    }, 1000);
+}
+
+function counts(){
+        $.ajax({
+            type    :   'POST',
+            url     :   adminurl+'/Counts',
+            data:{
+            }, 
+            success: function (html) { 
+                var d    =   JSON.parse(html);
+                if(d.status=='1'){
+                    d.status_messsage.forEach(coount);
+                    function coount(item, index) {
+                        if(item > 0){
+                            $('#lin'+index).addClass('alert-danger');
+                        }
+                    }
+                   
+                }   
+            }
+        });   
+}
+function copyId(x){
+    var text = x;
+    navigator.clipboard.writeText(text).then(function() {
+      alert('Copying to clipboard was successful!');
+    }, function(err) {
+      alert('Async: Could not copy text: ', err);
+    });
+}
 $(function(){ 
         travelthis();
         pageform();
@@ -1525,5 +1584,6 @@ $(function(){
         initPart();
         //formInit();
         timer();
+        counts();
         addonslist();
 });
