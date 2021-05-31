@@ -1,4 +1,8 @@
-<?php $view = $view[0];echo $view['resturant_items_type'];//print_r($view);?>
+<?php 
+$view = $view[0];
+echo $view['resturant_items_type'];
+//print_r($view);
+?>
 <div class="row layout-top-spacing">
 	<div id="fuSingleFile" class="col-lg-12 layout-spacing">
 		<div class="statbox widget box box-shadow">
@@ -50,6 +54,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group b-grey">
+											    <input type="hidden" name="resturant_id" id="restid" class="restid" value="<?php echo ($view['resturant_id']!="")?$view['resturant_id']:'' ?>">
 											    <input type="hidden" name="tempid" id="tempid" value="<?php echo ($view['resturant_temp_id']!="")?$view['resturant_temp_id']:$tempid ?>">
 											    <input type="hidden" name="categoty" id="tempid" value="<?php echo $this->uri->segment("3");?>">
 												<input type="text" class="form-control arabic_feild width-100"  name="itemname_a" value="<?php echo $view['resturant_items_name_a'];?>" placeholder="أدخل اسم المطعم" required>
@@ -158,7 +163,7 @@
     							                if($ad->addon_id!=0){
     							            ?> 
     							            <div class="col-md-3">
-    							                <a data-toggle="modal" class="addon<?php echo $ad->addon_id;?>" onclick="addon('<?php echo $ad->addon_id;?>')" data-ids<?php echo $ad->addon_id;?>="<?php echo $ad->addon_id;?>" data-title<?php echo $ad->addon_id;?>="<?php echo $ad->addon_name;?>" ><!--data-target=".bd-example-modal-lgs"-->
+    							                <a data-toggle="modal" class="addon<?php echo $ad->addon_id;?>" onclick="addons('<?php echo $ad->addon_id;?>')" data-ids<?php echo $ad->addon_id;?>="<?php echo $ad->addon_id;?>" data-title<?php echo $ad->addon_id;?>="<?php echo $ad->addon_name;?>" ><!--data-target=".bd-example-modal-lgs"-->
         							                <blockquote class="blockquote media-object" style="height: 160px;">
                                                         <div class="media">
                                                             <div class="usr-img mr-2">
@@ -178,7 +183,7 @@
     							            }}
     							            ?>
     							            <div class="col-md-3">
-        							            <a data-toggle="modal" class="addon0" onclick="addon('0')" data-ids0="<?php echo $ad->addon_id;?>" data-title0="" >
+        							            <a data-toggle="modal" class="addon0" onclick="addons('0')" data-ids0="<?php echo $ad->addon_id;?>" data-title0="" >
             							            <blockquote class="blockquote media-object">
                                                         <div class="media">
                                                             <div class="usr-img mr-2">
@@ -199,6 +204,8 @@
     							    ?>
 							    </div>
 							</div>
+							<div class="row bb-grey addonslist"></div>
+							
 							<div class="row bb-grey ">
 							    <label>Variants of this item </label>
 							    <div class="row">
@@ -209,7 +216,7 @@
     							            foreach($variant as $var){
     							            ?> 
     							            <div class="col-md-4">
-    							                <a class="variant<?php echo $var->variant_id;?>" onclick="variant('<?php echo $var->variant_id;?>')" data-title<?php echo $var->variant_id;?>="<?php echo $var->variant_name;?>">
+    							                <a class="variant<?php echo $var->variant_id;?>" onclick="variants('<?php echo $var->variant_id;?>')" data-title<?php echo $var->variant_id;?>="<?php echo $var->variant_name;?>">
         							                <blockquote class="blockquote media-object">
                                                         <div class="media">
                                                             <div class="usr-img mr-2">
@@ -229,7 +236,7 @@
     							            }
     							            ?>
     							            <div class="col-md-4">
-    							                <a class="variant0" onclick="variant('0')" data-title0="" data-id0="<?php echo $this->uri->segment('3');?>">
+    							                <a class="variant0" onclick="variants('0')" data-title0="" data-id0="<?php echo $this->uri->segment('3');?>">
     							                    <blockquote class="blockquote media-object">
                                                         <div class="media">
                                                             <div class="usr-img mr-2">
@@ -250,19 +257,20 @@
     							    ?>
 							    </div>
 							</div>
+							<div class="row bb-grey variantslist"></div>
 							<div class="row bb-grey">
 								<div class="col-md-12">
 									<div class="form-group b-grey">
 										<label >Item timings *</label> 
 										<div class="n-chk">
 											<label class="new-control new-radio square-radio new-radio-text">
-												<input type="radio" class="new-control-input" name="timings" data-value="alltime" onclick="timmes('alltime')" value="alltime" checked required="">
+												<input type="radio" class="new-control-input" name="timings" data-value="alltime" onclick="timmesadmin('alltime')" value="alltime" checked required="">
 												<span class="new-control-indicator"></span><span class="new-radio-content">all times when kitchen / restaurant is open on Rayt</span>
 											</label>
 										</div>
 										<div class="n-chk">
 											<label class="new-control new-radio square-radio new-radio-text">
-												<input type="radio" class="new-control-input" name="timings" data-value="alldays" onclick="timmes('alldays')" value="alldays" required="">
+												<input type="radio" class="new-control-input" name="timings" data-value="alldays" onclick="timmesadmin('alldays')" value="alldays" required="">
 												<span class="new-control-indicator"></span><span class="new-radio-content">Item is available at same time for all days of the week</span>
 											</label>
 											<div class="jumbotron" id="alldays" style="display:none;">
@@ -271,7 +279,7 @@
 										</div>
 										<div class="n-chk">
 											<label class="new-control new-radio square-radio new-radio-text">
-												<input type="radio" class="new-control-input" name="timings" data-value="differentdays" onclick="timmes('differentdays')" value="differentdays" required="">
+												<input type="radio" class="new-control-input" name="timings" data-value="differentdays" onclick="timmesadmin('differentdays')" value="differentdays" required="">
 												<span class="new-control-indicator"></span><span class="new-radio-content">Item is available at different times during different days of the week</span>
 											</label>
 											<div class="differentdays jumbotron" style="display:none;">

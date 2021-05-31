@@ -357,7 +357,7 @@ class Customer_model extends CI_Model{
         $par['whereCondition'] ="ct.cart_customer_id LIKE '".$customer_id."' AND ct.cart_acde LIKE '0'";
         $dta  = $this->order_model->viewcartproducts($par);
         $ds = array();
-        if(is_array($dta) && count($dta) >0){
+        if(is_array($dta) && count($dta) > 0){
             $i=0;foreach($dta as $d){
                 $addons     = explode(",",$d->cart_addons);
                 $variants     = explode(",",$d->cart_variants);
@@ -412,6 +412,8 @@ class Customer_model extends CI_Model{
                 $ds[$i]['category_name']                = $d->resturant_category_name;
                 $ds[$i]['category_name_a']              = $d->resturant_category_name_a;
                 $ds[$i]['addons']                       = ($data);
+                $ds[$i]['variants_amount']              = $variantsamount;
+                $ds[$i]['addons_amount']                = $addonsamount;
                 $ds[$i]['cart_variants']                = ($datas);
             $i++;}
         }
@@ -478,6 +480,8 @@ class Customer_model extends CI_Model{
                 $ds[$i]['category_name_a']              = $d->resturant_category_name_a;
                 $ds[$i]['addons']                       = implode(',',$data);
                 $ds[$i]['variants']                     = implode(',',$datas);
+                $ds[$i]['addons_amount']                = $addonsamount;
+                $ds[$i]['variants_amount']              = $variantsamount;
             $i++;}
         }
         return $ds;
@@ -628,7 +632,6 @@ class Customer_model extends CI_Model{
                             </body>';
                             //print_r($messge);exit;
                 return $this->common_config->configemail($toemail,$subject,$messge);
-                
             }
         }
 }

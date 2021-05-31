@@ -110,5 +110,5 @@
 <div class="modal-footer">
     <div class="msg"></div>
     <button class="btn" data-dismiss="modal"><i class="flaticon-cancel-12"></i> Discard</button>
-    <button type="button" class="btn btn-primary" onclick="addonvariant()">Save</button>
+    <button type="button" class="btn btn-primary" onclick="addonvariants()">Save</button>
 </div>

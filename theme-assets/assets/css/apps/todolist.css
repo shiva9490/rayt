@@ -115,7 +115,7 @@
 .tab-title .todoList-sidebar-scroll {
     position: relative;
     width: 100%;
-    height: calc(100vh - 346px);
+    /*height: calc(100vh - 346px);*/
 }
 .tab-title .nav-pills {}
 .tab-title .nav-pills .nav-link.active svg {
@@ -217,7 +217,7 @@
     margin: auto;
     width: 100%;
     overflow: auto;
-    height: calc(100vh - 224px);
+    /*height: calc(100vh - 224px);*/
 }
 .todo-inbox .todo-item {
     cursor: pointer;

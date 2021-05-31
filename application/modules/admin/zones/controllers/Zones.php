@@ -25,6 +25,20 @@ class Zones extends CI_Controller{
 			"title"     =>  "Add Zones",
 			"content"  =>  'add_zones'
 		);
+		if($this->input->post('publish')){
+		    $this->form_validation->set_rules('zname', 'zname', 'required|is_unique[zones.zone_name]');
+		    $this->form_validation->set_rules('lat[]', 'lat', 'required');
+		    $this->form_validation->set_rules('lng[]', 'lng', 'required');
+            if($this->form_validation->run() == true){
+    		    $d= $this->zone_model->add_zone();
+    		    if($d > 0){
+    				$this->session->set_flashdata("suc","Created a Zones Successfully.");
+    				redirect(sitedata("site_admin")."/Zones");
+    			}else{
+    				$this->session->set_flashdata("err","Not Created a Zones.Please try again.");
+    			}
+            }
+		}
 		$this->load->view('admin/inner_template',$dta);
 	}
 	public function update_zones(){
@@ -128,5 +142,13 @@ class Zones extends CI_Controller{
 			} 
 		} 
 		echo $vsp;
+    }
+    public function validation_name(){
+        $this->form_validation->set_rules('zname', 'zname', 'required|is_unique[zones.zone_name]');
+        if($this->form_validation->run() == true){
+            echo 0;
+        }else{
+            echo 1;
+        }
     }
 }?>

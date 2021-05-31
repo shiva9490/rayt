@@ -8,7 +8,7 @@ class Apis extends CI_Controller{
             $json   =   $this->api_model->jsonencodevalues("0","Authorization key Invalid");
             if($sv == "1"){
                 $ppunt  =   array(
-                    "countries"     =>  $this->api_model->countries()
+                    "countries"     =>  $this->api_model->countries(),
                 );
                 $json   =   $this->api_model->jsonencodevalues("1",$ppunt);
             }

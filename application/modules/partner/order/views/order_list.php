@@ -3,7 +3,7 @@
         <div id="tabsWithIcons" class="col-lg-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
                 <div class="widget-content widget-content-area rounded-pills-icon">
-                    <ul class="nav nav-pills mb-4 mt-3  justify-content-center" id="rounded-pills-icon-tab" role="tablist" style="float: left;">
+                    <ul class="nav nav-pills mb-4 mt-3  justify-content-center custtab" id="rounded-pills-icon-tab" role="tablist" style="float: left;">
                         <li class="nav-item ml-2 mr-2">
                             <a class="nav-link mb-2 shiva active text-center" id="rounded-pills-icon-home-tab" data-toggle="pill" data-type="Order Placed" data-field="" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Order Placed')" href="#rounded-pills-icon-home" role="tab" aria-controls="rounded-pills-icon-home" aria-selected="true">
                                 <svg width="30" height="30" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -22,7 +22,7 @@
                                     <path d="M2.27227 18.0369C2.64513 18.0369 3.02317 18.0007 3.38913 18.0542C3.54794 18.0766 3.67913 18.2855 3.82413 18.408C3.69639 18.522 3.57383 18.7308 3.44264 18.736C2.63996 18.7671 1.83554 18.7671 1.03286 18.7343C0.908574 18.7291 0.794645 18.4978 0.675537 18.3718C0.806728 18.2613 0.927563 18.0714 1.06911 18.0559C1.46614 18.0127 1.8718 18.0404 2.27227 18.0404C2.27227 18.0404 2.27227 18.0386 2.27227 18.0369Z" fill="#020202"/>
                                     <path d="M26.4028 18.0564C27.3142 18.0564 28.2256 18.0564 29.1733 18.0564C29.3356 18.4828 29.3269 18.7676 28.7573 18.759C28.0996 18.7486 27.4385 18.79 26.786 18.7348C26.5788 18.7175 26.3924 18.4621 26.1956 18.3153C26.2664 18.2273 26.3354 18.141 26.4028 18.0564Z" fill="#020202"/>
                                 </svg>
-                                <b>New </b><br>
+                                <h6>New </h6>
                             </a>
                         </li>
                         <li class="nav-item ml-2 mr-2">
@@ -38,7 +38,7 @@
                                         <path d="M47.9629 31.5382C47.957 33.0862 47.0338 34.2932 45.8849 34.2586C44.7815 34.2239 43.8761 33.0223 43.8524 31.5568C43.8266 30.0648 44.7815 28.7832 45.9185 28.7778C47.0893 28.7752 47.9708 29.9635 47.9629 31.5382ZM45.8056 33.1049C46.5723 33.1049 47.117 32.4015 47.1369 31.5435C47.1567 30.6616 46.5366 29.7983 45.8849 29.8969C45.1895 30.0035 44.7399 30.5204 44.7557 31.5409C44.7716 32.5507 45.2014 33.0356 45.8056 33.1049Z" fill="black"/>
                                         </g>
                                     </svg>
-                             <b>preparing</b> <br></a>
+                             <h6>preparing</h6></a>
                         </li>
                         <li class="nav-item ml-2 mr-2">
                             <a class="nav-link mb-2 shiva text-center" id="rounded-pills-icon-contact-tab" data-toggle="pill" data-type="Ready for pickup" data-field="" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Ready for pickup')" href="#rounded-pills-icon-contact" role="tab" aria-controls="rounded-pills-icon-contact" aria-selected="false">
@@ -49,7 +49,7 @@
                                 </g>
                             </svg>
     
-                             <b>Ready for pickup</b></a>
+                             <h6>Ready for pickup</h6></a>
                         </li>
                         <li class="nav-item ml-2 mr-2">
                             <a class="nav-link mb-2 shiva text-center" id="rounded-pills-icon-settings-tab" data-toggle="pill" data-type="Out for delivery" data-field="" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Out for delivery')"  href="#rounded-pills-icon-settings" role="tab" aria-controls="rounded-pills-icon-settings" aria-selected="false">
@@ -64,7 +64,7 @@
                                     </g>
                                 </svg>
 
-                                <b>Out for delivery</b></a>
+                                <h6>Out for delivery</h6></a>
                         </li>
                     </ul>
                 </div>

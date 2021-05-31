@@ -140,7 +140,7 @@ class Apirestraint_model extends CI_Model{
         $res = $this->menu_model->viewAddon($par);
         //print_r($res);exit;
         $data = array();
-        if(is_array($res) && count($res) >0){
+        if(is_array($res) && count($res) > 0){
             foreach($res as $key=>$r){
                 $data[$key]['addon_listid']     = $r->resturant_addon_listid;
                 $data[$key]['addonitem']        = $r->resturant_addonitem;
@@ -154,7 +154,7 @@ class Apirestraint_model extends CI_Model{
         //$par['group_by'] ="ra.resturant_addon_temp_id";
         $res = $this->menu_model->viewAddon($par);
         $data = array();
-        if(is_array($res) && count($res) >0){
+        if(is_array($res) && count($res) > 0){
             foreach($res as $key=>$r){
                 $data[$key]['variants_id']     = $r->resturant_addon_listid;
                 $data[$key]['variants']        = $r->resturant_addonitem;
@@ -167,7 +167,7 @@ class Apirestraint_model extends CI_Model{
         $par['whereCondition'] = "rt.resturant_id LIKE '".$restrant_id."' AND  rt.resturant_items_id LIKE '".$item_id."' AND ral.resturant_addon_listid LIKE '".$adds."' ";
         $res = $this->menu_model->getAddon($par);
         $data = array();
-        if(is_array($res) && count($res) >0){
+        if(is_array($res) && count($res) > 0){
             foreach($res as $key=>$r){
                 $data['addon_listid']     = $r['resturant_addon_listid'];
                 $data['addonitem']        = $r['resturant_addonitem'];
@@ -260,7 +260,7 @@ class Apirestraint_model extends CI_Model{
         $conditions['limit']            = sitedata("site_pagination");
         $conditions['group_by']         = "or.order_unique_id";
         $res = $this->order_model->viewOrderDetails($conditions);
-        //print_r($conditions);exit;
+        //print_r($res);exit;
         $data = array();
         if(is_array($res) && count($res) > 0){
             foreach($res as $key=>$r){
@@ -278,14 +278,24 @@ class Apirestraint_model extends CI_Model{
         }
         return $data;
     }
-    public function viewneworder(){
-        $par['whereCondition']  =  "or.order_unique_id LIKE '".$this->input->post("unique_id")."' AND ord.orderdetail_restaurant_id LIKE '".$this->input->post("restrant_id")."' AND orderdetails_rest_staus LIKE '".$this->input->post("status")."'";
+    public function viewneworder($unique_id = null,$status =null){
+        $usn = $this->input->post("unique_id");
+        if($unique_id!=""){
+            $usn = $unique_id;
+        }
+        $statu = $this->input->post("status");
+        if($status !=""){
+            $statu = $status;
+        }
+        $par['whereCondition']  =  "or.order_unique_id LIKE '".$usn."' AND ord.orderdetail_restaurant_id LIKE '".$this->input->post("restrant_id")."' AND orderdetails_rest_staus LIKE '".$statu."'";
 	    $par['group_by']        =  "ost.orderdetail_status";
 	    $results = $this->order_model->viewOrderDetails($par);
 	    $data = array();
 	    if(is_array($results) && count($results) > 0){
 	        foreach($results as $key=>$r){
 	            $data['billing']['unique_id']            =  $r->order_unique_id;
+	            $data['billing']['order_type']           =  $r->order_type;
+	            $data['billing']['status']               =  $r->orderdetails_rest_staus;
 	            $data['billing']['order_placed_date']    =  date("d-M-Y", strtotime($r->order_created_by));
 	            $data['billing']['order_placed_time']    =  date("H:i:s a", strtotime($r->order_created_by));
                 $data['customeraddress']['fullname']     =  $r->customeraddress_fullname;
@@ -302,14 +312,27 @@ class Apirestraint_model extends CI_Model{
                 $data['customeraddress']['current_loc']  =  $r->customeraddress_current_loc;
                 $data['customeraddress']['add_lat']      =  $r->customeraddress_add_lat;
                 $data['customeraddress']['add_lot']      =  $r->customeraddress_add_lot;
-                $data['order_details']                   =  $this->order_details();
+                $data['order_details']                   =  $this->order_details($usn,$statu);
                 $data['order_status']                    =  $this->order_status($r->order_id);
+                $data['drivery_details']                 =  $this->driver_details($usn,$statu);
 	        }
 	    }
 	    return $data;
     }
-    public function order_details(){
-        $par['whereCondition']  =  "or.order_unique_id LIKE '".$this->input->post("unique_id")."' AND ord.orderdetail_restaurant_id LIKE '".$this->input->post("restrant_id")."' AND orderdetails_rest_staus LIKE '".$this->input->post("status")."'";
+    public function order_details($usn= null,$status= null,$resturant_id=null){
+        $unique_id = $this->input->post("unique_id");
+        if($usn!=""){
+            $unique_id = $usn;
+        }
+        $statu = $this->input->post("status");
+        if($status !=""){
+            $statu = $status;
+        }
+        $resturantid = $this->input->post("restrant_id");
+        if($resturant_id !=""){
+            $resturantid = $resturant_id;
+        }
+        $par['whereCondition']  =  "or.order_unique_id LIKE '".$unique_id."' AND ord.orderdetail_restaurant_id LIKE '".$resturantid."' AND orderdetails_rest_staus LIKE '".$status."'";
 	    $par['group_by'] = "ord.orderdetails_unique_id";
 	    $results = $this->order_model->viewOrderDetails($par);
 	    $data = array();
@@ -343,16 +366,16 @@ class Apirestraint_model extends CI_Model{
                 }
                 $total = $total+($r->orderdetail_quantity * $r->orderdetail_price)+$addonss+$variantam;
                 $variants  = implode(",",$var['name']);
-	            $data['order_list'][$key]['order_unique_id']          = $r->orderdetails_unique_id;
-	            $data['order_list'][$key]['items_name']               = $r->resturant_items_name;
-	            $data['order_list'][$key]['items_name_a']             = $r->resturant_items_name_a;
-	            $data['order_list'][$key]['items_type']               = $r->resturant_items_type;
-	            $data['order_list'][$key]['quantity']                 = $r->orderdetail_quantity;
-	            $data['order_list'][$key]['price']                    = $r->orderdetail_price;
-	            $data['order_list'][$key]['addons']                   = $addons;
-	            $data['order_list'][$key]['variants']                 = $variants;
-	            $data['order_payments']['total']                      = $total;
-	            $data['order_payments']['delivery']                   = '0';
+	            $data['order_list'][$key]['order_unique_id']   = $r->orderdetails_unique_id;
+	            $data['order_list'][$key]['items_name']        = $r->resturant_items_name;
+	            $data['order_list'][$key]['items_name_a']      = $r->resturant_items_name_a;
+	            $data['order_list'][$key]['items_type']        = $r->resturant_items_type;
+	            $data['order_list'][$key]['quantity']          = $r->orderdetail_quantity;
+	            $data['order_list'][$key]['price']             = $r->orderdetail_price;
+	            $data['order_list'][$key]['addons']            = $addons;
+	            $data['order_list'][$key]['variants']          = $variants;
+	            $data['order_payments']['total']               = $total;
+	            $data['order_payments']['delivery']            = '0';
 	        }
 	    }
 	    return $data;
@@ -369,22 +392,62 @@ class Apirestraint_model extends CI_Model{
                     foreach($res as $r){
                         $ds[$oct] = date("H:i:s a", strtotime($r['orderstatus_add_date']));
                         $t = ($r['orderstatus_add_date']!="")?$r['orderstatus_add_date']:'';
+                        $st = date("H:i:s", strtotime($r['orderstatus_add_date']));
                     }
                 }else{
                     $tim='';
                     if($oct === "Ready for pickup"){
                         $p['whereCondition'] ="ord.order_id LIKE '".$id."'";
                         $ress = $this->order_model->getOrderDetails($p);
-                        //print_r($t);exit;
-                        $tims = explode(" ",$ress['resturant_zone_time']);
-                        
-                        $tim = date("H:i:s", strtotime($t)+($tims[0]*60));
+                        $tims = explode(" ",($ress['resturant_zone_time']!="")?$ress['resturant_zone_time']:$ress['resturant_subzone_time']);
+                        if(isset($st) && $st!=""){
+                            $tim = date("H:i:s a", strtotime($st)+($tims[0]*60));
+                        }
                     }
                     $ds[$oct]  = $tim;
                 }
             }
         }
         return $ds;
+    }
+    public function driver_details($usn= null,$status= null,$resturant_id = null){
+        $unique_id = $this->input->post("unique_id");
+        if($usn!=""){
+            $unique_id = $usn;
+        }
+        $statu = $this->input->post("status");
+        if($status !=""){
+            $statu = $status;
+        }
+        $resturantid = $this->input->post("restrant_id");
+        if($resturant_id !=""){
+            $resturantid = $resturant_id;
+        }
+        $par['columns']         =   "dr.driver_id,driver_name,driver_name_last,driver_name_a,driver_name_a_last,driver_phone,driver_email,driver_gender,driver_vehicle_number,driver_vehicle_type,driver_profile_image,driver_address_a,driver_address";
+        $par['whereCondition']  =   "or.order_unique_id LIKE '".$unique_id."' AND ord.orderdetail_restaurant_id LIKE '".$resturantid."' AND orderdetails_rest_staus LIKE '".$status."'";
+	    $results = $this->order_model->getOrderDetails($par);
+	    $da = array();
+	    if(is_array($results) && count($results) > 0){
+	        foreach($results as $d){
+	            $pa['whereCondition'] = "dau.driver_address_driver_id LIKE '".$results['driver_id']."'";
+	            $la = $this->db->query("SELECT driver_address_latitude,driver_address_longitude FROM driver_address_update WHERE driver_address_driver_id = '".$results['driver_id']."' ORDER BY `driver_addressid` DESC LIMIT 1")->row_array();
+	            $da['driver_name']              = $results['driver_name'];
+	            $da['driver_name_last']         = $results['driver_name_last'];
+	            $da['driver_name_a']            = $results['driver_name_a'];
+	            $da['driver_name_a_last']       = $results['driver_name_a_last'];
+	            $da['driver_gender']            = $results['driver_gender'];
+	            $da['driver_phone']             = $results['driver_phone'];
+	            $da['driver_email']             = $results['driver_email'];
+	            $da['driver_address']           = $results['driver_address'];
+	            $da['driver_address_a']         = $results['driver_address_a'];
+	            $da['driver_vehicle_number']    = $results['driver_vehicle_number'];
+	            $da['driver_vehicle_type']      = $results['driver_vehicle_type'];
+	            $da['driver_profile_image']     = base_url().'upload/drivers/'.$results['driver_profile_image'];
+	            $da['driver_lat']               = ($la['driver_address_latitude']!="")?$la['driver_address_latitude']:'';
+	            $da['driver_lon']               = ($la['driver_address_longitude']!="")?$la['driver_address_longitude']:'';
+	        }
+	    }
+        return $da;
     }
     public function vieworder($id){
         $par['whereCondition'] = "orderdetails_id LIKE '".$id."'";
@@ -399,9 +462,10 @@ class Apirestraint_model extends CI_Model{
         }
     }
     public function change_action(){
-        $par['whereCondition'] = "order_unique_id LIKE '".$this->input->post("unique_id")."' AND ord.orderdetail_restaurant_id LIKE '".$this->input->post("restrant_id")."' AND orderdetails_rest_staus LIKE '".$this->input->post("status")."'";
+        $par['columns']          =  "ord.order_id AS orderids,or.*,ord.*,rt.*,res.*,cs.*,ost.*,cadd.*,drso.*,dr.*";
+        $par['whereCondition']   =  "order_unique_id LIKE '".$this->input->post("unique_id")."' AND ord.orderdetail_restaurant_id LIKE '".$this->input->post("restrant_id")."' AND orderdetails_rest_staus LIKE '".$this->input->post("status")."'";
         $results = $this->order_model->viewOrderDetails($par);
-        //echo '<pre>';print_r($results);exit;
+       // echo '<pre>';print_r($results);exit;
         if(is_array($results) && count($results) > 0){
 	        $res = $this->order_model->order_accect($results);
 	        if($res >0){
@@ -415,7 +479,6 @@ class Apirestraint_model extends CI_Model{
         $par['whereCondition'] = "order_unique_id LIKE '".$this->input->post("unique_id")."' AND ord.orderdetail_restaurant_id LIKE '".$this->input->post("restrant_id")."' AND orderdetails_rest_staus LIKE '".$this->input->post("status")."'";
         $results = $this->order_model->viewOrderDetails($par);
         if(is_array($results) && count($results) > 0){
-            //print_r($results);exit;
 	        $res = $this->order_model->order_accect($results);
 	        if($res >0){
 	            return 1;
@@ -435,10 +498,72 @@ class Apirestraint_model extends CI_Model{
         return $d;
     }
     public function cancel_order(){
-        $par['whereCondition'] = "order_unique_id LIKE '".$this->input->post("unique_id")."' AND ord.orderdetail_restaurant_id LIKE '".$this->input->post("restrant_id")."'";
+        $par['columns']       =   "ord.order_id AS orderids,or.*,ord.*,rt.*,res.*,cs.*,ost.*,cadd.*,drso.*,dr.*";
+        $hr ="AND (ord.orderdetails_rest_staus = 'Order Placed' OR ord.orderdetails_rest_staus = 'Preparing' OR ord.orderdetails_rest_staus = 'Ready for pickup')";
+        $par['whereCondition'] = "or.order_unique_id LIKE '".$this->input->post("unique_id")."' AND ord.orderdetail_restaurant_id LIKE '".$this->input->post("restrant_id")."' $hr";
         $results = $this->order_model->viewOrderDetails($par);
         if(is_array($results) && count($results) > 0){
-            return $this->order_model->order_accect();
+            //print_r($results);exit;
+            return $this->order_model->order_accect($results);
+        }
+        return false;
+    }
+    public function online_offline(){
+        if($this->input->post("status")=='1'){
+            $status = 'Active';
+        }else if($this->input->post("status")=='2'){
+            $status = 'Inactive';
+        }
+        $data = array(
+            'resturant_openclose' => $status,
+        );
+        $this->db->where('resturant_id',$this->input->post("restrant_id"))->update('resturant',$data);
+        $dat    =   array(
+            "resturant_id"               =>  $this->input->post("restrant_id"),
+            "resturant_status_status" 	 =>  $status,
+            "resturant_status_cr_by" 	 =>  $this->input->post("restrant_id"),
+            "resturant_status_cr_on" 	 =>  date("Y-m-d h:i:s")
+        );
+        $this->db->insert("resturant_status",$dat);
+        $vsp   =    $this->db->insert_id();
+        if($vsp > 0){
+            $this->db->update("resturant_status",array("resturant_status_id" => $vsp."RESHIS"),array("resturant_statusid" => $vsp));
+            return TRUE;
+        }
+        return false;
+    }
+    public function vieworderss(){
+        $vues =array();
+        $limit  = ($this->input->post('limit')!="")?$this->input->post('limit'):'0';
+        $conditions['whereCondition']   = "ord.orderdetail_restaurant_id LIKE '".$this->input->post("restrant_id")."'  AND orderdetails_rest_staus LIKE 'Delivered' OR orderdetails_rest_staus LIKE 'Order Cancelled'";
+        $conditions['order_by']         = "DESC";
+        $conditions['tipoOrderby']      = "order_unique_id";
+        $conditions['start']            = ($limit!="")?$limit:'0';
+        $conditions['limit']            = sitedata("site_pagination")+$limit;
+        $conditions['group_by']         = "order_unique_id";
+        $vue    =   $this->order_model->viewOrders($conditions);
+        foreach($vue as $key=>$vu){
+            $vues[$key] = $this->viewneworder($vu->order_unique_id,$vu->orderdetails_rest_staus);
+        }
+        return $vues;
+    }
+    public function delay_order(){
+        $dat = array();
+        $orderstatus = $this->config->item('orderstatus');
+        $conditions['whereCondition']   = "ord.orderdetail_restaurant_id LIKE '".$this->input->post("restrant_id")."' AND or.order_unique_id LIKE '".$this->input->post("unique_id")."' AND (ord.orderdetails_rest_staus LIKE '".$orderstatus[1]."')";
+        $vue    =   $this->order_model->getOrders($conditions);
+        if(is_array($vue) && count($vue) > 0){
+            $orderstat= array(
+                'order_id'                  => $vue['order_id'],
+                'orderdetail_restaurant_id' => $vue['orderdetails_id'],
+                'orderdetail_status'        => "Dely Order",
+                'orderdetail_dely_time'     => $this->input->post('delay_time'),
+                'orderstatus_add_by'        => $this->input->post('restrant_id'),
+                'orderstatus_add_date'      => date('Y-m-d H:i:s')
+            );
+            $this->db->insert('order_status',$orderstat);
+            $ifd = $this->db->insert_id();
+            return $this->db->where('orderstatus_id',$ifd)->update('order_status',array('orderstatusid'=>'ORDSTA'.$ifd));
         }
         return false;
     }

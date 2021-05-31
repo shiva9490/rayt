@@ -49,6 +49,8 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group b-grey">
+											    <input type="hidden" class="resturant_id" name="resturant_id" value="<?php echo $resturant_id;?>">
+											    <input type="hidden" class="restid" value="<?php echo $this->uri->segment('3');?>">
 											    <input type="hidden" name="tempid" id="tempid" value="<?php echo (set_value('tempid')!="")?set_value('tempid'):$tempid ?>">
 											    <input type="hidden" name="categoty" id="tempid" value="<?php echo $this->uri->segment("3");?>">
 												<input type="text" class="form-control arabic_feild width-100"  name="itemname_a" value="<?php set_value('itemname_a')?>" placeholder="أدخل اسم المطعم" required>
@@ -137,7 +139,7 @@
 								<div class="col-md-3">
 									<div class="form-group b-grey">
 										<label>Final Price *</label>
-										<input type="text" class="form-control total"  name="final_amount" placeholder="Final Price" required />
+										<input type="text" class="form-control total"  name="final_amount" placeholder="Final Price" readonly required />
 									</div>
 								</div>
 							</div><br>
@@ -241,13 +243,13 @@
 										<label >Item timings *</label> 
 										<div class="n-chk">
 											<label class="new-control new-radio square-radio new-radio-text">
-												<input type="radio" class="new-control-input" name="timings" data-value="alltime" onclick="timmes('alltime')" value="alltime" checked required="">
+												<input type="radio" class="new-control-input" name="timings" data-value="alltime" onclick="timmesadmin('alltime')" value="alltime" checked required="">
 												<span class="new-control-indicator"></span><span class="new-radio-content">all times when kitchen / restaurant is open on Rayt</span>
 											</label>
 										</div>
 										<div class="n-chk">
 											<label class="new-control new-radio square-radio new-radio-text">
-												<input type="radio" class="new-control-input" name="timings" data-value="alldays" onclick="timmes('alldays')" value="alldays" required="">
+												<input type="radio" class="new-control-input" name="timings" data-value="alldays" onclick="timmesadmin('alldays')" value="alldays" required="">
 												<span class="new-control-indicator"></span><span class="new-radio-content">Item is available at same time for all days of the week</span>
 											</label>
 											<div class="jumbotron" id="alldays" style="display:none;">
@@ -256,7 +258,7 @@
 										</div>
 										<div class="n-chk">
 											<label class="new-control new-radio square-radio new-radio-text">
-												<input type="radio" class="new-control-input" name="timings" data-value="differentdays" onclick="timmes('differentdays')" value="differentdays" required="">
+												<input type="radio" class="new-control-input" name="timings" data-value="differentdays" onclick="timmesadmin('differentdays')" value="differentdays" required="">
 												<span class="new-control-indicator"></span><span class="new-radio-content">Item is available at different times during different days of the week</span>
 											</label>
 											<div class="differentdays jumbotron" style="display:none;">

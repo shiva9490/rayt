@@ -7,16 +7,18 @@ class Common extends CI_Controller{
                 );
                 $this->load->view("admin/outer_template",$dta);
         }
-        public function change_password(){
+         public function change_password(){
+         
                 if($this->session->userdata("login_id") == ""){
                     redirect(sitedata("site_admin")."/");
                 }
                 $dta    =   array(
                     "title"     =>  "Change Password",
-                    "content"   =>  "changepassword"
+                    "content"   =>  "change_password"
                 );
-                $login_id   =   $this->session->userdata("loginid");
+                $login_id   =   $this->session->userdata("login_id");
                 if($this->input->post("submit")){
+                    $this->form_validation->set_rules("old_password","Old Password","required|xss_clean|trim|min_length[3]|max_length[50]|callback_checkpassword");
                     $this->form_validation->set_rules("new_password","New Password","required|xss_clean|trim|min_length[3]|max_length[50]");
                     $this->form_validation->set_rules("con_password","Confirm Password","required|xss_clean|trim|min_length[3]|max_length[50]|matches[new_password]");
                     if($this->form_validation->run() == true){
@@ -31,6 +33,16 @@ class Common extends CI_Controller{
                 }
                 $this->load->view("admin/inner_template",$dta);
         }
+
+        public function checkpassword($str){   
+            $oldpass = base64_encode($str);         
+            $vsp    =   $this->login_model->checkvaluepassword($oldpass); 
+            if($vsp == false){
+                $this->form_validation->set_message("checkpassword","Old password didn't match.");
+                return FALSE;
+            }	 
+            return TRUE; 	
+        }	
         public function countryname(){
             $erm    =   $this->input->get("term");
             $params['whereCondition']  =   "country_name like '%".$erm."%'"; 

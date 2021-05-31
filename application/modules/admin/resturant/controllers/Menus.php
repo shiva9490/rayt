@@ -3,7 +3,7 @@ class Menus extends CI_Controller{
 	public function __construct(){
 		parent::__construct();
 	    if($this->session->userdata("login_id") == ""){
-			redirect(base_url('Admin/Login'));
+			redirect(sitedata("site_admin")); 
 		}
 	}
 	public function index(){
@@ -38,7 +38,7 @@ class Menus extends CI_Controller{
 		$dta    =   array(
 			"title"     =>  "Create Resturant Form",
 			"content"   =>  'create_resturant',
-			"id"		=> $id,
+			"id"		=>  $id,
 		);
 		if($this->input->post('publish')){
 			//echo '<pre>';print_r($this->input->post());exit;
@@ -223,6 +223,8 @@ class Menus extends CI_Controller{
 		echo $vsp;
 	}
 	public function add_items($id){
+	    $par['whereCondition'] = "resturant_category_id = '".$id."'";
+	    $catedata = $this->menu_model->getCategory($par);
 	    if($this->session->userdata("tempid") != ""){
 	        $t = $this->session->userdata("tempid");
 	    }else{
@@ -230,9 +232,10 @@ class Menus extends CI_Controller{
 	        $t = $this->session->userdata("tempid");
 	    }
 	    $dta    =   array(
-			"title"     =>  "Add Item",
-			"content"   =>  "add_item",
-			"tempid"    =>  $t,
+			"title"         =>  "Add Item",
+			"content"       =>  "add_item",
+			"tempid"        =>  $t,
+			"resturant_id"  => ($catedata[0]['resturant_id']!="")?$catedata[0]['resturant_id']:''
 		);
 		if($this->input->post('publish')){
 		    $this->form_validation->set_rules('veg_type','Item Type','required');
@@ -319,7 +322,7 @@ class Menus extends CI_Controller{
 	        $gr .= "AND rv.resturant_variants_category LIKE '".$this->input->post('eve')."' OR rv.resturant_variants_category LIKE '".$this->input->post('eve')."'";
 	    }
 	    $par['whereCondition'] = $gr;
-	    $datas = $this->menu_model->viewVariants($par);
+	    $datas = [];//$this->menu_model->viewVariants($par);
 		$data = array(
 			'eve'   => $this->input->post('eve'),
 			'title' => $this->input->post('title'),
@@ -327,7 +330,6 @@ class Menus extends CI_Controller{
 			'tempid'=> $this->input->post('tempid'),
 			'datas' => $datas
 		);
-		
 		$this->load->view("addon_model",$data); 
 	}
 	public function veg_types(){
@@ -353,10 +355,7 @@ class Menus extends CI_Controller{
 	    $this->load->view('add_category',$dat);
 	}
 	public function adding_category(){
-	    
 	    if($this->input->post()){
-	        //$check = $this->checkcategory($this->input->post('category'));
-	        //if($check)
 			$res = $this->menu_model->addcategory();
             if($res != ''){
                 echo "Created category successfully.";
@@ -411,6 +410,56 @@ class Menus extends CI_Controller{
                 echo 2;
             }
         }
+    }
+    public function delete_items(){
+		$uri    =   $this->uri->segment("3");
+		$params["whereCondition"]   =   "resturant_items_id = '".$uri."'";
+		$vue    =   $this->menu_model->getItems($params);
+		if(count($vue) > 0){
+			$bt     =   $this->menu_model->delete_items($uri); 
+			if($bt > 0){
+				$vsp    =   1;
+			}
+		}else{
+			$vsp    =   2;
+		} 
+		echo $vsp;
+	}
+	public function category_rest_delete(){
+		$uri        =   $this->uri->segment("3");
+		$params["whereCondition"]   =   "resturant_category_id LIKE '".$uri."'";
+		$vue    =   $this->menu_model->getCategory($params);
+		if(count($vue) > 0){
+			$bt     =   $this->menu_model->delete_category_rest($uri); 
+			if($bt > 0){
+				$vsp    =   1;
+			}
+		}else{
+			$vsp    =   2;
+		} 
+		echo $vsp;
+	}
+	public function delete_addon_list(){
+		$uri    =   $this->uri->segment("3");
+		$params["whereCondition"]   =   "resturant_addon_id = '".$uri."'";
+		$vue    =   $this->menu_model->getAddona($params);
+		if(count($vue) > 0){
+			$bt     =   $this->menu_model->delete_addon_list($uri); 
+			if($bt > 0){
+				$vsp    =   1;
+			}
+		}else{
+			$vsp    =   2;
+		} 
+		echo $vsp;
+	}
+	public function addons_list(){
+        $da['tempid'] = $this->input->post('tempid');
+        $this->load->view('addonlist',$da);
+    }
+    public function variants_list(){
+        $da['tempid'] = $this->input->post('tempid');
+        $this->load->view('variantslist',$da);
     }
 }
 ?>

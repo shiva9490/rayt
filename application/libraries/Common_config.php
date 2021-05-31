@@ -294,8 +294,8 @@ class Common_config{
                     'smtp_host'   =>  sitedata("site_host"),
                     'smtp_pass'   =>  sitedata("site_emailpassword"),
                     'smtp_port'   =>  '465', 
-                    'wordwrap'  =>    TRUE,
-                    'mailtype'  =>    'html'
+                    'wordwrap'    =>   TRUE,
+                    'mailtype'    =>   'html'
                 ); 
             $headers = "MIME-Version: 1.0" . "\r\n";
             $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
@@ -439,4 +439,77 @@ class Common_config{
            return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
         }
         
+         public function send_pushnotifications($title,$message,$mobileno = 0){
+        $ci     =   &get_instance();
+        $ci->load->database(); 
+        $tokens		=	$ci->db->get_where("tokens",array("token_open" => '1'))->result(); 
+        if($mobileno != '0'){
+            $tokens		=	$ci->db->get_where("tokens",array("token_open" => '1',"token_mobile" => $mobileno))->result();
+        }
+        if(count($tokens) > 0){
+            $offset =   0; 
+            while($offset <= count($tokens)){
+                $dtokens		=	$ci->db->get_where("tokens",array("token_open" => '1'), '1000', $offset)->result();
+                if($mobileno != '0'){
+                    $dtokens		=	$ci->db->get_where("tokens",array("token_open" => '1',"token_mobile" => $mobileno))->result();
+                } 
+                 //echo "<pre>";print_r($dtokens);exit;
+                $d_name     = array();
+                foreach($dtokens as $tu){
+                    $d_name[]	=	$tu->token_name;
+                }
+                $url        =   'https://fcm.googleapis.com/fcm/send';
+                $priority   =   "high";
+                $notification   = array('title' => $title,'body' => $message);
+                $fields = array(
+                        'registration_ids'  => $d_name,
+                        'notification'      => $notification 
+                );
+                $headers = array(
+                    'Authorization:key=AAAA_Zgkrek:APA91bH2u9jTxJnTzJPgw_nns-RGNMzSgvJU0mkuJHZuRjJteqAYdkQy7UueJvG-AxGJeZmG0aVfdvSH-11bkH1TP6gPAhpRe3uA5Y5OXYNWILUapRbBFtx8FZZgfZYFzI5DUyqx3GHP',
+                    'Content-Type: application/json'
+                ); 
+               $ch = curl_init();
+               curl_setopt($ch, CURLOPT_URL, $url);
+               curl_setopt($ch, CURLOPT_POST, true);
+               curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+               curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+               curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 0);  
+               curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+               curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+                // echo json_encode($fields);
+               $result = curl_exec($ch);    
+                if ($result === FALSE) {
+                   die('Curl failed: ' . curl_error($ch));
+                }
+                $vspr    =   json_decode($result,true);
+                $res = array();
+                $res['registration_ids'] = $title;
+                $res['notification']     = $message;
+                $res['responce']         = $result;
+                $res['token']            = $mobileno;
+                $res['date_time']        = date('Y-m-d H:i:s a');
+                $ci->db->insert('notification',$res);
+                $vrfg =  array();
+                if(count($vspr) > 0){
+                    $vsfr =  $vspr['results'];
+                    foreach($vsfr as $key => $byh){
+                        if(array_key_exists("error",$byh)){
+                            if($byh['error'] == 'NotRegistered'){
+                                array_push($vrfg,$key);
+                            }
+                        }
+                    }
+                    foreach($d_name as $keu =>  $dtu){
+                        if(in_array($keu,$vrfg)){
+                            $ci->db->update("tokens",array("token_open" => '0',"token_update" => date("Y-m-d H:i:s")),array("token_name" => $dtu));
+                        }
+                    }
+                }
+                curl_close($ch); 
+                $offset =    $offset+1000; 
+            } 
+            return $result;
+        }
+    }
 }

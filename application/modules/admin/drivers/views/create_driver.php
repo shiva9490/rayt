@@ -1,7 +1,7 @@
 <div class="row layout-top-spacing">
 	<div id="fuSingleFile" class="col-lg-12 layout-spacing">
 		<div class="statbox widget box box-shadow">
-			<form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+			<form method="POST" enctype="multipart/form-data" class="needs-validation text-left" novalidate>
 				<div class="container-fluid py-3 pt-4 bb-grey sticky">
 					<div class="row">
 						<div class="col-md-2">
@@ -110,9 +110,20 @@
 												<span class="text-danger"><?php echo form_error('company'); ?></span>
 											</div>
 											<div class="col-md-6">
+											    
 												<label >Password *</label>
-												<input type="password" class="form-control"  name="pass" placeholder="Enter E-mail address" value="<?php echo set_value('pass')?>" required />
+												<!--<input type="password" class="form-control"  name="pass" placeholder="Enter E-mail address" value="<?php echo set_value('pass')?>" required />
 												<div class="invalid-feedback">
+													Please provide Password.
+												</div>-->
+												<div class="input-group mb-4" id="show_hide_password">                               
+                                                    <input type="password" class="form-control" name="pass" value="<?php echo set_value('pass');?>" required >
+                                                    <div class="input-group-prepend">
+                                                     <span class="input-group-text"><i class="far fa-eye-slash" aria-hidden="true"></i></span>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="invalid-feedback">
 													Please provide Password.
 												</div>
 												<span class="text-danger"><?php echo form_error('pass'); ?></span>
@@ -379,6 +390,39 @@
 											</div>
 										</div>
 									</div>
+								</div>
+								
+								<div class="col-md-12 m-3">
+									<h5>Working Hours *</h5><br>
+									<?php 
+										$menu   =   $this->config->item("menu_hours");
+										$i=0;$j=0;foreach($menu as $key=>$m){
+									?>
+									<div class="form-group b-grey">
+										<div class="row">
+											<div class="col-md-2">
+												<label><?php echo $m;?> - </label>
+												<input type="hidden"  name="driver_weekly[]" value="<?php echo $m;?>"  />
+											</div>
+											<div class="col-md-4">
+												<input id="timepicker<?php echo $i;?>" name="strt_time[]" value="<?php echo set_value('strt_time".$i."');?>" required />
+											</div>
+											<div class="col-md-4">
+												<input id="timepicker1<?php echo $i;?>" name="end_time[]" value="<?php echo set_value('end_time')?>"  class="form-control" required />
+											</div>	
+											<div class="col-md-2">										
+												<label class="new-control new-checkbox new-checkbox-text checkbox-dark">
+													<input type="checkbox" name="working_hours[<?php echo $key; ?>]" value="<?php echo $m;?>" id="<?php echo $m;?>" <?php if(set_value('working_hours')){echo 'check';} ?> class="new-control-input">
+													<span class="new-control-indicator"></span><span class="new-chk-content">Holiday</span>
+												</label>
+											</div>									
+										</div>
+									</div>
+									<?php 
+										$i++;
+										$j++;
+										}
+									?>
 								</div>
 
 								<div class="col-md-12 m-3">

@@ -168,6 +168,7 @@ class Order_model extends CI_Model{
                 'order_item_count'   =>  ($res[0]['cart_quantity']!="")?$res[0]['cart_quantity']:$this->input->post('quantity'),
                 'order_paymentid'    =>  ($this->input->post('payementid') !="")?$this->input->post('payementid'):'',
                 'order_created_on'   =>  $customer_id,
+                'order_payment_status'=>  ($this->input->post('pay_responce')!="")?$this->input->post('pay_responce'):'',
                 'order_created_by'   =>  date('Y-m-d H:i:s'),
                 'order_status'       =>  'Active',
                 'order_open'         =>  '1'
@@ -345,6 +346,14 @@ class Order_model extends CI_Model{
         public function getOrders($params = array()){
                 return $this->queryOrders($params)->row_array();
         }
+        public function cntviewOrderDetails($params  =    array()){
+                $params["cnt"]      =   "1"; 
+                $val    =   $this->queryOrderDetails($params)->row_array();
+                if(isset($val)){
+                    return  $val['cnt'];
+                }
+                return "0";
+        }
         public function viewOrderDetails($params = array()){
                 return $this->queryOrderDetails($params)->result();
         }
@@ -374,6 +383,8 @@ class Order_model extends CI_Model{
                         ->join("customers as cs","cs.customer_id = or.customer_id","INNER")
                         ->join("order_status as ost","ost.order_id = ord.order_id","Left")
                         ->join("customer_address as cadd","cadd.customeraddress_id = or.customeraddress_id","INNER")
+                        ->join("driver_assign_order as drso","ord.order_id = drso.order_id","LEFT")
+                        ->join("drivers as dr","drso.driver_id = dr.driver_id","LEFT")
                         ->where($dta);
                 if(array_key_exists("keywords", $params)){
                     $this->db->where("(orders LIKE '%".$params["keywords"]."%')");
@@ -397,52 +408,110 @@ class Order_model extends CI_Model{
         }
         public function order_accect($param = array()){
             $orderstatus = $this->config->item('orderstatus');
-            $ds = array();
-            $k= 0;
+            $ds = array();$k= 0;
             foreach($orderstatus as $key=>$oct){
-                if($oct == $this->input->post('status')){
-                    $k = $key+1;
+                if($oct == $this->input->post('status') || $oct == $param[0]->orderdetails_rest_staus){
+                    $k  = $key+1;
                     $ds = $orderstatus[$k];
                 }
                 $k++;
             }
-            if($this->input->post("accepted")!="" && $this->input->post("accepted") == "rejected" || $this->input->post('Cancle')){
+            if($this->input->post("accepted")!="" && $this->input->post("accepted") == "rejected" || $this->input->post('Cancle') == "Cancle"){
                 $d = "Order Cancelled";
             }else{
                 $d = $ds;
             }
-            //print_r($d);exit;
+            /*-*/
+            $parse['columns']           =   "ord.order_id AS orderids,or.*,ord.*,rt.*,res.*,cs.*,ost.*,cadd.*,drso.*,dr.*";
+            $parse['whereCondition']    =   "or.order_unique_id LIKE '".$param[0]->order_unique_id."' and ord.orderdetail_restaurant_id LIKE '".$param[0]->resturant_id."'";
+            $ordst = $this->getOrderDetails($parse);
+            //echo '<pre>';print_r($ordst);exit;
+            if($d == "Preparing"){
+                if(is_array($ordst) && count($ordst) > 0){
+                    $data = array(
+                        'order_id'              => ($ordst['orderids']!="")?$ordst['orderids']:'',
+                        'restaurant_id'         => $ordst['resturant_id'],
+                        'driver_id'             => '1DRIVER',
+                        'custmore_id'           => $ordst['orderdetail_customer_id'],
+                        'custmore_adder_id'     => $ordst['customeraddress_id'],
+                        'driverassign_add_by'   => ($this->input->post("restrant_id")!="")?$this->input->post("restrant_id"):$this->session->userdata("restraint_id"),
+                        'driverassign_add_date' => date('Y-m-d H:i:s a')
+                    );
+                    //print_r($data);exit;
+                    $this->db->insert('driver_assign_order',$data);
+                    $id = $this->db->insert_id();
+                    $this->db->where('driverassignorderid',$id)->update('driver_assign_order',array('driverassignorder_id' => 'ORDAST'.$id));
+                    $derv = 'ORDAST'.$id;
+                }
+            }
+            /*-*/
+            $updart='';
+            if($this->input->post("restrant_id")!=""){
+                $updart = ($this->input->post("restrant_id")!="")?$this->input->post("restrant_id"):'';
+            }elseif($this->session->userdata("restraint_id")!=""){
+                $updart = $this->session->userdata("restraint_id");
+            }elseif(isset($param[0]->driver_id) && $param[0]->driver_id!=""){
+                $updart = $param[0]->driver_id;
+            }
             if(is_array($param) && count($param) > 0){
                 foreach($param as $ord){
-                    //echo '<pre>';print_r($ord);exit;
                     $data = array(
                         'orderdetails_rest_staus' => $d,
                         'orderdetail_modified_on' => date('Y-m-d H:i:s'),
-                        'orderdetail_modified_by' => ($this->input->post("restrant_id")!="")?$this->input->post("restrant_id"):$this->session->userdata("restraint_id"),
+                        'orderdetail_modified_by' => $updart,
                     );
+                    if($d == "Preparing"){
+                        $data['driver_assion_order'] = $derv;
+                    }
+                    $ords = ($ord->orderids!="")?$ord->orderids:'';
+                    $restraint_id               = ($ord->resturant_id!="")?$ord->resturant_id:$this->session->userdata('restraint_id');
                     $this->db->where('orderdetails_id',$ord->orderdetails_id)->update('order_details',$data);
-                    
-                    /*=========================================*/
-                    $parse['whereCondition'] = "ost.order_id LIKE '".$ord->order_id."' AND ost.orderdetail_status LIKE '".$d."' AND ord.orderdetail_restaurant_id LIKE '".$this->session->userdata("restraint_id")."'";
+                    $parse['columns']           =   "ord.order_id AS orderids,or.*,ord.*,rt.*,res.*,cs.*,ost.*,cadd.*,drso.*,dr.*";
+                    $parse['whereCondition']    =   "ost.order_id LIKE '".$ords."' AND ost.orderdetail_status LIKE '".$d."' AND ord.orderdetail_restaurant_id LIKE '".$restraint_id."'";
                     $ordst = $this->getOrderDetails($parse);
                     if(is_array($ordst)&& count($ordst) > 0){
                     }else{
                         $orderstat= array(
-                            'order_id'                  => $ord->order_id,
+                            'order_id'                  => $ord->orderids,
                             'orderdetail_restaurant_id' => $ord->orderdetails_id,
                             'orderdetail_status'        => $d,
-                            'orderstatus_add_by'        => ($this->input->post("restrant_id")!="")?$this->input->post("restrant_id"):$this->session->userdata("restraint_id"),
+                            'orderstatus_add_by'        => $updart,
                             'orderstatus_add_date'      => date('Y-m-d H:i:s')
                         );
+                        if($this->input->post('Cancle')!=""){
+                            $orderstat['order_cancel_res']  = $this->input->post('canceled_desc');
+                        }
+                        if($this->input->post("canceled_option")!=""){
+                            $orderstat['order_cancel_option']   = $this->input->post('canceled_option');
+                        }
                         $this->db->insert('order_status',$orderstat);
                         $ifd = $this->db->insert_id();
                         $this->db->where('orderstatus_id',$ifd)->update('order_status',array('orderstatusid'=>'ORDSTA'.$ifd));
                     }
-                    /*=========================================*/
                 }
                 return true;
             }else{
                 return false;
+            }
+        }
+        public function driver_assion_order(){
+            $parse['whereCondition'] = "or.order_unique_id LIKE '".$this->input->post("unique_id")."' and ord.orderdetail_restaurant_id LIKE '".$this->input->post("restrant_id")."'";
+            $ordst = $this->getOrderDetails($parse);
+            if(is_array($ordst) && count($ordst) > 0){
+                $data = array(
+                    'order_id'              => $ordst['order_id'],
+                    'restaurant_id'         => $ordst['resturant_id'],
+                    'driver_id'             => '1DRIVER',
+                    'custmore_id'           => $ordst['orderdetail_customer_id'],
+                    'custmore_adder_id'     => $ordst['customeraddress_id'],
+                    'driverassign_add_by'   => $this->input->post("restrant_id"),
+                    'driverassign_add_date' => date('Y-m-d H:i:s a')
+                );
+                //print_r($data);exit;
+                $this->db->insert('driver_assign_order',$data);
+                $id = $this->db->insert_id();
+                $this->db->where('driverassignorderid',$id)->update('driver_assign_order',array('driverassignorder_id' => 'ORDAST'.$id));
+                return 'ORDAST'.$id;
             }
         }
         /*----------------------/Oredr Data------------------------*/

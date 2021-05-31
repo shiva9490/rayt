@@ -16,11 +16,10 @@ if($ur  == 1 || $dr == '1' || $sr == 1){
                 <th>S.No</th>
                 <th><a href="javascript:void(0);" data-type="order" data-field="driver_id" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this))">driver Id <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
                 <th><a href="javascript:void(0);" data-type="order" data-field="driver_name" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this))">Driver Name <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
-               
                 <th><a href="javascript:void(0);" data-type="order" data-field="driver_phone" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this))">Phone No<i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
-               
                 <th>Email</th>   
-                <th>Address </th>            
+                <th>Address </th>
+                <th>Login Details</th>
                 <th><a href="javascript:void(0);" data-type="order" data-field="driver_status" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this))">Status <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
                 <th>Action</th>
             </tr>
@@ -44,13 +43,19 @@ if($ur  == 1 || $dr == '1' || $sr == 1){
             ?>
             <tr>
                 <td><?php echo $limit++;?></td>
-                <td class="fonn"><?php echo $ve->driver_id;?><i class="fa fa-clone" aria-hidden="true"></i></td>
+                <td class="fonn">
+                    <a href="<?php echo adminurl("Driver-Details/".$ve->driver_id);?>">
+                        <span id="paragraph-copy<?php echo $ve->driver_id;?>" style="color:blue"><?php echo $ve->driver_id;?></span>
+                    </a>
+                    <a class="copy<?php echo $ve->driver_id;?>" href="javascript:;" data-clipboard-action="copy" data-tap<?php echo $ve->driver_id;?>="<?php echo $ve->driver_id;?>" data-clipboard-target="#paragraph-copy<?php echo $ve->driver_id;?>" onclick="copy('<?php echo $ve->driver_id;?>');">
+                        <i class="far fa-clone" aria-hidden="true"></i>
+                    </a>
+                </td>
                 <td><a href="#"><?php echo $ve->driver_name;?></a></td>
-              
                 <td><?php echo $ve->driver_phone;?></td>
-             
                 <td><?php echo $ve->driver_email;?></td>
                 <td><?php echo $ve->driver_address;?></td>
+                <td><?php echo 'User Id : '.$ve->driver_login_username.'<br>Password : '.$ve->driver_login_password;?></td>
                 <td><?php echo $vdata;?></td>
 				<?php if($ct == '1'){?>
                 <td> 
@@ -70,7 +75,7 @@ if($ur  == 1 || $dr == '1' || $sr == 1){
                     <a href="javascript:void(0);" onclick="confirmationDelete($(this),'Driver')" data-toggle='tooltip' attrvalue="<?php echo adminurl("Delete-Driver/".$ve->driver_id);?>" data-original-title="Delete driver" class="text-danger">
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-octagon table-cancel"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
 					</a>
-                    <?php }  ?>
+                    <?php } ?>
                 </td>
                 <?php }  ?>
             </tr>

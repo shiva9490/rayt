@@ -131,19 +131,7 @@ class Login_model extends CI_Model{
                 }
                 return FALSE;
         }
-        public function updatePassword($suplid){
-                $dta    =   array(  
-                                "login_password"  =>    base64_encode($this->input->post("new_password")),  
-                                "login_md_on"     =>    date("Y-m-d h:i:s"),
-                                "login_md_by"     =>    $this->session->userdata("login_id")
-                            );
-                $this->db->update("login",$dta,array("login_id" => $suplid));  
-                $vsp    =    $this->db->affected_rows();
-                if($vsp > 0){  
-                    return TRUE;
-                }
-                return FALSE;
-        }
+      
         public function update_user($loginid){
                 $dta    =   array( 
                                 "login_name"      =>    ucwords($this->input->post("username")),
@@ -204,37 +192,70 @@ class Login_model extends CI_Model{
                 return FALSE;
         }
         public function sendpassword(){
-                $emailid 	=	$this->input->post("emailid");  
-                $params["whereCondition"]      =   "login_email LIKE '$emailid'"; 
+                //echo "<pre>";print_r($this->input->post());exit;
+                $email_user 	=	$this->input->post("email_user");  
+                $params["whereCondition"]      =   "login_email LIKE '$email_user' OR login_name LIKE '$email_user'"; 
                 $vsl        =   $this->queryuser($params)->row_array(); 
+                // echo "<pre>";print_r($vsl);exit;
                 $pass       =   base64_decode($vsl["login_password"]);  
-                $config['protocol']    	= 'smtp';
-                $config['smtp_host']    = sitedata('site_host');
-                $config['smtp_port']    = sitedata("site_port"); 
-                $config['smtp_user']    = sitedata("site_email");
-                $config['smtp_pass']    = sitedata("site_emailpassword");
-                $config['charset']    	= 'utf-8';
-                $config['newline']    	= "\r\n";
-                $config['mailtype'] 	= 'html'; // or html
-                $config['validation'] 	= TRUE;
-                $this->email->initialize($config);
-                $this->email->from(sitedata("site_email"), 'Administrator'); 
-                $this->email->to($emailid); 
-                $this->email->subject('Forgot Password');
-                $message 	=	"Dear User,<br/><br/>";
+                // $config['protocol']    	= 'smtp';
+                // $config['smtp_host']    = sitedata('site_host');
+                // $config['smtp_port']    = sitedata("site_port"); 
+                // $config['smtp_user']    = sitedata("site_email");
+                // $config['smtp_pass']    = sitedata("site_emailpassword");
+                // $config['charset']    	= 'utf-8';
+                // $config['newline']    	= "\r\n";
+                // $config['mailtype'] 	= 'html'; // or html
+                // $config['validation'] 	= TRUE;
+                // $this->email->initialize($config);
+                // $this->email->from(sitedata("site_email"), 'Administrator'); 
+                $toemail = $vsl['login_email']; 
+                $subject = 'Forgot Password';
+                $message 	=	"Dear $email_user,<br/><br/>";
                 $message	.=	"Please find the user credentials to login in to the portal.<br/>";
                 $message	.=	"<a href='".adminurl("")."'>Click Here</a><br/>";
-                $message	.=	"<b>Email Id</b>:".$emailid."<br/>";
+                $message	.=	"<b>Email Id / User name</b>:".$email_user."<br/>";
                 $message	.=	"<b>Password</b>:".$pass;
                 $message	.=	"<br/><br/>";
                 $message	.=	"<b>Regards</b><br/>";
                 $message	.=	"<b style='color:blue;'>".sitedata("site_name")."</b>";
-                $this->email->message($message);
-                $result =  $this->email->send();
-                //print_r($this->email->print_debugger());exit;
+                $result =  $this->common_config->configemail($toemail,$subject,$message);
                 if($result){    
                   return TRUE;	
                 }
                 return FALSE; 
+        }
+         public function checkvaluepassword(){ 
+            $userpass = base64_encode($this->input->post('password'));           
+            $params["whereCondition"]   =   "l.login_password LIKE '".$userpass."' AND l.login_id LIKE '".$this->session->userdata("login_id")."' ";
+            $vsl        =   $this->queryuser($params)->row_array();         
+           // echo "<pre>";print_r($vsl );exit;
+            if(is_array($vsl) && count($vsl) > 0){ 
+                return true; 
+            }
+            return false;
+         }
+         public function checkpassword($fields,$userpass){  
+            $params["whereCondition"]   =   'l.'.$fields.' LIKE "'.$userpass.'"';
+            $rev        =   $this->queryuser($params)->row_array();
+            if(is_array($rev) && count($rev) > 0){ 
+                return true; 
+            }
+                return false;
+         }
+         public function updatePassword($userid){
+         
+            $dta    =   array(  
+                            "login_password"  =>    base64_encode($this->input->post("new_password")),  
+                            "login_md_on"     =>    date("Y-m-d h:i:s"),
+                            "login_md_by"     =>    $this->session->userdata("login_id")
+                        );
+                       // echo "<pre>";print_r($dta);exit;
+            $this->db->update("login",$dta,array("login_id" => $userid));  
+            $vsp    =    $this->db->affected_rows();
+            if($vsp > 0){  
+                return TRUE;
+            }
+            return FALSE;
         }
 }

@@ -14,7 +14,7 @@ class Orders extends CI_Controller{
 		);
 		$this->load->view("admin/inner_template",$dta);
 	}
-	public function viewOrders($str){
+	public function viewOrders(){
 	    $page       =   $this->uri->segment('3');
 		$offset     =   (!$page)?"0":$page;
 		$keywords   =   $this->input->post('keywords');
@@ -35,7 +35,7 @@ class Orders extends CI_Controller{
 		}elseif($ids == "Completed Pickup"){
 		    $ht  = "ord.orderdetails_rest_staus LIKE 'Completed Pickup'";
 		}elseif($ids == "Arraived at customes"){
-		   //$ht  = "ord.orderdetails_rest_staus LIKE 'Completed Pickup'";
+		    $ht  = "ord.orderdetails_rest_staus LIKE 'arrived order'";
 		   //$group  = "or.order_id";
 		}elseif($ids == "Delivered"){
 		    $ht  = "ord.orderdetails_rest_staus LIKE 'Delivered'";
@@ -46,9 +46,9 @@ class Orders extends CI_Controller{
 		$conditions['whereCondition']   = $ht;
 		$conditions['group_by']         = $group;
 		$orders   =   $this->input->post('orders');
-		$perpage        =    $this->input->post("limitvalue")?$this->input->post("limitvalue"):'5';    
+		$perpage        =    $this->input->post("limitvalue")?$this->input->post("limitvalue"):'30';    
 		$orderby        =    $this->input->post('orderby')?$this->input->post('orderby'):"DESC";
-		$tipoOrderby    =    $this->input->post('tipoOrderby')?str_replace("+"," ",$this->input->post('tipoOrderby')):"orderid";  
+		$tipoOrderby    =    $this->input->post('tipoOrderby')?str_replace("+"," ",$this->input->post('tipoOrderby')):"orderid";
 		$totalRec               =   $this->order_model->cntviewOrders($conditions);
 		if(!empty($orderby) && !empty($tipoOrderby)){
 			$dta['orderby']        =   $conditions['order_by']      =   $orderby;
@@ -67,6 +67,7 @@ class Orders extends CI_Controller{
 		$dta["limit"]           =   $offset+1;
 		$dta["urlvalue"]        =   adminurl("viewOrders/");
 		$dta["view"]            =   $this->order_model->viewOrders($conditions); 
+		
 		$this->load->view("ajax_orders",$dta);
 	}
 	

@@ -11,18 +11,17 @@ if($ur  == 1 || $dr == '1' || $sr == 1){
 
 <div class="row pt-2 pb-2">
    <div class="col-sm-12">
-      <h4 class="page-title"><?php echo $title;?></h4>
       <ol class="breadcrumb">
          <li class="breadcrumb-item"><a href="<?php echo adminurl("Dashboard");?>">Home</a></li>
          <?php echo $vtil;?>
-         <li class="breadcrumb-item active" aria-current="page">Update Driver</li>
+         <li class="breadcrumb-item active" aria-current="page"><?php echo $title;?></li>
       </ol>
    </div>
 </div>
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
-            <div class="card-header">Update Driver</div>
+            <div class="card-header"><?php echo $title;?></div>
             <div class="card-body">
                 <form action="" method="post" class="validform formssample forms-sample" id="role" novalidate=""  enctype="multipart/form-data">
                 <div class="row">
@@ -30,11 +29,9 @@ if($ur  == 1 || $dr == '1' || $sr == 1){
 							<!--<h5>English</h5>-->
 							<div class="row bb-grey">
 								<div class="col-md-12 m-3">
-									<label for="Deiversname" >Driver Name *</label>
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group b-grey">
-
 												<div class="row">
 													<div class="col-md-12 mb-3">
 														<div class="form-group b-grey">											
@@ -92,9 +89,7 @@ if($ur  == 1 || $dr == '1' || $sr == 1){
 											<div class="col-md-6">
 												<label >email *</label>
 												<input type="text" class="form-control"  name="driver_email" placeholder="Enter E-mail address" value="<?php echo $view['driver_email'];?>"  />
-											
 											</div>
-											
 										</div>
 									</div>
 								</div>
@@ -383,6 +378,74 @@ if($ur  == 1 || $dr == '1' || $sr == 1){
 										</div>
 									</div>
 								</div>
+								
+								<div class="col-md-12 m-3"> 
+									<label >Working days*</label>
+									<?php 
+									if($drivertime){
+										$menu   =   $this->config->item("menu_hours");
+										$j=1; foreach($drivertime as $key=>$i){
+									?>
+									<div class="form-group b-grey">
+										<div class="row">
+    										<div class="col-md-2">
+    											<label><?php echo ($i->driver_weekly);?> -
+    											<input type="hidden"  name="driver_weekly[]" value="<?php echo $i->driver_weekly;?>"  />
+    										</div>
+    										<div class="col-md-4">
+    											<input class="form-control" type="hidden" name="drivertime_id[]" value="<?php echo $i->drivertime_id;?>" required />
+    											<input class="form-control" id="timepicker<?php echo $j;?>" name="strt_time[]" value="<?php echo ($i->driver_start_time!="")?$i->driver_start_time:'';?>" />
+    										</div>
+    										<div class="col-md-4">
+    											<input id="timepicker1<?php echo $j;?>" name="end_time[]" value="<?php echo ($i->driver_end_time!="")?$i->driver_end_time:'';?>"  class="form-control"/>
+    										</div>
+    										<div class="col-md-2">		
+    											<input type="checkbox" class="" name="working_hours[<?php echo $key; ?>]" value="0" id="<?php echo $i->driver_close_time;?>" 
+    											<?php if($i->driver_close_time == '1'){echo 'checked';}?>/>
+    											<?php if($i->driver_close_time == '0'){?>
+    												<label >Working</label>	
+    											<?php } else{?>  <label >Holiday</label>	 <?php }?>
+    										</div>
+								    	</div>
+									</div>
+									<?php 
+										$j++;
+										}
+									}
+									else{ ?>
+									<?php
+										$menu   =   $this->config->item("menu_hours");
+										$i=0;$j=0;foreach($menu as $m){
+										    print_r(set_value('strt_time'[0]));
+									?>
+									<div class="form-group b-grey">
+										<div class="row">
+											<div class="col-md-2">
+												<label><?php echo $m;?> - </label>
+												<input type="hidden"  name="driver_weekly[]" value="<?php echo $m;?>"  />
+											</div>
+											<div class="col-md-4">
+												<input id="timepicker<?php echo $i;?>" name="strt_time[]" value="<?php echo set_value('strt_time".$i."');?>" required />
+											</div>
+											<div class="col-md-4">
+												<input id="timepicker1<?php echo $i;?>" name="end_time[]" value="<?php echo set_value('end_time".$i."');?>"  class="form-control" required />
+											</div>	
+											<div class="col-md-2">										
+												<label class="new-control new-checkbox new-checkbox-text checkbox-dark">
+													<input type="checkbox" name="working_hours[]" value="<?php echo $m;?>" id="<?php echo $m;?>" <?php if(set_value('working_hours')){echo 'check';} ?> class="new-control-input">
+													<span class="new-control-indicator"></span><span class="new-chk-content">Holiday</span>
+												</label>
+											</div>									
+										</div>
+									</div>
+									<?php 
+										$i++;
+										$j++;
+										}
+									}
+									?>
+								
+								</div>
 
 								<div class="col-md-12 m-3">
 									<div class="custom-file-container" data-upload-id="myFirstImage">
@@ -409,11 +472,9 @@ if($ur  == 1 || $dr == '1' || $sr == 1){
                                         <a id="multiple-reset" href="<?php echo base_url().'Rayt-Admin/Drivers'; ?>" class="btn btn-primary">Cancel</a>
                                     </div>
                                 </div>
-                            </div>    
-
+                            </div> 
 						</div>
-					</div>                  
-                
+					</div> 
                 </form>
             </div><!--end card-body-->
         </div><!--end card-->

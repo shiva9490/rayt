@@ -8,10 +8,16 @@ class Drivers extends CI_Controller{
 	}
 
 	public function create(){
-		$number = rand(111,999);
-		$id = 'DRIRAY'.date('ym').$number;
+	    $incre = $this->db->query('SELECT MAX(driver_login_username) as ids FROM `driver_login')->row_array();
+	    if(isset($incre['ids']) && ($incre['ids']) != ""){
+	        $number = (int)$incre['ids']+1;
+	    }else{
+	        $number ='1';
+	    }
+		$id = str_pad($number, 4, "0", STR_PAD_LEFT);
 		$conditions['whereCondition']	="zone_abc = 'Active'";
 		$zone            =   $this->zone_model->viewZones($conditions);
+// 		echo "<pre>";print_r($zone );exit;
 		$condition['whereCondition']	="resturant_status = 'Active'";
 		$rest            =   $this->resturant_model->viewResturant($condition); 
 		$dta    =   array(
@@ -22,6 +28,7 @@ class Drivers extends CI_Controller{
 			"rest"		=>  $rest
 		);
 		if($this->input->post('publish')){
+		   // echo '<pre>';print_r($this->input->post());exit;
 			$this->form_validation->set_rules('driver_name','Driver Name','required');	
 			$this->form_validation->set_rules('driver_name_last','Driver Last Name','required');				
 			$this->form_validation->set_rules('driver_phone','Phone Number','required|numeric|min_length[8]');					
@@ -73,6 +80,24 @@ class Drivers extends CI_Controller{
         // }
         return TRUE; 
     }
+    public function driver_details(){
+		$uri    =   $this->uri->segment("3"); 
+		$p['whereCondition'] = "d.driver_id = '".$uri."'";
+		$data            =   $this->drivers_model->getDriver($p); 
+		//$driid = $this->input->post('der');
+	    $par['columns']         =   "driver_address_latitude,driver_address_longitude";
+        $par['whereCondition']  =   "d.driver_id LIKE '".$uri."'";
+        $par['tipoOrderby']     =   "driver_addressid";
+        $par['order_by']        =   "DESC";
+        $point  = $this->drivers_model->getDriverupdate($par);
+		$dta    =   array(
+			"title"     =>  "Driver Details",
+			"content"   =>  'driver_details',				
+			"view"		=>  $data,			
+			"point"		=>  $point,		
+		);	
+		$this->load->view('admin/inner_template',$dta);
+	}
 	public function viewDriver($str){
 	    $conditions =   array();
 		$page       =   $this->uri->segment('3');
@@ -153,7 +178,7 @@ class Drivers extends CI_Controller{
 				redirect(sitedata("site_admin")."/Dashboard");
 		}
 		$uri    =   $this->uri->segment("3"); 
-		$p['whereCondition'] = "driver_id = '".$uri."'";
+		$p['whereCondition'] = "d.driver_id = '".$uri."'";
 		$vue    =   $this->drivers_model->getDriver($p);
 	//	echo "<pre>";print_r($vue);exit;
 		if(count($vue) > 0){
@@ -171,7 +196,7 @@ class Drivers extends CI_Controller{
 						"rest"		=>  $rest
 				); 
 				if($this->input->post("submit")){
-						//echo '<pre>';print_r($this->input->post());exit;	
+			//	echo '<pre>';print_r($this->input->post());exit;	
 						$this->form_validation->set_rules('driver_name','Driver Name','required');	
 						$this->form_validation->set_rules('driver_name_last','Driver Last Name','required');				
 						$this->form_validation->set_rules('driver_phone','Phone Number','required|numeric|min_length[8]');					
@@ -202,6 +227,9 @@ class Drivers extends CI_Controller{
 								}
 						}
 				}
+				$conditionss=array();
+				$conditionss['id']=$uri ;
+				$dt['drivertime']=$this->drivers_model->viewDriverTime($conditionss);
 				$this->load->view("admin/inner_template",$dt);
 		}else{
 				$this->session->set_flashdata("war","Driver does not exists."); 
@@ -353,6 +381,14 @@ public function ajax_res_list(){
 	}
 }
 	
-	
+	public function update_drive_loc(){
+	    $driid = $this->input->post('der');
+	    $par['columns']         =   "driver_address_latitude,driver_address_longitude";
+        $par['whereCondition']  =   "d.driver_id LIKE '".$driid."'";
+        $par['tipoOrderby']     =   "driver_addressid";
+        $par['order_by']        =   "DESC";
+        $data['point']  = $this->drivers_model->getDriverupdate($par);
+        $this->load->view('ajax_update_driver',$data);
+	}
 }
 ?>

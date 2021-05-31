@@ -150,7 +150,10 @@ class Order extends CI_Controller{
 	    if($this->input->post()!=""){
 	        $eve = $this->input->post('eve');
 	        $status = $this->input->post('status');
-	        $par['whereCondition'] = "order_unique_id LIKE '".$this->input->post('eve')."' AND ord.orderdetail_restaurant_id LIKE '".$this->session->userdata("restraint_id")."' AND orderdetails_rest_staus LIKE '".$status."'";
+	        $restid = $this->input->post('restid');
+	        $par['columns']        =   "ord.order_id AS orderids,or.*,ord.*,rt.*,res.*,cs.*,ost.*,cadd.*,drso.*,dr.*";
+	        $he = ($this->session->userdata("restraint_id")!="")?$this->session->userdata("restraint_id"):$restid;
+	        $par['whereCondition'] = "order_unique_id LIKE '".$this->input->post('eve')."' AND ord.orderdetail_restaurant_id LIKE '".$he."' AND orderdetails_rest_staus LIKE '".$status."'";
 	        $results = $this->order_model->viewOrderDetails($par);
 	        //echo '<pre>';print_r($results);exit;
 	        if(is_array($results) && count($results) > 0){

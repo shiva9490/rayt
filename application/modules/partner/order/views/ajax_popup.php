@@ -24,7 +24,7 @@
                         <button class="btn btn-lg btn-secondary mb-4 mr-2">Reject</button>
                    
                         <?php }elseif($status=="Preparing"){ ?>
-                            <button class="btn btn-lg btn-primary mb-4 mr-2 orders" data-title ="<?php echo $orderstatus[1];?>" onclick="accectorder('<?php echo $title;?>')">Food Is Done</button>
+                            <button class="btn btn-lg btn-primary mb-4 mr-2 orders" data-value="<?php echo $this->session->userdata("restraint_id");?>" data-title ="<?php echo $orderstatus[1];?>" onclick="accectorder('<?php echo $title;?>')">Food Is Done</button>
                         <?php } ?>
                      </div>
                     <div class="col-sm-12 mb-3">
@@ -52,13 +52,13 @@
                                                 //echo '<pre>';print_r($r);exit;
                                             ?>
                                             <div class="col-md-4">
-                                                <p class="t-time"><?php echo date("H:i a", strtotime($r[0]->orderstatus_add_date));?></p>
+                                                <p class="t-time"><?php if(isset($r[0]->orderstatus_add_date)) {echo date("H:i a", strtotime($r[0]->orderstatus_add_date)); }else{ echo " "; }?></p>
                                                 <div class="item-timeline">
                                                     <div class="t-dot t-dot-primary">
                                                     </div>
                                                 </div>
                                                 <div class="t-text">
-                                                    <p><?php echo $r[0]->orderdetail_status;?></p>
+                                                    <p><?php if(isset($r[0]->orderdetail_status)) {echo $r[0]->orderdetail_status; }?></p>
                                                     <p class="t-meta-time">25 mins ago</p>
                                                 </div>
                                             </div>

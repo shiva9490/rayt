@@ -13,11 +13,14 @@
     <link href="<?php echo $this->config->item('admin_assets');?>assets/css/plugins.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo $this->config->item('admin_assets');?>plugins/apex/apexcharts.css" rel="stylesheet" type="text/css">
     <link href="<?php echo $this->config->item('admin_assets');?>assets/css/dashboard/dash_1.css" rel="stylesheet" type="text/css" />
-     <link href="<?php echo $this->config->item('admin_assets');?>plugins/forms/switches.css" rel="stylesheet" type="text/css">
     <link href="<?php echo $this->config->item('admin_assets');?>plugins/users/account-setting.css" rel="stylesheet" type="text/css">
     <link href="<?php echo $this->config->item('admin_assets');?>plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css">
     <link href="<?php echo $this->config->item('admin_assets');?>assets/css/dashboard.css" rel="stylesheet" type="text/css">
     <link href="<?php echo $this->config->item('admin_assets');?>assets/css/forms/theme-checkbox-radio.css" rel="stylesheet" type="text/css">
+    <link href="<?php echo $this->config->item('admin_assets');?>plugins/forms/switches.css" rel="stylesheet" type="text/css">
+     <link rel="stylesheet" href="<?php echo $this->config->item('admin_assets');?>plugins/font-icons/fontawesome/css/regular.css">
+    <link rel="stylesheet" href="<?php echo $this->config->item('admin_assets');?>plugins/font-icons/fontawesome/css/fontawesome.css">
+
 	<?php if($this->uri->segment(1) !=""){?>
 	<link href="<?php echo $this->config->item('admin_assets');?>assets/css/scrollspyNav.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo $this->config->item('admin_assets');?>plugins/animate/animate.css" rel="stylesheet" type="text/css" />
@@ -34,12 +37,14 @@
     <link href="<?php echo $this->config->item('admin_assets');?>plugins/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
     <link href="<?php echo $this->config->item('admin_assets');?>plugins/noUiSlider/custom-nouiSlider.css" rel="stylesheet" type="text/css">
     <link href="<?php echo $this->config->item('admin_assets');?>plugins/bootstrap-range-Slider/bootstrap-slider.css" rel="stylesheet" type="text/css">
-     <link rel="stylesheet" type="text/css" href="<?php echo $this->config->item('admin_assets');?>plugins/select2/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->config->item('admin_assets');?>plugins/select2/select2.min.css">
+    <link href="<?php echo $this->config->item('admin_assets');?>assets/css/authentication/form-2.css" rel="stylesheet" type="text/css" />
 	<?php }if($this->uri->segment(2) =="Orders"){ ?>
 	  <link href="<?php echo $this->config->item('admin_assets');?>assets/css/components/tabs-accordian/custom-tabs.css" rel="stylesheet" type="text/css" />
 	 <?php }if($this->uri->segment(2) =="Menus"){ ?>
 	 <link href="<?php echo $this->config->item('admin_assets');?>assets/css/apps/todolist.css" rel="stylesheet" type="text/css" />
 	 <?php } ?>
+	 	<link href="<?php echo $this->config->item('admin_assets');?>assets/css/custom.css" rel="stylesheet" type="text/css" />
 	 <style>
     #snackbar {
         visibility: hidden;
@@ -122,6 +127,13 @@
             </div>           	                                                                             
         </div>
     </div>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" data-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content datas">
+                
+            </div>
+        </div>
+    </div>
     <div class="modal right fade orderModel" id="myModal" data-backdrop="static" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content orderModel">
@@ -137,6 +149,14 @@
         </div>
     </div>
     <div id="snackbar">Some text some message..</div>
+    <script>
+    function copy(element){
+      var copyText = $('.copy'+element).attr('data-tap'+element).select();
+      copyText.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      alert("Copied the text: " + copyText.value);
+    }
+    </script>
     <script src="<?php echo $this->config->item('admin_assets');?>assets/js/libs/jquery-3.1.1.min.js"></script>
     <script src="<?php echo $this->config->item('admin_assets');?>bootstrap/js/popper.min.js"></script>
     <script src="<?php echo $this->config->item('admin_assets');?>bootstrap/js/bootstrap.min.js"></script>
@@ -243,6 +263,7 @@
     <script src="<?php echo $this->config->item('admin_assets');?>plugins/bootstrap-range-Slider/bootstrap-rangeSlider.js"></script>
     <script src="<?php echo $this->config->item('admin_assets');?>plugins/select2/select2.min.js"></script>
     <script src="<?php echo $this->config->item('admin_assets');?>plugins/select2/custom-select2.js"></script>
+    <script src="<?php echo $this->config->item('admin_assets');?>assets/js/authentication/form-2.js"></script>
 	<?php }if($this->uri->segment(2) == "Zones"){?>
 	<script>
         function initMap() {
@@ -256,8 +277,35 @@
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBe-HPCsy9e136sYKeO549pu3Zj8GytkXI&callback=initMap&libraries=&v=weekly"
       async
     ></script>
+    <?php }if($this->uri->segment(2) == "Update-Items"){?>
+    <script>
+        addons();
+    </script>
+     
+    <?php }elseif($this->uri->segment(2) == "Driver-Details"){?> ?>
+    <script>
+        $(function(){
+            updatedriloca();
+        });
+    </script>
     <?php } ?>
 	<script src="<?php echo $this->config->item('admin_assets');?>assets/js/rayt.js"></script>
-	
+	 <script>
+        $(document).ready(function() {
+            $("#show_hide_password span").on('click', function(event) {           
+                event.preventDefault();
+                if($('#show_hide_password input').attr("type") == "text"){
+                    $('#show_hide_password input').attr('type', 'password');
+                    $('#show_hide_password i').addClass( "fa-eye-slash" );
+                    $('#show_hide_password i').removeClass( "fa-eye" );
+                }else if($('#show_hide_password input').attr("type") == "password"){
+                    $('#show_hide_password input').attr('type', 'text');
+                    $('#show_hide_password i').removeClass( "fa-eye-slash" );
+                    $('#show_hide_password i').addClass( "fa-eye" );
+                }
+            });
+        });
+</script>
+    
 </body>
 </html>

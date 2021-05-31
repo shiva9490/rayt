@@ -1,46 +1,44 @@
 <?php
 class Zone_model extends CI_Model{
     function add_zone(){
-        $par['whereCondition'] = "zone_name LIKE '".$this->input->post('zon')."'";
-        $zon = $this->getZones($par);
-        if(is_array($zon) && count($zon) > 0){
-            return  $this->addlag($zon['zone_id']);
-        }else{
-            $dta = array(
-                'zone_name'      => $this->input->post('zon'),
-                'zone_key_word'  => $this->common_config->cleanstr($this->input->post('zon')),
-                'zone_add_by'    => $this->session->userdata("login_id"),
-                'zone_add_date'  => date('Y-m-d H:i:s'),
-            );
-            $this->db->insert('zones',$dta);
-            $id = $this->db->insert_id();
-            if($id){
-                $d = array(
-                    'zone_id' => "ZONE".$id,
-                );
-                $this->db->where('zoneid',$id)->update('zones',$d);
-                return $this->addlag("ZONE".$id);
-                //return "ZONE".$id;
-            }else{
-                return false;
-            }
-        }
-    }
-    public function addlag($id){
-        $data = array(
-            'zone_id'           => $id,
-            'zonelist_lat'      => $this->input->post('lat'),
-            'zonelist_lng'      => $this->input->post('lng'),
-            'zonelist_add_by'   => $this->session->userdata("login_id"),
-            'zonelist_add_date' => date('Y-m-d H:i:s'),
+        $dta = array(
+            'zone_name'      => $this->input->post('zoneName'),
+            'zone_key_word'  => $this->common_config->cleanstr($this->input->post('zoneName')),
+            'zone_add_by'    => $this->session->userdata("login_id"),
+            'zone_add_date'  => date('Y-m-d H:i:s'),
         );
-        $this->db->insert('zone_list',$data);
+        $this->db->insert('zones',$dta);
         $id = $this->db->insert_id();
         if($id){
             $d = array(
-                'zonelist_id' => "ZONELIST".$id,
+                'zone_id' => "ZONE".$id,
             );
-            $this->db->where('zonelistid',$id)->update('zone_list',$d);
+            $this->db->where('zoneid',$id)->update('zones',$d);
+            return $this->addlag("ZONE".$id);
+        }else{
+            return false;
+        }
+    }
+    public function addlag($id){
+        $lat = $this->input->post('lat');
+        if(is_array($lat) && count($lat) >0){
+            foreach($lat as $i=>$l){
+                $data = array(
+                    'zone_id'           => $id,
+                    'zonelist_lat'      => $this->input->post('lat')[$i],
+                    'zonelist_lng'      => $this->input->post('lng')[$i],
+                    'zonelist_add_by'   => $this->session->userdata("login_id"),
+                    'zonelist_add_date' => date('Y-m-d H:i:s'),
+                );
+                $this->db->insert('zone_list',$data);
+                $id = $this->db->insert_id();
+                if($id){
+                    $d = array(
+                        'zonelist_id' => "ZONELIST".$id,
+                    );
+                    $this->db->where('zonelistid',$id)->update('zone_list',$d);
+                }
+            }
             return true;
         }else{
             return false;

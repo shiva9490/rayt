@@ -15,7 +15,6 @@ class Resturant_model extends CI_Model{
 		$direct = "upload/resturants";
         if (file_exists($direct)){
         }else{mkdir("upload/resturants");}
-        
         $picture1= '';
 		if(!empty($_FILES['sign']['name'])){
 			$config['upload_path'] = $direct.'/';
@@ -117,6 +116,7 @@ class Resturant_model extends CI_Model{
             'resturant_menu_hours'              => ($this->input->post('menu_hours'))?implode(',',$this->input->post('menu_hours')):'',
             'resturant_preparation'             => $this->input->post('preparation_time'),
             'resturant_delivery'                => $this->input->post('delivery_fee'),
+            'resturant_minorder'                => $this->input->post('minorder'),
             'resturant__discount'               => $this->input->post('discount'),
             'resturant_rating'                  => $this->input->post('rating'),
             'resturant_cuisine'                 => ($this->input->post('cusine'))?implode(',',$this->input->post('cusine')):'',
@@ -468,6 +468,7 @@ class Resturant_model extends CI_Model{
             'resturant_delivery'            => $this->input->post('delivery_fee'),
             'resturant__discount'           => $this->input->post('discount'),
             'resturant_rating'              => $this->input->post('rating'),
+            'resturant_minorder'            => $this->input->post('minorder'),
             'resturant_cuisine'             => ($this->input->post('cusine'))?implode(',',$this->input->post('cusine')):'',
             'resturant_zone'                => $this->input->post('zone'),
             'resturant_zone_time'           => $this->input->post('zone_time'),
@@ -559,6 +560,7 @@ class Resturant_model extends CI_Model{
             return false;    
         }
     }
+    
     public function unique_id_resturant($str){
         $pms["whereCondition"]  =   "resturant_name = '".$str."'";
         $vsp    =   $this->getResturant($pms);
@@ -567,6 +569,7 @@ class Resturant_model extends CI_Model{
         }
         return false;
     }
+    
     public function queryResImages($params = array()){
         $dt =   array(
             "resturant_images_open"  => '1'
@@ -717,9 +720,6 @@ class Resturant_model extends CI_Model{
         return FALSE;
     }
 
-
-
-
     public function queryRestime($params = array()){
         $dt =   array(
             "resturanttime_open"  => '1'
@@ -779,17 +779,16 @@ class Resturant_model extends CI_Model{
     }
 
     public function update_Res_Time($uro) {
-      
-  //echo "<pre>"; print_r($this->input->post());exit;
-      //   $resturanttimedata = array();$close =array();
-      $i=0;
-      $starttime = $this->input->post('strt_time');
-      $endtime = $this->input->post('end_time');
-      $close = $this->input->post('menu_hours');
-      $weekly = $this->input->post('resturant_weekly');
-      $restime_id = $this->input->post('resturanttime_id');      
-        foreach ($this->input->post('resturant_weekly') as $res){      
-             $resturanttimedata = array(                 
+        //echo "<pre>"; print_r($this->input->post());exit;
+        //   $resturanttimedata = array();$close =array();
+        $i=0;
+        $starttime = $this->input->post('strt_time');
+        $endtime = $this->input->post('end_time');
+        $close = $this->input->post('menu_hours');
+        $weekly = $this->input->post('resturant_weekly');
+        $restime_id = $this->input->post('resturanttime_id');      
+        foreach ($this->input->post('resturant_weekly') as $res){
+             $resturanttimedata = array(
                 'resturant_weekly'          => $res,
                 'resturant_start_time'  	=> $starttime[$i],
                 'resturant_end_time'	    => $endtime[$i],
@@ -799,13 +798,11 @@ class Resturant_model extends CI_Model{
                 'resturanttime_update_by'  	=> ($this->session->userdata("restraint_id") !="")?$this->session->userdata("restraint_id"):'',
                 'resturanttime_update_on' 	=> date('Y-m-d H:i:s'),
             );
-          $this->db->where('resturanttime_id',$restime_id[$i])->update("resturant_time",$resturanttimedata);
+            $this->db->where('resturanttime_id',$restime_id[$i])->update("resturant_time",$resturanttimedata);
             $vspss   =    $this->db->affected_rows();  
             $i++;
         }
-        return true;   
-
+        return true;
     }
-
 }
 ?>

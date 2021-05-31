@@ -248,7 +248,6 @@ function searchFilter(page_num,url,id){
         }else{
             var ids = id;
         }
-        
         page_num        =   page_num?page_num:0; 
         var keywords    =   $('#FilterTextBox').val();
         var secserach   =   $('.secserach option:selected').val();   
@@ -355,6 +354,7 @@ function confirmationDelete(anchor, val) {
             $.post(atr,function(data){
                 if(data == 1){
                     loadpage();
+                    addonslist();
                 }
             });
             swal(
@@ -658,6 +658,28 @@ function timmes(eve){
 		});
     }
 }
+function timmesadmin(eve){
+    if(eve=="alltime"){
+        $('#alldays').css('display','none');
+        $('.differentdays').css('display','none');
+        $('.differentdays').empty();
+        $('#alldays').empty();
+    }else if(eve=="alldays"){
+        $('#alldays').css('display','block');
+        $('.differentdays').css('display','none');
+		$.post(adminurl+"/Weely-Avaliable",{eve:eve},function(data){
+			$('#alldays').html(data);
+			$('.differentdays').empty();
+		});
+    }else if(eve=="differentdays"){
+        $('#alldays').css('display','none');
+        $('.differentdays').css('display','block');
+		$.post(adminurl+"/Weely-Avaliable",{eve:eve},function(data){
+			$('#differentdays').html(data);
+            $('#alldays').empty();
+		});
+    }
+}
 function myevent(action){
     var eve = $(".alltime").attr('data-value');
     var eve2 = $("#inncer").attr('data-value');
@@ -754,13 +776,14 @@ function variants(eve){
     var id      = $('.variant'+eve).attr('data-ids'+eve);
     var total   = $('.total').val();
     var tempid  = $('#tempid').val();
+    var resturantid  = $('#resturant_id').val();
     if(id == "0" || id == "undefined"){
         var ids ="0";
     }else{
         var ids ="1";
     }
     $('.modal-content').empty();
-    $.post(adminurl+"/Variant-model",{eve:eve,title:title,total:total,tempid:tempid,ids:ids},function(data){
+    $.post(adminurl+"/Variant-model",{eve:eve,title:title,total:total,tempid:tempid,ids:ids,resturantid:resturantid},function(data){
         $('.bd-example-modal-lgs').modal('show');
 		$('.modal-content.addon').html(data);
 	});
@@ -903,37 +926,41 @@ function checktextarea() {
 /*-------------Zone ----------------------*/
 function lag(eve1,eve2){
     var zon = $('.zoneName').val();
-    if(zon !=""){
+    var zons = $('.zoneName').attr('data-value');
+    if(zon !="" && zon.length > 0){
         $('.old-row').remove();
-        var id = $('#dvMap').attr('data-value');
+        var id = $('.zoneName').attr('data-value');
         var i = parseInt(id)+parseInt(1);
-        $("#dvMap").attr('data-value',i);
-        $.post(adminurl + "/Add-Zone",{lat:eve1,lng:eve2,zon:zon}, function (data){
-            if(data > 0){
-                var innerHTML = '<div class="row" id="lagrows'+i+'">'+
-                                '<div class="col-md-1">'+
-                                    '<label></label><br>'+
-                                    '<span>'+i+'.</span>'+
-                                '</div>'+
-                                '<div class="col-md-5">'+
-                                    '<label>Latitude</label>'+
-                                    '<input type="text" class="form-control" value="'+eve1+'" id="lat'+i+'">'+
-                                '</div>'+
-                                '<div class="col-md-5">'+
-                                    '<label>Longitude</label>'+
-                                    '<input type="text" class="form-control" value="'+eve2+'" id="lng'+i+'">'+
-                                '</div>'+
-                                '<div class="col-md-1">'+
-                                    '<label></label><br>'+
-                                    '<a href="javascript:void(0);" data-id='+id+' id="'+id+'" class="remCF" onclick="remove(this)">'+
-                                        '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle table-cancel"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>'+
-                                    '</a>'+
-                                '</div>'+
-                            '</div>';
-                $('.newlag').append(innerHTML);
-            }
-        });
-        
+        $(".zoneName").attr('data-value',i);
+        if(eve1 !="" && eve2 !=""){
+            var innerHTML = '<div class="row" id="lagrows'+i+'">'+
+                            '<div class="col-md-1">'+
+                                '<label></label><br>'+
+                                '<span>'+i+'.</span>'+
+                            '</div>'+
+                            '<div class="col-md-5">'+
+                                '<label>Latitude</label>'+
+                                '<input type="text" class="form-control" name="lat[]" value="'+eve1+'" id="lat'+i+'">'+
+                            '</div>'+
+                            '<div class="col-md-5">'+
+                                '<label>Longitude</label>'+
+                                '<input type="text" class="form-control" name="lng[]" value="'+eve2+'" id="lng'+i+'">'+
+                            '</div>'+
+                            '<div class="col-md-1">'+
+                                '<label></label><br>'+
+                                '<a href="javascript:void(0);" data-id='+id+' id="'+id+'" class="remCF" onclick="remove(this)">'+
+                                    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle table-cancel"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>'+
+                                '</a>'+
+                            '</div>'+
+                        '</div>';
+            $('.newlag').append(innerHTML);
+        }else{
+            var i = parseInt(zons)-parseInt(1);
+            var element = document.getElementById(action.id);
+            $(".zoneName").attr('data-value',i);
+            $('.lagrows'+i).remove();
+        }
+        return true;
     }else{
         alert('Enter Zone Name.');
     }
@@ -946,6 +973,13 @@ function remove(action){
 function addcategory(){
     var title = $('.addcategory').attr('data-title');
     $.post(partnerurl+"/Add-Category",{title:title},function(data){
+        $('#exampleModalCenter').modal('show');
+		$('.datas').html(data);
+	});
+}
+function addcategorys(){
+    var title = $('.addcategory').attr('data-title');
+    $.post(adminurl+"/Add-Category",{title:title},function(data){
         $('#exampleModalCenter').modal('show');
 		$('.datas').html(data);
 	});
@@ -968,13 +1002,6 @@ function addingcategort(){
         }, 3000);
 	});
 }
-function addcategorys(){
-    var title = $('.addcategory').attr('data-title');
-    $.post(adminurl+"/Add-Category",{title:title},function(data){
-        $('#exampleModalCenter').modal('show');
-		$('.datas').html(data);
-	});
-}
 function addingcategorts(){
     var category = $('.category').val();
     var category_a = $('.category_a').val();
@@ -993,7 +1020,41 @@ function addingcategorts(){
         }, 3000);
 	});
 }
-
+function addingcategortss(){
+    var category = $('.category').val();
+    var category_a = $('.category_a').val();
+    var rastid = $('#rastid').val();
+    $.post(adminurl+"/Adding-Category",{category:category,category_a:category_a,rastid:rastid},function(data){
+        var html ='<div class="alert alert-success">'+
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                            '<i class="material-icons">close</i>'+
+                        '</button>'+
+                        data
+                    '</div>';
+		$('.msgs').html(html);
+		$('.categorybutton').css('display','none');
+		$('.loading').css('display','block');
+		setTimeout(function(){
+           window.location.reload(1);
+        }, 3000);
+	});
+}
+function addcategorydelete(eve){
+    var rastid = $('#rastid').val();
+    $.post(adminurl+"/Category-Rest-Delete",{eve:eve,rastid:rastid},function(data){
+        var html ='<div class="alert alert-success">'+
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                            '<i class="material-icons">close</i>'+
+                        '</button>'+
+                        data
+                    '</div>';
+		$('.msgs').html(html);
+		$('.loading').css('display','block');
+		setTimeout(function(){
+           window.location.reload(1);
+        }, 3000);
+	});
+}
 /*-------------Enfd addcategory ----------------------*/
 
 function addonvariant(){
@@ -1058,6 +1119,79 @@ function addonvariant(){
             });
         }
 }
+
+function addonvariants(){
+        var addonitem = [];
+        $(".addonitem").each(function (){
+            var sThisVal = $(this).val();
+            if(sThisVal != ''){
+                addonitem.push(sThisVal);
+            }
+        });
+        var addonitem_amount = [];
+        $(".addonitem_amount").each(function (){
+            var sThisVals = $(this).val();
+            if(sThisVals != ''){
+                addonitem_amount.push(sThisVals);
+            }
+        });
+        var addon_listid = [];
+        $(".addon_listid").each(function (){
+            var sThisVals = $(this).val();
+            if(sThisVals != ''){
+                addon_listid.push(sThisVals);
+            }
+        });
+        var eve                 = $("#eve").val();
+        var tempid              = $("#tempid").val();
+        var addonoption         = $(".addonoption").val();
+        var selection           = $("input[name='selection']:checked").val();
+        var minselection        = $('.minselection option:selected').val();   
+        var maxvalue            = $('.maxvalue option:selected').val();   
+        var addonitem           = addonitem;
+        var addonitem_amount    = addonitem_amount;
+        if(eve == "0" || eve == ""){
+            if(addonoption == ""){
+                $('.msg').html('<div class="alert alert-warning mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Failed!</strong>Enter Title of customization </div>');
+            }else{
+                $.post(adminurl+"/Adding-variant",
+                {eve:eve,tempid:tempid,selection:selection,minselection:minselection,addonitem:addonitem,addonitem_amount:addonitem_amount,maxvalue:maxvalue,addon_listid:addon_listid,addonoption:addonoption},
+                function(data){
+                    if(data == 1){
+                        $('.msg').html('<div class="alert alert-primary mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Successfully!</strong> Addons Adding Successfully</div>');
+                        setTimeout(function(){
+                           $('.bd-example-modal-lgs').modal('hide');
+                        }, 3000);
+                    }else{
+                        $('.msg').html('<div class="alert alert-warning mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Failed!</strong> Addons Adding Failed</div>');
+                    }
+                });
+            }
+        }else{
+            $.post(adminurl+"/Adding-variant",
+            {eve:eve,tempid:tempid,selection:selection,minselection:minselection,addonitem:addonitem,addonitem_amount:addonitem_amount,maxvalue:maxvalue,addon_listid:addon_listid},
+            function(data){
+                if(data == 1){
+                    $('.msg').html('<div class="alert alert-primary mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Successfully!</strong> Addons Adding Successfully</div>');
+                    setTimeout(function(){
+                       $('.bd-example-modal-lgs').modal('hide');
+                    }, 3000);
+                }else{
+                    $('.msg').html('<div class="alert alert-warning mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Failed!</strong> Addons Adding Failed</div>');
+                }
+            });
+        }
+}
+function addonslist(){
+    var tempid              = $("#tempid").val();
+    $.post(adminurl+"/Addons-List",{tempid:tempid},function(data){
+        $('.addonslist').html(data);
+    });
+    $.post(adminurl+"/variants-List",{tempid:tempid},function(data){
+        $('.variantslist').html(data);
+    });
+    
+}
 function add_variant(){
         var variantsid = [];
         $(".variantsids").each(function (){
@@ -1097,6 +1231,7 @@ function add_variant(){
         var eve                 = $("#eve").val();
         var tempid              = $("#tempid").val();
         var total               = $("#total").val();
+        var restid              = $("#restid").val();
         var customization       = $(".customization").val();
         var addonoption         = addonoption;
         var veg                 = veg;
@@ -1108,7 +1243,7 @@ function add_variant(){
                 $('.msg').html('<div class="alert alert-warning mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Failed!</strong>Enter Title of customization </div>');
             }else{
                 $.post(partnerurl+"/Adding-variants",
-                    {eve:eve,tempid:tempid,total:total,addonoption:addonoption,veg:veg,addprince:addprince,defelat:defelat,variantsid:variantsid,customization:customization},
+                    {eve:eve,tempid:tempid,total:total,addonoption:addonoption,veg:veg,addprince:addprince,defelat:defelat,variantsid:variantsid,customization:customization,restid:restid},
                     function(data){
                     if(data == 1){
                         $('.msg').html('<div class="alert alert-primary mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Successfully!</strong> variants Adding Successfully</div>');
@@ -1122,7 +1257,85 @@ function add_variant(){
             }
         }else{
             $.post(partnerurl+"/Adding-variants",
-                {eve:eve,tempid:tempid,total:total,addonoption:addonoption,veg:veg,addprince:addprince,defelat:defelat,variantsid:variantsid,customization:customization},
+                {eve:eve,tempid:tempid,total:total,addonoption:addonoption,veg:veg,addprince:addprince,defelat:defelat,variantsid:variantsid,customization:customization,restid:restid},
+                function(data){
+                if(data == 1){
+                    $('.msg').html('<div class="alert alert-primary mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Successfully!</strong> variants Adding Successfully</div>');
+                    setTimeout(function(){
+                       $('.bd-example-modal-lgs').modal('hide');
+                    }, 3000);
+                }else{
+                    $('.msg').html('<div class="alert alert-warning mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Failed!</strong> variant Adding Failed</div>');
+                }
+            });
+        }
+}
+function add_variants(){
+        var variantsid = [];
+        $(".variantsids").each(function (){
+            var sThisValX = $(this).val();
+            if(sThisValX != ''){
+                variantsid.push(sThisValX);
+            }
+        });
+        var addonoption = [];
+        $(".addonoption").each(function (){
+            var sThisVal = $(this).val();
+            if(sThisVal != ''){
+                addonoption.push(sThisVal);
+            }
+        });
+        var veg = [];
+        $(".veg").each(function (){
+            var sThisVals = $(this).val();
+            if(sThisVals != ''){
+                veg.push(sThisVals);
+            }
+        });
+        var addprince = [];
+        $(".addprince").each(function (){
+            var sThisValss = $(this).val();
+            if(sThisValss != ''){
+                addprince.push(sThisValss);
+            }
+        });
+        var defelat = [];
+        $(".defelat").each(function (){
+            var sThisValss = (this.checked ? $(this).val() : "");
+            if(sThisValss != ''){
+                defelat.push(sThisValss);
+            }
+        });
+        var eve                 = $("#eve").val();
+        var tempid              = $("#tempid").val();
+        var total               = $("#total").val();
+        var customization       = $(".customization").val();
+        var restid              = $(".restid").val();
+        var addonoption         = addonoption;
+        var veg                 = veg;
+        var addprince           = addprince;
+        var defelat             = defelat;
+        var variantsid          = variantsid;
+        if(eve == "0" || eve == ""){
+            if(customization == ""){
+                $('.msg').html('<div class="alert alert-warning mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Failed!</strong>Enter Title of customization </div>');
+            }else{
+                $.post(adminurl+"/Adding-variants",
+                    {eve:eve,tempid:tempid,total:total,addonoption:addonoption,veg:veg,addprince:addprince,defelat:defelat,variantsid:variantsid,customization:customization,restid:restid},
+                    function(data){
+                    if(data == 1){
+                        $('.msg').html('<div class="alert alert-primary mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Successfully!</strong> variants Adding Successfully</div>');
+                        setTimeout(function(){
+                           $('.bd-example-modal-lgs').modal('hide');
+                        }, 3000);
+                    }else{
+                        $('.msg').html('<div class="alert alert-warning mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Failed!</strong> variant Adding Failed</div>');
+                    }
+                });
+            }
+        }else{
+            $.post(adminurl+"/Adding-variants",
+                {eve:eve,tempid:tempid,total:total,addonoption:addonoption,veg:veg,addprince:addprince,defelat:defelat,variantsid:variantsid,customization:customization,restid:restid},
                 function(data){
                 if(data == 1){
                     $('.msg').html('<div class="alert alert-primary mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Successfully!</strong> variants Adding Successfully</div>');
@@ -1239,7 +1452,8 @@ function closeorder(eve){
 }
 function accectorder(eve){
     var status = $('.orders').attr('data-title');
-    $.post(partnerurl+"/Order-Accect",{eve:eve,status:status},function(data,status, jqXHR){
+    var restid = $('.restid').attr('data-value');
+    $.post(partnerurl+"/Order-Accect",{eve:eve,status:status,restid:restid},function(data,status, jqXHR){
         if(data == 1){
             $('.msg').html('<div class="alert alert-primary mb-4" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="alert"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button> <strong>Successfully!</strong> Order Accepted</div>');
             setTimeout(function(){
@@ -1275,8 +1489,33 @@ function helpdeskcats(){
         $('.helpdesksubcat').html(data);
     });
 }
+function zonename(){
+    var zname = $('.zoneName').val();
+    if(zname !=""){
+        $.post(adminurl+"/validation-Zonename",{zname:zname},function(data,status, jqXHR){
+            if(data == 1){
+                $('.invalid-feedback').css('display','block');
+                $('.error-zone').html('Zone Name already exsting.');
+                $(".publish").prop("disabled", true);
+            }else{
+                $(".publish").removeAttr('disabled');
+                $('.invalid-feedback').css('display','none');
+            }
+        });
+    }else{
+        $('.invalid-feedback').css('display','block');
+        $('.error-zone').html('Zone Name Empty.');
+        $(".publish").prop("disabled", true);
+    }
+}
 
-
+function updatedriloca(){
+    var der = $('.driverid').val();
+    $.post(adminurl+"/Update-Drive-Loc",{der:der},function(data){
+        $('.maps-update').html(data);
+        setInterval(updatedriloca, 20000);
+    });
+}
 $(function(){ 
         travelthis();
         pageform();
@@ -1286,4 +1525,5 @@ $(function(){
         initPart();
         //formInit();
         timer();
+        addonslist();
 });

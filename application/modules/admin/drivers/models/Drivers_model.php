@@ -79,12 +79,41 @@ class Drivers_model extends CI_Model{
             $this->db->insert("drivers",$data);
             $vsp   =    $this->db->insert_id();
             if($vsp > 0){
+                $id=$vsp;
+                foreach ($this->input->post('driver_weekly') as $key=>$week){
+                    $starttime = $this->input->post('strt_time');
+                    $endtime = $this->input->post('end_time');                  
+                    $weekly = $this->input->post('driver_weekly');   
+                    $close = $this->input->post('working_hours');
+                    $close ="0";
+                    if(isset($close[$key]) && $close[$key]==$key){
+                        $close = "1";
+                    }               
+                    $drivertimedata = array(                     
+                        'driver_weekly'          => $weekly[$key],
+                        'driver_start_time'  	=> $starttime[$key],
+                        'driver_end_time'	    => $endtime[$key],   
+                        'driver_close_time'		=>  $close,                  
+                        'drivertime_acde'     	=> 'Active',	
+                        'drivertime_open'		=> 1,		
+                        'drivertime_add_by'  	=> ($this->session->userdata("login_id") !="")?$this->session->userdata("login_id"):'',
+                        'drivertime_add_on' 	    => date('Y-m-d H:i:s'),
+                    );                   
+                $this->db->insert('driver_time',$drivertimedata);            
+                $drivertime = $this->db->insert_id();
+                    if($drivertime > 0){
+                        $dat= array(
+                                "drivertime_id" => $drivertime."DRITIME",
+                                "driver_id"        => $id."DRIVER"
+                            );	                     
+                       $this->db->where('drivertimeid',$drivertime)->update("driver_time",$dat);                      
+                    }
+                 }
                 $dat=array(
     				"driver_id" 			=> $vsp."DRIVER",
     				"driver_profile_image"	=> $picture3
     			);
-    			$id=$vsp;
-                $this->db->update("drivers",$dat,"driverid='".$vsp."'");
+    		    $this->db->update("drivers",$dat,"driverid='".$vsp."'");
                 $total = count($_FILES['driver_files']['name']);
                 // Loop through each file
                 for( $i=0 ; $i < $total ; $i++ ) {
@@ -146,7 +175,8 @@ class Drivers_model extends CI_Model{
             $sel    =    $params["columns"];
         }
         $this->db->select($sel)
-                    ->from("drivers")
+                    ->from("drivers d")
+                    ->join('driver_login as dl','d.driver_id=dl.driver_id','INNER')
                     ->where($dt);
         if(array_key_exists("keywords",$params)){
                 $this->db->where("(driver_name LIKE '%".$params["keywords"]."%' OR driver_phone LIKE '%".$params["keywords"]."%' OR driver_id LIKE '%".$params["keywords"]."%')");
@@ -255,7 +285,9 @@ class Drivers_model extends CI_Model{
         }
     }
 
-    public function update_driver($uri){        
+    public function update_driver($uri){    
+    //echo '<pre>';print_r($this->input->post());exit;
+         $id=$uri;
 		$direct = "upload/drivers";
         if (file_exists($direct)){
         }else{mkdir("upload/drivers");}
@@ -322,7 +354,47 @@ class Drivers_model extends CI_Model{
             $data['driver_profile_image'] = $picture3;
         }
         $vsp = $this->db->where('driver_id',$uri)->update("drivers",$data);
-        if($vsp > 0){			
+        if($vsp > 0){
+              $i=0;
+            foreach ($this->input->post('driver_weekly') as $key=>$week){
+                $starttime = $this->input->post('strt_time');
+                $endtime = $this->input->post('end_time');                  
+                $weekly = $this->input->post('driver_weekly');   
+                $drivertime_id = $this->input->post('drivertime_id');  
+                $close = $this->input->post('working_hours');
+                $close ="0";
+                if(isset($close[$key]) && $close[$key]==$key){
+                    $close = "1";
+                }
+                  
+                $drivertimedata = array(                     
+                    'driver_weekly'          => $weekly[$key],
+                    'driver_start_time'  	=> $starttime[$key],
+                    'driver_end_time'	    => $endtime[$key],    
+                    'driver_close_time'		=>  ($close[$i]) ?? 1 ,              
+                    'drivertime_acde'     	=> 'Active',	
+                    'drivertime_open'		=> 1,		
+                    'drivertime_update_by'  	=> ($this->session->userdata("login_id") !="")?$this->session->userdata("login_id"):'',
+                    'drivertime_update_on' 	    => date('Y-m-d H:i:s'),
+                );   
+         //echo "<pre>";print_r($drivertimedata);exit;  
+             if($drivertime_id){
+                $this->db->where('drivertime_id',$drivertime_id[$i])->update("driver_time",$drivertimedata);
+            }else{
+                 $this->db->insert('driver_time',$drivertimedata);            
+                $drivertime = $this->db->insert_id();
+                    if($drivertime > 0){
+                        $dat= array(
+                                "drivertime_id" => $drivertime."DRITIME",
+                                "driver_id"        => $id
+                            );	                     
+                       $this->db->where('drivertimeid',$drivertime)->update("driver_time",$dat);                      
+                    }
+                
+            }
+                $vspss   =    $this->db->affected_rows();  
+                $i++;
+            }
             $total = count($_FILES['driver_files']['name']);
             // Loop through each file
             for( $i=0 ; $i < $total ; $i++ ) {
@@ -551,7 +623,102 @@ class Drivers_model extends CI_Model{
         return $this->queryDriverLogin($params)->result();
     }
     /*-------------------Naresh--------------------------*/
-
-	
+    public function queryDrivertime($params = array()){
+        $dt =   array(
+            "drivertime_open"  => '1'
+        );
+        $sel        =   "*";
+        if(array_key_exists("cnt",$params)){
+            $sel    =   "count(*) as cnt";
+        }
+        if(array_key_exists("columns",$params)){
+            $sel    =    $params["columns"];
+        }
+        $this->db->select($sel)
+                    ->from("driver_time")
+                    ->where($dt);
+        if(array_key_exists("keywords",$params)){
+                $this->db->where("(driver_name LIKE '%".$params["keywords"]."%')");
+        }
+        if(array_key_exists("whereCondition",$params)){
+                $this->db->where("(".$params["whereCondition"].")");
+        }
+        if(array_key_exists("id",$params)){
+                $this->db->where("(driver_id = '".$params["id"]."')");
+        }
+        if(array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit'],$params['start']);
+        }elseif(!array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit']);
+        }
+        if(array_key_exists("tipoOrderby",$params) && array_key_exists("order_by",$params)){
+                $this->db->order_by($params['tipoOrderby'],$params['order_by']);
+        }
+        // $this->db->get();echo $this->db->last_query();exit;
+        return  $this->db->get();
+    }
+    public function cntviewDriverTime($params = array()){
+        $params["cnt"]      =   "1";
+        $val    =   $this->queryResTime($params)->row_array();
+        if(is_array($val) && count($val) > 0){
+            return  $val['cnt'];
+        }
+        return "0";
+    }
+    public function getDriverTime($params = array()){
+        return $this->queryResTime($params)->row_array();
+    }
+    public function viewDriverTime($params = array()){
+         //print_r($params);exit;
+         return $this->queryDriverTime($params)->result();
+    }
+    public function delete_DriverTime($uro){
+        $this->db->delete("driver_time",array("drivertime_id" => $uro));
+        $vsp   =    $this->db->affected_rows();
+        if($vsp > 0){
+            return true;
+        }
+        return FALSE;
+    }
+    public function getDriverupdate($params = array()){
+        return $this->queryDriverupdate($params)->row_array();
+    }
+    public function queryDriverupdate($params = array()){
+        $dt =   array(
+            "driver_open"  => '1',
+            "driver_login_open" => '1'
+        );
+        $sel        =   "*";
+        if(array_key_exists("cnt",$params)){
+            $sel    =   "count(*) as cnt";
+        }
+        if(array_key_exists("columns",$params)){
+            $sel    =    $params["columns"];
+        }
+        $this->db->select($sel)
+                    ->from("driver_address_update as dau")
+                    ->join("drivers as d","dau.driver_address_driver_id =d.driver_id","inner")
+                    ->join("driver_login as dl","dl.driver_id =d.driver_id","inner")
+                    ->where($dt);
+        if(array_key_exists("keywords",$params)){
+                $this->db->where("(driver_name LIKE '%".$params["keywords"]."%')");
+        }
+        if(array_key_exists("whereCondition",$params)){
+                $this->db->where("(".$params["whereCondition"].")");
+        }
+        if(array_key_exists("id",$params)){
+                $this->db->where("(driver_id = '".$params["id"]."')");
+        }
+        if(array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit'],$params['start']);
+        }elseif(!array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit']);
+        }
+        if(array_key_exists("tipoOrderby",$params) && array_key_exists("order_by",$params)){
+                $this->db->order_by($params['tipoOrderby'],$params['order_by']);
+        }
+        // $this->db->get();echo $this->db->last_query();exit;
+        return  $this->db->get();
+    }
 }
 ?>

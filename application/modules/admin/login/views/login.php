@@ -44,7 +44,7 @@
                                 </div>
 
                                 <div class="field-wrapper">
-                                    <a href="auth_pass_recovery.html" class="forgot-pass-link">Forgot Password?</a>
+                                    <a href="<?php echo adminurl('Forgot-Password');?>" class="forgot-pass-link">Forgot Password?</a>
                                 </div>
 
                             </div>

@@ -6,7 +6,7 @@
                             <div class="tab-title">
                                 <div class="row">
                                     <div class="col-md-12 col-sm-12 col-12 text-center">
-                                        <button type="button" class="btn btn-primary mb-2 mr-2 addcategory" data-title="Add Category" onclick="addcategory()">
+                                        <button type="button" class="btn btn-primary mb-2 mr-2 addcategory" data-title="Add Category" onclick="addcategorys()">
                                           Add Category
                                         </button>
                                     </div>
@@ -29,8 +29,8 @@
                                     							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
                                     						</a>
                                     						<div class="dropdown-menu" aria-labelledby="dropdownMenuLink-2" style="will-change: transform;">
-                                    							<a class="edit dropdown-item" href="https://rayt.advitsoftware.com/Partner-Admin/Update-Items/RESTITEM1">Edit</a>
-                                    							<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+                                    							<a class="edit dropdown-item" href="<?php echo adminurl('Update-Category-Menu/'.$cat->resturant_category_id)?>">Edit</a>
+                                    							<a class="dropdown-item delete" onclick="confirmationDelete($(this),'Category')" data-toggle='tooltip' attrvalue="<?php echo adminurl("Category-Rest-Delete/".$cat->resturant_category_id);?>" data-original-title="Delete country" class="text-danger" href="javascript:void(0);">Delete</a>
                                     						</div>
                                     					</div>
                                     				</div>
@@ -45,6 +45,7 @@
                             <div id="todo-inbox" class="accordion todo-inbox"><br>
                                 <div class="todo-box">
                                     <div id="ct" class="todo-box-scroll">
+										<input type="hidden" id="rastid" name="rastid" value="<?php echo $this->uri->segment("3");?>"> 
 										<input type="hidden" id="urlvalue" name="urlvalue" value="<?php echo $urlvalue;?>"> 
 										<input type="hidden" id="orderby" name="orderby" value="<?php echo isset($orderby)?$orderby:'';?>">
 										<input type="hidden" id="tipoOrderby" name="tipoOrderby" value="<?php echo isset($tipoOrderby)?$tipoOrderby:'';?>">

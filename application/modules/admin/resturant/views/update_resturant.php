@@ -369,6 +369,15 @@ if($ur  == 1 || $dr == '1'){
                                                             </div>
                                                             <div class="col-md-12">
                             									<div class="form-group mb-4">
+                            										<label >Min Order</label>
+                            										<input type="text" class="form-control"  name="minorder" value="<?php echo $view['resturant_minorder'];?>" placeholder="Enter Min Order" required />
+                            										<div class="invalid-feedback">
+                            											Please provide a valid Min Order.
+                            										</div>
+                            									</div>
+                            								</div>
+                                                            <div class="col-md-12">
+                            									<div class="form-group mb-4">
                             										<label for="exampleFormControlSelect1">Rating *</label>
                             										<select class="form-control" name="rating" id="exampleFormControlSelect1"required >
                             											<option value="">Select Rating</option>
@@ -403,14 +412,16 @@ if($ur  == 1 || $dr == '1'){
                                                                         Please provide a valid Resturant Main Image.
                                                                     </div>
                                                                     <?php
-                                                                         $cuisine   = explode(',',$view['resturant_menu_hours']);
-                                                                        //$par['whereCondition']="cuisine_acde LIKE 'Active'";
-                                                                        $cuisine = $this->cuisine_model->view_cuisine();
+                                                                        $cuisines   = explode(',',$view['resturant_cuisine']);
+                                                                        //print_r($cuisines);exit;
+                                                                        $par['whereCondition']="cuisine_acde LIKE 'Active'";
+                                                                        $cuisine = $this->cuisine_model->view_cuisine($par);
                                                                         if(is_array($cuisine) && count($cuisine) >0){
+                                                                            // echo '<pre>';print_r($cuisine);exit;
                                                                             foreach($cuisine as $cui){
-                                                                    ?>
+                                                                    ?>     
                                                                             <div class="form-group b-grey">
-                                                                                <input type="checkbox" id="8" name="cusine[]" value="<?php echo $cui->cuisine_id;?>" <?php if(in_array([0],$cuisine)){echo 'checked';}?>/>
+                                                                                <input type="checkbox" id="8" name="cusine[]" value="<?php echo $cui->cuisine_id;?>" <?php if(in_array($cui->cuisine_id,$cuisines)){echo 'checked';}?>/>
                                                                                 <label for="8"><?php echo $cui->cuisine_name;?></label>
                                                                             </div>
                                                                     <?php

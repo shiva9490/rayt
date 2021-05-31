@@ -250,6 +250,7 @@
 										<div class="row">
 											<div class="col-md-2">
 												<label><?php echo $m;?> - </label>
+												<input type="hidden"  name="resturant_weekly[]" value="<?php echo $m;?>"  />
 											</div>
 											<div class="col-md-4">
 												<input id="timepicker<?php echo $i;?>" name="strt_time[]" value="<?php echo set_value('strt_time".$i."');?>" />
@@ -301,6 +302,15 @@
 										</div>
 									</div>
 								</div>
+								<div class="col-md-12 m-3">
+									<div class="form-group b-grey">
+										<label >Min Order</label>
+										<input type="text" class="form-control"  name="minorder" value="<?php set_value('minorder')?>" placeholder="Enter Min Order" required />
+										<div class="invalid-feedback">
+											Please provide a valid Min Order.
+										</div>
+									</div>
+								</div>
 							</div>
 							<div class="row bb-grey">
 								<div class="col-md-12 m-3">
@@ -308,19 +318,18 @@
 									<div class="invalid-feedback">
 										Please provide a valid Resturant Main Image.
 									</div>
+									<?php
+									    $p['whereCondition'] ="cuisine_acde LIKE 'Active'";
+									    $cuisine = $this->cuisine_model->view_cuisine($p);
+									    if(is_array($cuisine) && count($cuisine) >0){
+									        foreach($cuisine as $c){
+									?>
 									<div class="form-group b-grey">
-										<input type="checkbox" id="8" name="cusine[]" value="1"/>
-										<label for="8">Kuwait</label>
+										<input type="checkbox" id="8" name="cusine[]" value="<?php echo $c->cuisine_id;?>"/>
+										<label for="8"><?php echo $c->cuisine_name;?></label>
 									</div>
-									<div class="form-group b-grey">
-										<input type="checkbox" id="9" name="cusine[]" value="2"/>
-										<label for="9">Indian</label>
-									</div>
-									<div class="form-group b-grey">
-										<input type="checkbox" id="10" name="cusine[]" value="3"/>
-										<label for="10">Arabian</label>
-									</div>
-									
+									<?php } 
+									} ?>
 								</div>
 								<div class="col-md-12 m-3">
 									<div class="form-group">

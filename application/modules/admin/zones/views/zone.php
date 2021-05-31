@@ -23,6 +23,7 @@ if($ur  == 1 || $dr == '1'){
                 </div>
             </div>
             <div class="card-body">
+                <?php $this->load->view('admin/success_error');?>
                <?php $this->load->view("admin/search");?>
             </div>
       </div>

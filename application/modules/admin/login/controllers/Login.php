@@ -44,7 +44,7 @@ class Login extends CI_Controller{
                 "content"   =>  "forgotpassword"
             );
             if($this->input->post("submit")){
-                $this->form_validation->set_rules("emailid","Email ID","valid_email|xss_clean|required|callback_checkemail"); 
+                $this->form_validation->set_rules("email_user","Email ID Or User name","xss_clean|required|callback_checkemail"); 
                 if($this->form_validation->run() == TRUE){
                     $ins    =   $this->login_model->sendpassword();
                     if($ins){
@@ -66,6 +66,32 @@ class Login extends CI_Controller{
             }	 
             return TRUE; 	
         }	
+        public function lockscreen(){
+             $uri = $this->session->userdata("login_id");
+            if($uri != ''){
+            $data  =   array(
+                'title'     =>  "Lock Screen",
+                "content"   =>  "lock_sccreen"
+            );      
+                if($this->input->post("submit")){  
+                    $this->form_validation->set_rules("password","Password","xss_clean|required"); 
+                    if($this->form_validation->run() == TRUE){
+                        $ins    =   $this->login_model->checkvaluepassword();
+                        echo   $ins ;
+                        if($ins){
+                            $this->session->set_flashdata("suc","Welcome Back");
+                            redirect(sitedata("site_admin")."/");
+                        }else{
+                            $this->session->set_flashdata("err","Your Password Doesn't Match");
+                            redirect(sitedata("site_admin")."/Lock-Screen");
+                        }
+                    }
+                }            
+            $this->load->view("admin/outer_template",$data);
+            }else{
+            redirect(sitedata("site_admin")."/"); 
+            }
+        }
         public function logout(){
             $this->session->sess_destroy();
             redirect(sitedata("site_admin")."/");

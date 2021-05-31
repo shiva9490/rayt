@@ -45,7 +45,7 @@
 						</a>
 						<div class="dropdown-menu" aria-labelledby="dropdownMenuLink-2">
 							<a class="edit dropdown-item" href="<?php echo adminurl('Update-Items/'.$view->resturant_items_id);?>">Edit</a>
-							<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+							<a class="dropdown-item delete" href="javascript:void(0);" onclick="confirmationDelete($(this),'Items')" data-toggle='tooltip' attrvalue="<?php echo adminurl("Delete-Items/".$view->resturant_items_id);?>" data-original-title="Delete Items" class="text-danger">Delete</a>
 						</div>
 					</div>
 				</div>

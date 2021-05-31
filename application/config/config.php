@@ -41,7 +41,7 @@ $config['zone']   			=   array("15 Mints","20 Mints","30 Mints","45 Mints","60 M
 $config['subzone']   		=   array("15 Mints","20 Mints","30 Mints","45 Mints","60 Mints");
 $config['veg']   		    =   array("Veg","Non-veg","Egg");
 $config['orderstatus']      =   array(
-    "Order Placed","Preparing","Ready for pickup","Out for delivery","Completed Pickup","Delivered","Order Cancelled"
+    "Order Placed","Preparing","Ready for pickup","Out for delivery","arrived order","Delivered","Order Cancelled"
 );
 $config['vehicle_type']     =   array("Car","Bike"); 
 $config['category']         =   array("Part Time","Full Time"); 
