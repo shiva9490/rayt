@@ -357,6 +357,7 @@ function confirmationDelete(anchor, val) {
             $.post(atr,function(data){
                 if(data == 1){
                     loadpage();
+                    location.reload() ;
                     addonslist();
                 }
             });
@@ -1005,6 +1006,32 @@ function addingcategort(){
         }, 3000);
 	});
 }
+function updatecategorys(x){
+    var title = 'Update Category';
+    $.post(adminurl+"/Update-Category/"+x,{title:title},function(data){
+        $('#exampleModalCenter').modal('show');
+		$('.datas').html(data);
+	});
+}
+function updatingcategortss(x){
+    var category = $('.category').val();
+    var category_a = $('.category_a').val();
+    var rastid = $('#rastid').val();
+    $.post(adminurl+"/Updating-Category/"+x,{category:category,category_a:category_a,rastid:rastid},function(data){
+        var html ='<div class="alert alert-success">'+
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                            '<i class="material-icons">close</i>'+
+                        '</button>'+
+                        data
+                    '</div>';
+		$('.msgs').html(html);
+		$('.categorybutton').css('display','none');
+		$('.loading').css('display','block');
+		setTimeout(function(){
+           window.location.reload(1);
+        }, 3000);
+	});
+}
 function addingcategorts(){
     var category = $('.category').val();
     var category_a = $('.category_a').val();
@@ -1542,7 +1569,7 @@ function timer(){
             return;
         }else{
             $('#time').text(counter);
-        console.log("Timer --> " + counter);
+        //console.log("Timer --> " + counter);
         }
     }, 1000);
 }
@@ -1583,7 +1610,7 @@ $(function(){
         loadpage();
         initPart();
         //formInit();
-        timer();
+        //timer();
         counts();
         addonslist();
 });

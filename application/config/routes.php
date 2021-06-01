@@ -114,6 +114,8 @@ $route['Rayt-Admin/Variant-model']                 		    =   'resturant/menus/va
 $route['Rayt-Admin/Min-Selection']                 		    =   'resturant/menus/min_selection';
 $route['Rayt-Admin/Add-Category']                 		    =   'resturant/menus/add_category';
 $route['Rayt-Admin/Adding-Category']                 	    =   'resturant/menus/adding_category';
+$route['Rayt-Admin/Update-Category/(:any)']            	    =   'resturant/menus/update_category/$1';
+$route['Rayt-Admin/Updating-Category/(:any)']               =   'resturant/menus/updating_category/$1';
 $route['Rayt-Admin/Adding-variant']                 	    =   'resturant/menus/adding_variant';
 $route['Rayt-Admin/Adding-variants']                        =   'resturant/menus/adding_variants';
 $route['Rayt-Admin/Active-Inactive-Item']                   =   'resturant/menus/active_inactive_item';
@@ -242,7 +244,6 @@ $route['Rayt-Admin/Delete-Resturant_banner/(:any)']       =   'resturant_banner/
 /*----------- Category------------*/
 $route['Rayt-Admin/Category']                             =   'category/index';
 $route['Rayt-Admin/viewcategory/(:any)']                  =   'category/viewcategory/$1';
-$route['Rayt-Admin/Update-Category/(:any)']               =   'category/update_category/$1';
 $route['Rayt-Admin/Delete-Category/(:any)']               =   'category/delete_category/$1';
 $route['Rayt-Admin/Ajax-Category-Active']                 =   'category/ajax_category_active';
 

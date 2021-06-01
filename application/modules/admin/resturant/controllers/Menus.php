@@ -252,8 +252,8 @@ class Menus extends CI_Controller{
 			if($this->form_validation->run() == TRUE){
                 $res = $this->menu_model->additem();
                 if($res){
-                    $this->session->set_flashdata("suc","image deleted sucessfully");
-				    redirect(adminurl('Update-Resturant/'.$res));
+                    $this->session->set_flashdata("suc","item Updated sucessfully");
+				    redirect(adminurl('Menus/'.$dta['resturant_id']));
                 }
 			}
 		}
@@ -359,6 +359,25 @@ class Menus extends CI_Controller{
 			$res = $this->menu_model->addcategory();
             if($res != ''){
                 echo "Created category successfully.";
+            }else{
+				echo "failed.";
+            }
+		}
+	}
+	public function update_category($str){
+		$par['whereCondition']	= "resturant_category_id = '".$str."'";
+	    $dat = array(
+	        'title' =>$this->input->post('title'),
+			"view"		=>  $this->menus_model->getCategory($par),
+			"id"	=> $str
+	    );
+	    $this->load->view('update_category',$dat);
+	}
+	public function updating_category($str){
+	    if($this->input->post()){
+			$res = $this->menus_model->updatecategory($str);
+            if($res != ''){
+                echo "Updated category successfully.";
             }else{
 				echo "failed.";
             }

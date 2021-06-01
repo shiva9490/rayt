@@ -277,6 +277,9 @@ class Menus_model extends CI_Model{
 	public function viewCategory($params = array()){
         return $this->queryCategory($params)->result();
     }
+    public function getCategory($params = array()){
+        return $this->queryCategory($params)->result_array();
+    }
 	public function querySubCategory($params = array()){
         $dt =   array(
             "resturant_subcategory_open"  	=> '1',
@@ -821,6 +824,20 @@ class Menus_model extends CI_Model{
         $vsp   =    $this->db->affected_rows();
         if($vsp > 0){
             return true;
+        }
+        return FALSE;
+    }
+    public function updatecategory($uri){
+        $data = array(
+            'resturant_category_name'           => $this->input->Post("category"),
+            'resturant_category_name_a'         => $this->input->Post("category_a"),
+            'resturant_category_key'            => $this->input->Post("category"),
+            'resturant_category_modifiy_by'      => $this->session->userdata("restraint_id"),
+            'resturant_category_modifiy_date'    => date('Y-m-d H:i:s'),
+        );
+        $this->db->update("resturant_category",$data,array("resturant_category_id" => $uri));
+        if($this->db->affected_rows() >  0){
+            return TRUE;
         }
         return FALSE;
     }
