@@ -39,9 +39,12 @@ class Orders extends CI_Controller{
 				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
 			}
 			$date	= explode(" to ",$this->input->get('date'));
-			if(count($date)>0){
+			if($this->input->post('date')){
+			if(is_array($date) && count($date)>1){
 				$ht	.=	" AND orderdetail_created_on >= '$date[0]' AND orderdetail_created_on <='$date[1]'";
-			}
+			}else if(count($date)>0){
+				$ht	.=	" AND orderdetail_created_on >= '$date[0]' AND orderdetail_created_on <='$date[0]'";
+			}}
 			$orderstatus = $this->config->item('orderstatus');
 			$conditions['whereCondition']   = $ht;
 			$conditions['group_by']         = $group;
@@ -103,9 +106,12 @@ class Orders extends CI_Controller{
 		    $ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
 		}
 		$date	= explode(" to ",$this->input->post('date'));
-		if(count($date)>1){
+		if($this->input->post('date')){
+		if(is_array($date) && count($date)>1){
 			$ht	.=	" AND orderdetail_created_on >= '$date[0]' AND orderdetail_created_on <='$date[1]'";
-		}
+		}else if(count($date)>0){
+			$ht	.=	" AND orderdetail_created_on >= '$date[0]' AND orderdetail_created_on <='$date[0]'";
+		}}
 		$orderstatus = $this->config->item('orderstatus');
 		$conditions['whereCondition']   = $ht;
 		$conditions['group_by']         = $group;

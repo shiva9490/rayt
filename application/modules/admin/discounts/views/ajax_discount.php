@@ -23,7 +23,7 @@ if($ur  == 1 || $dr == '1' || $sr == 1){
                     <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> To 
                     <i class="zmdi font-14 zmdi-sort pull-right"></i></a> 
                 </th>
-                <th>Time Slot</th>
+                <th> Time Slot </th>
                 <th><a href="javascript:void(0);" data-type="order" data-field="discount_approve" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this))">Approval <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
                 <th><a href="javascript:void(0);" data-type="order" data-field="discount_status" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this))">Status <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
                 <th>Action</th>
@@ -70,7 +70,14 @@ if($ur  == 1 || $dr == '1' || $sr == 1){
                 ?>
                 </td>
                 <td><?php echo $time1.' to '.$time2;?> </td>
-                <td><?php echo $ve->discount_approve;?></td>
+                <td>
+                    <select id="discStatusUpdate<?php echo $ve->discount_id;?>" class="form-control" onchange="discStatusUpdatee($(this))"  fields="<?php echo $ve->discount_id;?>">
+                        <option value="">Select Status</option>
+                        <option value="Pending" <?php if($ve->discount_approve=="Pending"){echo 'selected';}?>>Pending</option>
+                        <option value="Approve" <?php if($ve->discount_approve=="Approve"){echo 'selected';}?>>Approve</option>
+                        <option value="Reject" <?php if($ve->discount_approve=="Reject"){echo 'selected';}?>>Reject</option>
+                    </select>
+                </td>
                 <td><?php echo $vdata;?></td>
 				<?php if($ct == '1'){?>
                 <td> 

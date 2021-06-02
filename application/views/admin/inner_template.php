@@ -43,7 +43,9 @@
 	  <link href="<?php echo $this->config->item('admin_assets');?>assets/css/components/tabs-accordian/custom-tabs.css" rel="stylesheet" type="text/css" />
 	 <?php }if($this->uri->segment(2) =="Menus"){ ?>
 	 <link href="<?php echo $this->config->item('admin_assets');?>assets/css/apps/todolist.css" rel="stylesheet" type="text/css" />
-	 <?php } ?>
+	 <?php } if($this->uri->segment(2) =="Update-Discount" || $this->uri->segment(2) =="Create-Discount"){?>
+    <link href="<?php echo $this->config->item('admin_assets');?>assets/css/elements/custom-tree_view.css" rel="stylesheet" type="text/css" />
+    <?php } ?>
 	 	<link href="<?php echo $this->config->item('admin_assets');?>assets/css/custom.css" rel="stylesheet" type="text/css" />
 	 <style>
     #snackbar {
@@ -264,7 +266,9 @@
     <script src="<?php echo $this->config->item('admin_assets');?>plugins/select2/select2.min.js"></script>
     <script src="<?php echo $this->config->item('admin_assets');?>plugins/select2/custom-select2.js"></script>
     <script src="<?php echo $this->config->item('admin_assets');?>assets/js/authentication/form-2.js"></script>
-	<?php }if($this->uri->segment(2) == "Zones"){?>
+	<?php } if($this->uri->segment(2) =="Update-Discount" || $this->uri->segment(2) =="Create-Discount"){?>
+    <script src="<?php echo $this->config->item('admin_assets');?>plugins/treeview/custom-jstree.js"></script>
+    <?php }if($this->uri->segment(2) == "Zones"){?>
 	<script>
         function initMap() {
             var macc = {lat: 29.378586, lng: 47.990341};
@@ -305,6 +309,9 @@
                 }
             });
         });
+        <?php if($this->uri->segment(2) =="Orders"){ ?>
+            timer();
+        <?php } ?>
 </script>
     
 </body>

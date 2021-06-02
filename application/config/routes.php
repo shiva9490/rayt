@@ -264,6 +264,15 @@ $route['Rayt-Admin/Ajax-Variant-Active']                   =   'variant/activede
 $route['Rayt-Admin/Update-Variant/(:any)']                 =   'variant/update/$1';
 $route['Rayt-Admin/Delete-Variant/(:any)']                 =   'variant/delete_variant/$1';
 
+/*-------Discount 	----------*/
+$route['Rayt-Admin/Discount/(:any)']                		= 	'discounts/index/$1';
+$route['Rayt-Admin/Create-Discount']       			        = 	'discounts/create';
+$route['Rayt-Admin/ViewDiscount/(:any)']                    =   'discounts/viewDiscount/$1';
+$route['Rayt-Admin/Ajax-Discount-Active']                   =   'discounts/ajax_discount_active';
+$route['Rayt-Admin/Update-Discount/(:any)']                 =   'discounts/update_discount/$1';
+$route['Rayt-Admin/Delete-Discount/(:any)']                 =   'discounts/delete_discount/$1';
+$route['Rayt-Admin/Discount-Status-Update']                 =   'discounts/status_update';
+
 /*---------------restaurant---------------------*/
 $route['Partner-Admin']                  	 			 	=   'pdashboard/index';
 $route['Partner-Admin/Dashboard']            			 	=   'order/order_list';//'pdashboard/index';

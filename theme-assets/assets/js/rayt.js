@@ -1634,6 +1634,37 @@ function partneractiveform(evt,page){
         }
     })
 }
+function discStatusUpdatee(evt){
+    var fields  =   evt.attr("fields");
+    var status  =   $('#discStatusUpdate'+fields+' option:selected').val();
+    swal({
+        title: 'Are you sure?',
+        text: "Are you sure you want to " + status,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        padding: '2em'
+    }).then(function(result) {
+        if (result.value) {
+            $.post(adminurl+"/Discount-Status-Update",{status:status,fields:fields},function(data){
+                if(data == 1){
+                    loadpage();
+                }else if(data == 0){
+                    swal("No permissions ....!!!", '');
+                } else {
+                    swal("Not updated any ....!!!", '');
+                }
+            });
+            swal(
+              status,
+              'Your file has been '+status,
+              'success'
+            )
+        }else{
+            swal("Not updated any ....!!!", status);
+        }
+    })
+}
 function checkall(cla){
     var cclass   =cla;
     var boxes = $('.m'+cclass).is(':checked');
@@ -1676,7 +1707,7 @@ $(function(){
         loadpage();
         initPart();
         //formInit();
-        timer();
+        //timer();
         counts();
         addonslist();
 });
