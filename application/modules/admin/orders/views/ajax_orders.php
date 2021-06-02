@@ -49,7 +49,7 @@ if($ur  == 1 || $dr == '1' || $sr == '1'){
                  }
 
             ?>
-            <tr class="<?php if(!empty($delay) && !empty($updated[0]['orderstatus_add_date']) && $updated[0]['orderstatus_add_date'] <= $datediff){ echo 'alert-danger';} ?>">
+            <tr class="<?php if(!empty($delay) && !empty($updated[0]['orderstatus_add_date']) && $updated[0]['orderstatus_add_date'] <= $datediff){ echo 'alrt-danger';} ?>" id="alert<?php echo $ve->order_unique_id;?>">
                 <td id="orders<?php echo $ve->order_unique_id;?>" data-types<?php echo $ve->order_unique_id;?>="<?php echo $orders;?>" data-status<?php echo $ve->order_unique_id;?>="<?php echo $ve->orderdetails_rest_staus;?>">
                     <a class="orders<?php echo $ve->order_unique_id;?>" onclick="orderModel('<?php echo $ve->order_unique_id;?>','<?php echo $ve->orderdetail_restaurant_id;?>')" >
                         <?php echo $ve->order_unique_id;?>

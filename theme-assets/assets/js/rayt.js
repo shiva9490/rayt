@@ -1586,7 +1586,7 @@ function counts(){
                     d.status_messsage.forEach(coount);
                     function coount(item, index) {
                         if(item > 0){
-                            $('#lin'+index).addClass('alert-danger');
+                            $('#lin'+index).addClass('alrt-danger');
                         }
                     }
                    
@@ -1597,6 +1597,7 @@ function counts(){
 function copyId(x){
     var text = x;
     navigator.clipboard.writeText(text).then(function() {
+        $('#alert'+x).removeClass('alrt-danger');
       alert('Copying to clipboard was successful!');
     }, function(err) {
       alert('Async: Could not copy text: ', err);
@@ -1656,7 +1657,6 @@ function discType(){
 }
 function typeee(){
     var type =  $("#tyyy option:selected").val();
-    alert(type);
     if(type=='Category Wise'){
         $("#catt").show();
         $(".produc").hide();
@@ -1676,7 +1676,7 @@ $(function(){
         loadpage();
         initPart();
         //formInit();
-        //timer();
+        timer();
         counts();
         addonslist();
 });

@@ -669,7 +669,7 @@ hr {
 .custtab .nav-link.active h6 {
     color: #fff;
 }
-.alert-danger {
+.alrt-danger {
     background-color: red;
     color:#fff;
     animation: danger 2s  infinite;
