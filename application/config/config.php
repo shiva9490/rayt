@@ -48,6 +48,8 @@ $config['category']         =   array("Part Time","Full Time");
 $config['gender']           =   array("Male","Female"); 
 $config['rating']           =   array("Good","Average","Below Average","Bad");
 $config['cancleorderstatus']=   array("Order not available","Food finished","Very busy");
+$config['discountType']     =   array("Percentage","Amount");
+$config['discountBased']    =   array("Category Wise","Product Wise","All");
 
 /*
 |--------------------------------------------------------------------------

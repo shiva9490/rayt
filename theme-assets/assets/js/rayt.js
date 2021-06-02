@@ -1602,6 +1602,72 @@ function copyId(x){
       alert('Async: Could not copy text: ', err);
     });
 }
+function partneractiveform(evt,page){
+    var fields  =   evt.attr("fields");
+    var status  =   evt.attr("title");
+    swal({
+        title: 'Are you sure?',
+        text: "Are you sure you want to " + status,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        padding: '2em'
+    }).then(function(result) {
+        if (result.value) {
+            $.post(partnerurl+"/"+page,{status:status,fields:fields},function(data){
+                if(data == 1){
+                    loadpage();
+                }else if(data == 0){
+                    swal("No permissions ....!!!", '');
+                } else {
+                    swal("Not updated any ....!!!", '');
+                }
+            });
+            swal(
+              status,
+              'Your file has been '+status,
+              'success'
+            )
+        }else{
+            swal("Not updated any ....!!!", status);
+        }
+    })
+}
+function checkall(cla){
+    var cclass   =cla;
+    var boxes = $('.m'+cclass).is(':checked');
+    if(boxes){
+        $('.'+cclass).prop('checked', true);
+    }else{
+        $('.'+cclass).prop('checked', false);
+    }
+}
+function discType(){
+    var disc =  $("#exampleFormControlSelect1 option:selected").val();
+    if(disc == ''){
+        $('.discc').show();
+    }else if(disc=='Percentage'){
+        $('#basic-addon2').html('<i class="fa fa-percent" aria-hidden="true"></i>');
+        $('.discc').hide();
+    }else if(disc=='Amount'){
+        $('#basic-addon2').html('KD');
+        $('.discc').hide();
+    }
+}
+function typeee(){
+    var type =  $("#tyyy option:selected").val();
+    alert(type);
+    if(type=='Category Wise'){
+        $("#catt").show();
+        $(".produc").hide();
+    }else if(type=='Product Wise'){
+        $(".produc").show();
+        $("#catt").show();
+    }else{
+        $("#catt").hide();
+        $("#produc").hide();
+    }
+}
 $(function(){ 
         travelthis();
         pageform();

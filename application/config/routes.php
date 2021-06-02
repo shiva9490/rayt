@@ -294,6 +294,10 @@ $route['Partner-Admin/Order-Accect']                        = 	'order/order_acce
 /*-------Discount 	----------*/
 $route['Partner-Admin/Discount']                			= 	'discount/index';
 $route['Partner-Admin/Create-Discount']       			    = 	'discount/create';
+$route['Partner-Admin/ViewDiscount/(:any)']                 =   'discount/viewDiscount/$1';
+$route['Partner-Admin/Ajax-Discount-Active']                =   'discount/ajax_discount_active';
+$route['Partner-Admin/Update-Discount/(:any)']              =   'discount/update_discount/$1';
+$route['Partner-Admin/Delete-Discount/(:any)']              =   'discount/delete_discount/$1';
 
 /*-------Time 	----------*/
 $route['Partner-Admin/Time']                			    = 	'time/index';
