@@ -238,7 +238,8 @@ class Orders extends CI_Controller{
 		$group  = "or.order_id";
 		$ht = "or.order_status LIKE 'Active'";
 		$i=0;
-		$ids=array("Today Orders","Unassigned","Pending","Ready for Pickup","Completed Pickup","Arraived at customes","Delivered");
+		$ids=array("Today Orders","Unassigned","Pending","Ready for Pickup","Completed Pickup","Arraived at customes");
+		$ht="";
 		foreach($ids as $ids){
 			if($ids == "Today Orders"){
 				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
@@ -262,9 +263,6 @@ class Orders extends CI_Controller{
 				$time	=	"-5 minutes";
 				$datediff = date("Y-m-d H:i:s", strtotime($time));
 				$ht		.=	" AND ost.orderstatus_add_date <= '".$datediff."'";
-			//$group  = "or.order_id";
-			}else{
-				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
 			}
 			$ht 	.= " AND ost.orderdetail_status = ord.orderdetails_rest_staus";
 			$conditions['whereCondition']   = $ht;
