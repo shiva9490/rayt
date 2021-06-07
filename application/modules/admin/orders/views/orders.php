@@ -19,7 +19,7 @@
                     <a class="nav-link <?php if($this->input->get('category')=="Completed Pickup"){echo 'active';}?>" id="lin4" data-toggle="tab" href="#border-top-setting" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Completed Pickup')" role="tab" aria-controls="border-top-setting" aria-selected="false">Completed Pickup</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php if($this->input->get('category')=="Arraived at customes"){echo 'active';}?>" id="lin5" data-toggle="tab" href="#border-top-setting" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Arraived at customes')" role="tab" aria-controls="border-top-setting" aria-selected="false">Arraived at customer</a>
+                    <a class="nav-link <?php if($this->input->get('category')=="Arraived at customes"){echo 'active';}?>" id="lin5" data-toggle="tab" href="#border-top-setting" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Arraived at customes')" role="tab" aria-controls="border-top-setting" aria-selected="false">Arrived at Customer</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php if($this->input->get('category')=="Delivered"){echo 'active';}?>" id="lin6" data-toggle="tab" href="#border-top-setting" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Delivered')" role="tab" aria-controls="border-top-setting" aria-selected="false">Delivered</a>

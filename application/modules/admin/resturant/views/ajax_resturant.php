@@ -45,7 +45,13 @@ if($ur  == 1 || $dr == '1' || $sr == 1 || $drs == 1){
                 ?>
                 <tr>
                     <td><?php echo $limit++;?></td>
-                    <td class="fonn"><?php echo $ve->restraint_login_username;?><i class="fa fa-clone" aria-hidden="true"></i></td>
+                    <td class="fonn">
+                        <a class="resturant<?php echo $ve->resturantid;?>" onclick="resturantModel('<?php echo $ve->resturantid;?>')" >
+							<?php echo $ve->restraint_login_username;?>
+						</a>
+						<span class="loader<?php echo $ve->resturantid;?>"></span>
+                        <i class="far fa-clone" aria-hidden="true"></i>
+                    </td>
                     <td><a href="#"><?php echo $ve->resturant_name;?></a></td>
                     <td><?php echo $ve->resturant_area.','.$ve->resturant_block.','.$ve->resturant_street.','.$ve->resturant_jaada.','.$ve->resturant_house.','.$ve->resturant_building;?></td>
                     <td><?php echo $ve->resturant_contact_no;?></td>

@@ -31,10 +31,10 @@ class Zone_model extends CI_Model{
                     'zonelist_add_date' => date('Y-m-d H:i:s'),
                 );
                 $this->db->insert('zone_list',$data);
-                $id = $this->db->insert_id();
-                if($id){
+                $ids = $this->db->insert_id();
+                if($ids){
                     $d = array(
-                        'zonelist_id' => "ZONELIST".$id,
+                        'zonelist_id' => "ZONELIST".$ids,
                     );
                     $this->db->where('zonelistid',$id)->update('zone_list',$d);
                 }
@@ -97,6 +97,49 @@ class Zone_model extends CI_Model{
         }
         $this->db->select($sel)
                     ->from("zone_list")
+                    ->where($dt);
+        if(array_key_exists("keywords",$params)){
+                $this->db->where("(zone_name LIKE '%".$params["keywords"]."%')");
+        }
+        if(array_key_exists("whereCondition",$params)){
+                $this->db->where("(".$params["whereCondition"].")");
+        }
+        if(array_key_exists("image_inactive",$params)){
+                $this->db->where("(".$params["image_inactive"].")");
+        }
+        if(array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit'],$params['start']);
+        }elseif(!array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                $this->db->limit($params['limit']);
+        }
+        if(array_key_exists("tipoOrderby",$params) && array_key_exists("order_by",$params)){
+                $this->db->order_by($params['tipoOrderby'],$params['order_by']);
+        }
+        if(array_key_exists("group_by",$params)){
+                $this->db->group_by($params['group_by']);
+        }
+    //     $this->db->get();echo $this->db->last_query();exit;
+        return  $this->db->get();
+    }
+    public function ViewoverzoneList($params = array()){
+        return $this->queryoverzoneList($params)->result();
+    }
+    public function queryoverzoneList($params = array()){
+        $dt =   array(
+            "zl.zonelist_open"     => '1',
+            "zl.zonelist_status"   => '1',
+            "z.zone_open"       => '1',
+        );
+        $sel        =   "*";
+        if(array_key_exists("cnt",$params)){
+            $sel    =   "count(*) as cnt";
+        }
+        if(array_key_exists("columns",$params)){
+            $sel    =    $params["columns"];
+        }
+        $this->db->select($sel)
+                    ->from("zones as z")
+                    ->join("zone_list as zl","z.zone_id = zl.zone_id","INNER")
                     ->where($dt);
         if(array_key_exists("keywords",$params)){
                 $this->db->where("(zone_name LIKE '%".$params["keywords"]."%')");

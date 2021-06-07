@@ -638,8 +638,9 @@ hr {
     width: 100px;
 }
 .todoList-sidebar-scroll{
-    overflow-y: auto;
+     overflow-y: auto;
     overflow-x: hidden;
+    min-height: 255px;
 }
 .justify-content{
         justify-content: space-between;
@@ -678,5 +679,3 @@ hr {
     from {background-color: red;color:#fff;}
     to {background-color: #f6f7f8;color:#000;}
 }
-
-    

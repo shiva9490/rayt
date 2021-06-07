@@ -744,7 +744,7 @@ class Menu_model extends CI_Model{
             'resturant_items_type'     => $this->input->post('veg_type'),
             'resturant_items_desc'     => $this->input->post('details'),
             'resturant_items_price'    => $this->input->post('item_price'),
-            'resturant_items_packing'  => $this->input->post('final_amount'),
+            'resturant_items_packing'  => $this->input->post('delivery_fee'),
             'resturant_items_vat'      => $this->input->post('vat'),
             'resturant_items_add_by'   => ($this->session->userdata("restraint_id")!="")?$this->session->userdata("restraint_id"):$this->session->userdata("login_type"),
             'resturant_items_add_date' => date('Y-m-d H:i:s'),
@@ -821,7 +821,7 @@ class Menu_model extends CI_Model{
             'resturant_items_type'     => $this->input->post('veg_type'),
             'resturant_items_desc'     => $this->input->post('details'),
             'resturant_items_price'    => $this->input->post('item_price'),
-            'resturant_items_packing'  => $this->input->post('final_amount'),
+            'resturant_items_packing'  => $this->input->post('delivery_fee'),
             'resturant_items_vat'      => $this->input->post('vat'),
             'resturant_items_add_by'   => ($this->session->userdata("restraint_id")!="")?$this->session->userdata("restraint_id"):$this->session->userdata("login_type"),
             'resturant_items_add_date' => date('Y-m-d H:i:s'),
@@ -1175,6 +1175,20 @@ class Menu_model extends CI_Model{
         }
         // $this->db->get();echo $this->db->last_query();exit;
         return  $this->db->get();
+    }
+    public function updatecategory($uri){
+        $data = array(
+            'resturant_category_name'           => $this->input->Post("category"),
+            'resturant_category_name_a'         => $this->input->Post("category_a"),
+            'resturant_category_key'            => $this->input->Post("category"),
+            'resturant_category_modifiy_by'      => $this->session->userdata("restraint_id"),
+            'resturant_category_modifiy_date'    => date('Y-m-d H:i:s'),
+        );
+        $this->db->update("resturant_category",$data,array("resturant_category_id" => $uri));
+        if($this->db->affected_rows() >  0){
+            return TRUE;
+        }
+        return FALSE;
     }
 }
 ?>

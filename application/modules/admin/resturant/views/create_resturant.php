@@ -23,6 +23,18 @@
 						<div class="col-md-8 mx-auto box-shaow">
 							<!--<h5>English</h5>-->
 							<div class="row bb-grey">
+							    <div class="col-md-3 m-3">
+									<label for="Resturantname" >Resturant Main Image *</label>
+									<div class="row">
+										<div class="upload col-md-12">
+											<input type="file" name="main_image" accept="image/*"  id="input-file-max-fs" class="dropify" data-default-file="" data-max-file-size="2M" required />
+											<p class="mt-2"><i class="flaticon-cloud-upload mr-1"></i> Upload Logo</p>
+										</div>
+										<div class="invalid-feedback">
+											Please provide a valid Resturant Main Image.
+										</div>
+									</div>
+								</div>
 								<div class="col-md-12 m-3">
 									<label for="Resturantname" >Resturant Name *</label>
 									<div class="row">
@@ -42,20 +54,7 @@
 									<span class="text-danger"><?php echo form_error('name_a'); ?></span>
 									<span class="text-danger"><?php echo form_error('name'); ?></span>
 								</div>
-								<div class="col-md-12 m-3">
-									<div class="custom-file-container" data-upload-id="myFirstImage">
-										<label>Resturant Main Image (Single File) * <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
-										<label class="custom-file-container__custom-file" >
-											<input type="file" class="custom-file-container__custom-file__custom-file-input"  name="main_image" accept="image/*" required>
-											<input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
-											<span class="custom-file-container__custom-file__custom-file-control"></span>
-											<div class="invalid-feedback">
-												Please provide a valid Resturant Main Image.
-											</div>
-										</label>
-										<div class="custom-file-container__image-preview"></div>
-									</div>
-								</div>
+							
 								<div class="col-md-12 m-3">
 									<div class="form-group b-grey">
 										<label >Resturant ID</label>
@@ -77,7 +76,7 @@
 							</div>
 							<div class="row bb-grey">
 								<div class="col-md-12 m-3">
-									<div class="custom-file-container" data-upload-id="mySecondImage">
+									<div class="custom-file-container" data-upload-id="myFirstImage">
 										<label>Resturant Images (Allow Multiple) * <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
 										<label class="custom-file-container__custom-file" >
 											<input type="file" class="custom-file-container__custom-file__custom-file-input" name="files[]" multiple required>
@@ -241,7 +240,17 @@
 							</div>
 							<div class="row bb-grey">
 								<div class="col-md-12 m-3">
-									<h5>Menu hours *</h5><br>
+									<div class="row">
+										<div class="col-md-6">
+											<h5>Menu hours *</h5><br>
+										</div>
+										<div class="col-md-6 text-right">
+											<label class="new-control new-checkbox new-checkbox-text checkbox-dark">
+												<input type="checkbox" id="same" name="same" onchange="timeFunction()"  class="new-control-input">
+												<span class="new-control-indicator"></span><span class="new-chk-content"> If same Menu Time select this box.</span>
+											</label>
+										</div>
+									</div>
 									<?php 
 										$menu   =   $this->config->item("menu_hours");
 										$i=0;$j=0;foreach($menu as $m){
@@ -253,10 +262,10 @@
 												<input type="hidden"  name="resturant_weekly[]" value="<?php echo $m;?>"  />
 											</div>
 											<div class="col-md-4">
-												<input id="timepicker<?php echo $i;?>" name="strt_time[]" value="<?php echo set_value('strt_time".$i."');?>" />
+												<input id="timepicker<?php echo $i;?>" class="pristrtime<?php echo $i;?>" name="strt_time[]" value="<?php echo set_value('strt_time".$i."');?>" />
 											</div>
 											<div class="col-md-4">
-												<input id="timepicker1<?php echo $i;?>" name="end_time[]" value=""  class="form-control"/>
+												<input id="timepicker1<?php echo $i;?>" class="priendtime<?php echo $i;?>" name="end_time[]" value=""  class="form-control"/>
 											</div>
 											<div class="col-md-2">										
 												<label class="new-control new-checkbox new-checkbox-text checkbox-dark">
@@ -311,6 +320,23 @@
 										</div>
 									</div>
 								</div>
+								<div class="col-md-12 m-3">
+									<div class="form-group b-grey">
+										<label >Rating *</label>
+										<select class="form-control" name="rating" required >
+											<option value="">Select Rating</option>
+											<?php 
+												$rating   =   $this->config->item("rating");
+												foreach($rating as $ra){
+											?>
+											<option value="<?php echo $ra;?>" <?php if(set_value('resturant_rating') == $ra){echo 'selected';} ?>><?php echo $ra;?></option>
+											<?php } ?>
+										</select>
+										<div class="invalid-feedback">
+											Please provide a valid rating.
+										</div>
+									</div>
+								</div>
 							</div>
 							<div class="row bb-grey">
 								<div class="col-md-12 m-3">
@@ -335,12 +361,13 @@
 									<div class="form-group">
 										<label for="exampleFormControlSelect1">Zone *</label>
 										<select class="form-control" name="zone" id="exampleFormControlSelect1"required >
-											<option value="">Select Zone</option>
+									    	<option value="">Select Zone</option>
 											<?php 
-												$zone   =   $this->config->item("zone");
-												$i=0;foreach($zone as $z){
+												$z['whereCondition'] = 'zone_abc LIKE "Active" AND zone_open LIKE "1"';
+												$zone   =   $this->zone_model->viewZones($z);
+												foreach($zone as $z){
 											?>
-											<option value="<?php echo $z;?>"><?php echo $z;?></option>
+											<option value="<?php echo $z->zone_id;?>"><?php echo $z->zone_name;?></option>
 											<?php } ?>
 										</select>
 										<div class="invalid-feedback">
@@ -352,9 +379,9 @@
 									<div class="form-group">
 										<label for="exampleFormControlSelect1">Set delivery time for Zone *</label>
 										<select class="form-control" name="zone_time" id="exampleFormControlSelect1" required>
-											<option value="">Select sub Zone</option>
+											<option value="">Select Zone Time</option>
 											<?php 
-												$zone   =   $this->config->item("subzone");
+												$zone   =   $this->config->item("zone");
 												$i=0;foreach($zone as $sz){
 											?>
 											<option value="<?php echo $sz;?>"><?php echo $sz;?></option>
@@ -369,11 +396,14 @@
 									<div class="form-group">
 										<label for="exampleFormControlSelect1">Sub Zone *</label>
 										<select class="form-control" name="sub_zone" id="exampleFormControlSelect1" required >
-											<option value="1">1</option>
-											<option value="2">2</option>
-											<option value="3">3</option>
-											<option value="4">4</option>
-											<option value="5">5</option>
+										    <option value="">Select Sub Zone</option>
+											<?php 
+												$sz['whereCondition'] = 'zone_abc LIKE "Active" AND zone_open LIKE "1"';
+												$subzone   =   $this->zone_model->viewZones($sz);
+												foreach($subzone as $sz){
+											?>
+											<option value="<?php echo $sz->zone_id;?>"><?php echo $sz->zone_name;?></option>
+											<?php } ?>
 										</select>
 										<div class="invalid-feedback">
 											Please provide a valid Sub Zone.
@@ -384,11 +414,13 @@
 									<div class="form-group">
 										<label for="exampleFormControlSelect1">Set delivery time for subzone *</label>
 										<select class="form-control" name="sub_zone_time" id="exampleFormControlSelect1" required>
-											<option value="1">1</option>
-											<option value="2">2</option>
-											<option value="3">3</option>
-											<option value="4">4</option>
-											<option value="5">5</option>
+										    <option value="">Select Sub Zone Time</option>
+										    <?php 												
+												$zone   =   $this->config->item("subzone");
+												$i=0;foreach($zone as $sz){
+											?>
+											<option value="<?php echo $sz;?>"><?php echo $sz;?></option>
+											<?php } ?>
 										</select>
 										<div class="invalid-feedback">
 											Please provide a valid Set delivery time for subzone.
@@ -409,7 +441,7 @@
 								</div>
 								<div class="col-md-12 m-3">
 									<div class="form-group">
-										<div class="custom-file-container" data-upload-id="mythreeImage">
+										<div class="custom-file-container" data-upload-id="mySecondImage">
 											<label> <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">Clear All</a></label>
 											<label class="custom-file-container__custom-file" >
 												<input type="file" class="custom-file-container__custom-file__custom-file-input" name="legal_doc[]" multiple required>

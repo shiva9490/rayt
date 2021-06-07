@@ -169,6 +169,8 @@ class Customer_model extends CI_Model{
             "customer_name"         =>  ucwords($this->input->post("fname")), 
             "customer_email_id"     =>  $this->input->post("email"),
             "customer_mobile"       =>  $this->input->post("mobile"),
+            "customer_dob"          =>  $this->input->post("dob"),
+            "customer_gender"       =>  $this->input->post("gender"),
             "customer_modified_on"  =>  date("Y-m-d H:i:s"),
             "customer_modified_by"  =>  $this->session->userdata("login_id")?$this->session->userdata("login_id"):$customer_id
         ); 
@@ -194,6 +196,21 @@ class Customer_model extends CI_Model{
         $params["whereCondition"] = $h;
         $vsp        =   $this->customer_model->queryCustomer($params)->row_array();
         $this->db->update("customers",$dta,array("customer_id"   =>  $vsp['customer_id']));
+        if($this->db->affected_rows() > 0){
+            return TRUE;
+        }
+        return FALSE;
+    }
+    public function update_customer_password(){
+        $view           =   $this->api_model->checkcustomer(); 
+        $customer_id    =   $view["customer_id"];
+        $dta    =   array( 
+            "customer_password"     =>  $this->input->post("new_password"), 
+            "customer_cpassword"    =>  $this->input->post("confirm_password"),
+            "customer_modified_on"  =>  date("Y-m-d H:i:s"),
+            "customer_modified_by"  =>  $this->session->userdata("login_id")?$this->session->userdata("login_id"):$customer_id
+        );
+        $this->db->update("customers",$dta,array("customer_id" => $customer_id));
         if($this->db->affected_rows() > 0){
             return TRUE;
         }

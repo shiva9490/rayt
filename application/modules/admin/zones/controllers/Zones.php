@@ -1,4 +1,6 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+ob_start();
 class Zones extends CI_Controller{
 	public function __construct() {
 		parent::__construct();
@@ -26,7 +28,8 @@ class Zones extends CI_Controller{
 			"content"  =>  'add_zones'
 		);
 		if($this->input->post('publish')){
-		    $this->form_validation->set_rules('zname', 'zname', 'required|is_unique[zones.zone_name]');
+		    //print_r($this->input->post());exit;
+		    $this->form_validation->set_rules('zoneName', 'zname', 'required|is_unique[zones.zone_name]');
 		    $this->form_validation->set_rules('lat[]', 'lat', 'required');
 		    $this->form_validation->set_rules('lng[]', 'lng', 'required');
             if($this->form_validation->run() == true){

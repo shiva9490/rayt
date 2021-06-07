@@ -46,11 +46,9 @@ $config['orderstatus']      =   array(
 $config['vehicle_type']     =   array("Car","Bike"); 
 $config['category']         =   array("Part Time","Full Time"); 
 $config['gender']           =   array("Male","Female"); 
-$config['rating']           =   array("Good","Average","Below Average","Bad");
+$config['rating']           =   array("Excellent","VeryGood","Average","Poor");
 $config['cancleorderstatus']=   array("Order not available","Food finished","Very busy");
-$config['discountType']     =   array("Percentage","Amount");
-$config['discountBased']    =   array("Category Wise","Product Wise","All");
-
+$config['payment_mode']     =   array("COD","Online Payment");
 /*
 |--------------------------------------------------------------------------
 | Index File

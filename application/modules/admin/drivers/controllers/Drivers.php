@@ -1,4 +1,6 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+ob_start();
 class Drivers extends CI_Controller{
 	public function __construct() {
 		parent::__construct();
@@ -8,7 +10,7 @@ class Drivers extends CI_Controller{
 	}
 
 	public function create(){
-	    $incre = $this->db->query('SELECT MAX(driver_login_username) as ids FROM `driver_login')->row_array();
+	    $incre = $this->db->query('SELECT MAX(driver_login_username) as ids FROM driver_login')->row_array();
 	    if(isset($incre['ids']) && ($incre['ids']) != ""){
 	        $number = (int)$incre['ids']+1;
 	    }else{

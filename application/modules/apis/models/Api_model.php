@@ -1,18 +1,20 @@
 <?php
 class Api_model extends CI_Model{
 	public function checkAuthorizationvalid(){
-        $default_status =   "0";
+	    $default_status =   "0";
         $auth           =   sitedata('site_authorization');
         $getallheaders  =   getallheaders();
         $authorization_key = '';
-        if(isset($getallheaders) && is_array($getallheaders) && count($getallheaders) >0){
+        if(isset($getallheaders) && is_array($getallheaders) && count($getallheaders) > 0){
             if(isset($getallheaders['Authorization']) && $getallheaders['Authorization'] !='') { $authorization_key = $getallheaders['Authorization']; }
             if(isset($authorization_key) && $authorization_key !=''){
                 $authorization_key = str_replace("key=","",$authorization_key);
                 $authorization_key = str_replace('"',"",$authorization_key);
                 $authorization_key = str_replace("'","",$authorization_key);
                 $authorization_key = trim($authorization_key);
-                if($authorization_key == trim($auth) ) { $default_status = 1; }
+                if($authorization_key == trim($auth)){
+                    $default_status = 1;
+                }
             }
         }
         return $default_status;
@@ -32,23 +34,20 @@ class Api_model extends CI_Model{
         $par['group_by'] = "zones.zone_id";
         $zone_list = $this->zone_model->viewZones();
         if(is_array($zone_list) && count($zone_list)){
-            //print_r($zone_list);exit;
             foreach($zone_list as $key=>$z){
-                $p['whereCondition'] = "zone_id LIKE '".$z->zone_id."'";
-                $ponts = $this->zone_model->viewZoneList($p);
+                $pss['whereCondition'] = "zone_id LIKE '".$z->zone_id."'";
+                $ponts = $this->zone_model->viewZoneList($pss);
                 //print_r($ponts);exit;
                 $s = array();
                 foreach($ponts as $k=>$p){
                     $s[$k] = $p->zonelist_lat.' '.$p->zonelist_lng;
                 }
-                $point =array($this->input->post("lat").' '.$this->input->post("long"));
+                $point       = array($this->input->post("lat").' '.$this->input->post("long"));
                 $longitude_x = $this->input->post("long");
-                $latitude_y = $this->input->post("lat");    
-                $d = $this->pointInPolygon($point,$s);
+                $latitude_y  = $this->input->post("lat");
+                $d           = $this->pointInPolygon($point,$s);
                 if($d == "inside"){
                     return $z->zone_id;
-                }else{
-                    return false;
                 }
             }
         }else{
@@ -171,8 +170,13 @@ class Api_model extends CI_Model{
         }
         return FALSE;
     }
-    public function getprofile(){
-        $params["whereCondition"] =   "lower(customer_token) LIKE '".strtolower($this->input->post("customer_token"))."'";
+    public function getprofile($id=null){
+        if($this->input->post("customer_token")!=""){
+            $idas = $this->input->post("customer_token");
+        }else{
+            $idas = $id;
+        }
+        $params["whereCondition"] =   "lower(customer_token) LIKE '".strtolower($idas)."' OR customer_mobile LIKE '".strtolower($idas)."' OR customer_email_id LIKE '".strtolower($idas)."'";
         $vsp    =   $this->customer_model->queryCustomer($params)->row_array();
         if(is_array($vsp) && count($vsp) > 0){
             $data = array();
@@ -181,6 +185,7 @@ class Api_model extends CI_Model{
                 $data['customer_name']      = $vsp['customer_name'];
                 $data['customer_email_id']  = $vsp['customer_email_id'];
                 $data['customer_mobile']    = $vsp['customer_mobile'];
+                $data['customer_wallet']    = number_format((float)$vsp['customer_wallet'], 3, '.', '');
                 $data['customer_token']     = $vsp['customer_token'];
             }
             return $data;
@@ -226,8 +231,8 @@ class Api_model extends CI_Model{
         if($this->input->post('customer_id')!=""){
             $par['whereCondition'] ="cs.customer_id LIKE '".$this->input->post('customer_id')."' OR cs.customer_token LIKE '".$this->input->post('customer_id')."' AND (orderdetails_rest_staus !='Delivered' OR orderdetails_rest_staus!='Order Cancelled')";
             $res = $this->order_model->viewOrders($par);
-            $data = array();
             if(is_array($res) && count($res) > 0){
+                $data = array();
                 foreach($res as $key=>$r){
                     $par['whereCondition'] ="order_details_id LIKE '".$r->orderdetails_id."'";
                     $res  = $this->order_model->viewOrderasson($par);
@@ -268,6 +273,8 @@ class Api_model extends CI_Model{
         return '0';
     }
     public function near_restorent($zone){
+        $par['start'] = ($this->input->post('limit')!="")?$this->input->post('limit'):'0';
+        $par['limit'] = ($this->input->post('limit')!="")?$this->input->post('limit'):sitedata('site_pagination');
         $par['whereCondition'] ="resturant_zone LIKE '".$zone."'";
         $res = $this->resturant_model->viewResturant($par);
         $data = array();
@@ -289,9 +296,11 @@ class Api_model extends CI_Model{
                 $datas = [];
                 if(is_array($cuisine) && count($cuisine) > 0){
                     foreach($cuisine as $keys=>$ce){
-                        $p['whereCondition'] = "cuisine_id LIKE '".$ce."' AND cuisine_acde LIKE 'Active'";
-                        $cuisines = $this->cuisine_model->get_cuisine($p);
-                        $datas[$keys] = $cuisines[0]->cuisine_name;
+                        if($keys >= 3){
+                            $p['whereCondition'] = "cuisine_id LIKE '".$ce."' AND cuisine_acde LIKE 'Active'";
+                            $cuisines = $this->cuisine_model->get_cuisine($p);
+                            $datas[$keys] = $cuisines[0]->cuisine_name;
+                        }
                     }
                 }
                 $data[$key]['resturant_id']         = $r->resturant_id;
@@ -303,6 +312,7 @@ class Api_model extends CI_Model{
                 $data[$key]['zone_time']            = $r->resturant_zone_time;
                 $data[$key]['openclose']            = $r->resturant_openclose;
                 $data[$key]['rating']               = $r->resturant_rating;
+                $data[$key]['delivery_change']      = number_format((float)$r->resturant_delivery, 3, '.', '');
                 $data[$key]['minorder']             = number_format((float)$r->resturant_minorder, 3, '.', '');
                 $data[$key]['cuisines']             = implode(",",$datas);
                 $data[$key]['distance']             = ($dista!="")?$dista:'';
@@ -330,6 +340,7 @@ class Api_model extends CI_Model{
                 "cart_items_packing"        =>  $dta[0]['resturant_items_packing'],
                 "cart_items_vat"            =>  $dta[0]['resturant_items_vat'],
                 "cart_total"                =>  $this->input->post('total'),
+                "cart_addmore"              =>  ($this->input->post('addmore')!="")?$this->input->post('addmore'):'',
                 "cart_addons"               =>  json_encode($this->input->post('addons')),
                 "cart_variants"             =>  json_encode($this->input->post('variants')),
                 "cart_date"                 =>  $this->input->post('date'),
@@ -346,47 +357,47 @@ class Api_model extends CI_Model{
     
     public function view_totalcart(){
         $view           =   $this->checkcustomer();
-        $customer_id    =   $view["customer_id"];
-        $total ='0';
-        $prms =array();
-        $view           =   $this->api_model->checkcustomer(); 
-        $customer_id    =   $view["customer_id"];
-        $prms["whereCondition"]   =   "cart_acde = '0' AND cs.customer_id LIKE '".$customer_id."' OR cs.customer_token LIKE '".$customer_id."' AND rt.resturant_items_abc LIKE 'Active'";
-        $dta  = $this->order_model->viewcartproducts($prms);
-        $ds = array();
-        if(is_array($dta) && count($dta) >0){
-            $i=0;foreach($dta as $d){
-                $addons     = explode(",",$d->cart_addons);
-                $variants     = explode(",",$d->cart_variants);
-                $addonsamount = "0";
-                $data = array();$j=0;
-                foreach($addons as $a){
-                    $adds = $this->common_config->clean($a);
-                    $par['whereCondition'] = "rt.resturant_id LIKE '".$d->cart_resturant_id."' AND  rt.resturant_items_id LIKE '".$d->cart_resturant_item_id."' AND ral.resturant_addon_listid LIKE '".$adds."' ";
-                    $res = $this->menu_model->getAddon($par);
-                    if(is_array($res) && count($res) > 0){
-                        foreach($res as $res){
-                            $addonsamount = $addonsamount+$res['resturant_addonitem_amount'];
+        $total ='0';$ds = array();$count='0';
+        if(is_array($view) && count($view) > 0){
+            $customer_id    =   $view["customer_id"];
+            $prms =array();
+            $prms["whereCondition"]   =   "cart_acde = '0' AND cs.customer_id LIKE '".$customer_id."' OR cs.customer_token LIKE '".$customer_id."' AND rt.resturant_items_abc LIKE 'Active'";
+            $dta  = $this->order_model->viewcartproducts($prms);
+            $count = count($dta);
+            if(is_array($dta) && count($dta) > 0){
+                $i=0;foreach($dta as $d){
+                    $addons     = explode(",",$d->cart_addons);
+                    $variants     = explode(",",$d->cart_variants);
+                    $addonsamount = "0";
+                    $data = array();$j=0;
+                    foreach($addons as $a){
+                        $adds = $this->common_config->clean($a);
+                        $par['whereCondition'] = "rt.resturant_id LIKE '".$d->cart_resturant_id."' AND  rt.resturant_items_id LIKE '".$d->cart_resturant_item_id."' AND ral.resturant_addon_listid LIKE '".$adds."' ";
+                        $res = $this->menu_model->getAddon($par);
+                        if(is_array($res) && count($res) > 0){
+                            foreach($res as $res){
+                                $addonsamount = $addonsamount+$res['resturant_addonitem_amount'];
+                            }
                         }
-                    }
-                $j++;}
-                $variantsamount = "0";
-                $datas = array();$k=0;
-                foreach($variants as $v){
-                    $vans = $this->common_config->clean($v);
-                    $pars['whereCondition'] = "rv.resturant_id LIKE '".$d->cart_resturant_id."' AND  rv.resturant_variants_id LIKE '".$vans."'";
-                    $ress = $this->menu_model->getVariants($pars);
-                    if(is_array($ress) && count($ress) > 0){
-                        foreach($ress as $ress){
-                            $variantsamount = $variantsamount+$ress['resturant_variants_price'];
+                    $j++;}
+                    $variantsamount = "0";
+                    $datas = array();$k=0;
+                    foreach($variants as $v){
+                        $vans = $this->common_config->clean($v);
+                        $pars['whereCondition'] = "rv.resturant_id LIKE '".$d->cart_resturant_id."' AND  rv.resturant_variants_id LIKE '".$vans."'";
+                        $ress = $this->menu_model->getVariants($pars);
+                        if(is_array($ress) && count($ress) > 0){
+                            foreach($ress as $ress){
+                                $variantsamount = $variantsamount+$ress['resturant_variants_price'];
+                            }
                         }
-                    }
-                $k++;}
-                $vat = ($d->resturant_items_price*$d->resturant_items_vat)/100;
-                $total = ($total+$d->resturant_items_price+$d->resturant_items_packing+$vat+$addonsamount+$variantsamount)*$d->cart_quantity;
+                    $k++;}
+                    $vat = ($d->resturant_items_price*$d->resturant_items_vat)/100;
+                    $total = $total+($d->resturant_items_price+$d->resturant_items_packing+$vat+$addonsamount+$variantsamount)*$d->cart_quantity;
+                }
             }
         }
-        $ds[0]['cart_quantity']     = count($dta);
+        $ds[0]['cart_quantity']     = $count;
         $ds[0]['cart_service']      = '0.000';
         $ds[0]['cart_descount']     = '0.000';
         $ds[0]['cart_delivery']     = '0.000';
@@ -525,77 +536,119 @@ class Api_model extends CI_Model{
         $par['whereCondition']  = "or.customer_id LIKE '".$customer_id."' AND or.order_unique_id LIKE '".$this->input->post('unique_id')."'";
         $par['group_by']        = "ord.orderdetails_id";
         $results = $this->order_model->viewOrderDetails($par);
-       // print_r($results[0]->driver_id);exit;
-        $data = array();$d = array();$drive = array();
+        $data = array();$d = array();$drive = array();$resturant = array();
 	    if(is_array($results) && count($results) > 0){
 	        $total = '0';
 	        foreach($results as $key=>$r){
 	            $this->apirestraint_model->vieworder($r->orderdetails_id);
 	            $add = explode(",",json_decode($r->orderdetail_addons));
-                $addons = array();$addonss= '0';
-                if(is_array($add) && count($add) > 0){
+                $addons = array();$addonss= '0';$addonsw='';
+                if(is_array($add) && count($add) > 3){
                     foreach($add as $k=>$add){
                         $adds = $this->common_config->clean($add);
+                        $pars['columns'] = "orderassons as ordername,orderassons.*";
                         $pars['whereCondition'] = "order_id Like '".$r->order_id."' AND order_details_id LIKE '".$r->orderdetails_id."' AND  orderassons_id LIKE '".$adds."'";
                         $res = $this->order_model->getOrderasson($pars);
-                        $addons['name'][$k] = $res['orderassons'];
-                        $addons['amount'][$k] = $res['orderassons_amount'];
-                        $addonss = $addonss+$res['orderassons_amount'];
+                        $ordamount=0;
+                        $addons['name'][$k]     = ($res['ordername']!="")?$res['ordername']:'';
+                        $addons['amount'][$k]   = ($res['orderassons_amount']!="")?$res['orderassons_amount']:'';
+                        $ordamount = $res['orderassons_amount'];
+                        $addonss = $addonss+$ordamount;
                     }
+                    $addonsw = implode(",",$addons['name']);
                 }
-                $addons = implode(",",$addons['name']);
 	            $variants = explode(",",json_decode($r->orderdetail_variants));
-                $var = array();
-                $variantam = '0';
-                if(is_array($variants) && count($variants) > 0){
-                    foreach($variants as $variant){
+                $var = array();$variantam = '0';$variantsss='';
+                if(is_array($variants) && count($variants) > 3){
+                    foreach($variants as $ks=>$variant){
                         $variantss = $this->common_config->clean($variant);
                         $pare['whereCondition'] = "order_id Like '".$r->order_id."' AND order_details_id LIKE '".$r->orderdetails_id."' AND  orderassons_id LIKE '".$variantss."'";
                         $ress = $this->order_model->getOrderasson($pare);
                         $variantam = $variantam+$ress['orderassons_amount'];
-                        $var['name'][$k] = $ress['orderassons'];
-                        $var['amount'][$k] = $ress['orderassons_amount'];
+                        $var['name'][$ks] = ($ress['orderassons']!="")?$ress['orderassons']:'';
+                        $var['amount'][$ks] = ($ress['orderassons_amount']!="")?$ress['orderassons_amount']:'0';
                     }
+                    $variantsss  = implode(",",$var['name']);
                 }
-                $variants  = implode(",",$var['name']);
-                $la = $this->db->query("SELECT driver_address_latitude,driver_address_longitude FROM driver_address_update WHERE driver_address_driver_id = '".$r->driver_id."' ORDER BY `driver_addressid` DESC LIMIT 1")->row_array();
                 $total = $total+($r->orderdetail_quantity * $r->orderdetail_price)+$addonss+$variantam;
-	            $data[$key]['resturant_name']               = $r->resturant_name;
-	            $data[$key]['resturant_name_a']             = $r->resturant_name_a;
-	            $data[$key]['order_unique_id']              = $r->orderdetails_unique_id;
-	            $data[$key]['items_name']                   = $r->resturant_items_name;
-	            $data[$key]['items_name_a']                 = $r->resturant_items_name_a;
-	            $data[$key]['items_type']                   = $r->resturant_items_type;
-	            $data[$key]['quantity']                     = $r->orderdetail_quantity;
-	            $data[$key]['price']                        = number_format((float)($r->orderdetail_price+$variantam), 3, '.', '');
-	            $data[$key]['addons']                       = $addons;
-	            $data[$key]['addons_amount']                = number_format((float)$addonss, 3, '.', '');
-	            $data[$key]['variants']                     = $variants;
-	            $data[$key]['variants_total']               = number_format((float)$variantam, 3, '.', '');
-	            $drive['driver']['driver_name']             = $r->driver_name;
-	            $drive['driver']['driver_name_a']           = $r->driver_name_a;
-	            $drive['driver']['driver_name_last']        = $r->driver_name_last;
-	            $drive['driver']['driver_phone']            = $r->driver_phone;
-	            $drive['driver']['driver_email']            = $r->driver_email;
-	            $drive['driver']['driver_profile_image']    = $r->driver_profile_image;
-	            $drive['driver']['driver_vehicle_number']   = $r->driver_vehicle_number;
-	            $drive['driver']['driver_vehicle_type']     = $r->driver_vehicle_type;
-	            $drive['driver']['driver_gender']           = $r->driver_gender;
-	            $drive['driver']['driver_lat']              = ($la['driver_address_latitude']!="")?$la['driver_address_latitude']:'';
-	            $drive['driver']['driver_lon']              = ($la['driver_address_longitude']!="")?$la['driver_address_longitude']:'';
+	            $data[$key]['resturant_name']                    = $r->resturant_name;
+	            $data[$key]['resturant_name_a']                  = $r->resturant_name_a;
+	            $data[$key]['order_id']                          = $r->order_unique_id;
+	            $data[$key]['items_name']                        = $r->resturant_items_name;
+	            $data[$key]['items_name_a']                      = $r->resturant_items_name_a;
+	            $data[$key]['items_type']                        = $r->resturant_items_type;
+	            $data[$key]['quantity']                          = $r->orderdetail_quantity;
+	            $data[$key]['price']                             = number_format((float)($r->orderdetail_price+$variantam), 3, '.', '');
+	            $data[$key]['addons']                            = $addonsw;
+	            $data[$key]['addons_amount']                     = number_format((float)$addonss, 3, '.', '');
+	            $data[$key]['variants']                          = $variantsss;
+	            $data[$key]['variants_total']                    = number_format((float)$variantam, 3, '.', '');
+	            $drive['driver_name']                            = ($r->driver_name!="")?$r->driver_name:'';
+	            $drive['driver_name_a']                          = ($r->driver_name_a!="")?$r->driver_name_a:'';
+	            $drive['driver_name_last']                       = ($r->driver_name_last!="")?$r->driver_name_last:'';
+	            $drive['driver_phone']                           = ($r->driver_phone!="")?$r->driver_phone:'';
+	            $drive['driver_email']                           = ($r->driver_email!="")?$r->driver_email:'';
+	            $drive['driver_profile_image']                   = ($r->driver_profile_image!="")?$r->driver_profile_image:'';
+	            $drive['driver_vehicle_number']                  = ($r->driver_vehicle_number!="")?$r->driver_vehicle_number:'';
+	            $drive['driver_vehicle_type']                    = ($r->driver_vehicle_type!="")?$r->driver_vehicle_type:'';
+	            $drive['driver_gender']                          = ($r->driver_gender!="")?$r->driver_gender:'';
+                $resturant['resturant_name']                     = ($r->resturant_name!="")?$r->resturant_name:'';
+	            $resturant['resturant_name_a']                   = ($r->resturant_name_a!="")?$r->resturant_name_a:'';
+	            $resturant['resturant_image']                    = ($r->resturant_image!="")?$r->resturant_image:'';
+	            $resturant['resturant_logo_image']               = ($r->resturant_logo_image!="")?$r->resturant_logo_image:'';
+	            $resturant['resturant_contact']                  = ($r->resturant_contact!="")?$r->resturant_contact:'';
+	            $resturant['resturant_contact_no']               = ($r->resturant_contact_no!="")?$r->resturant_contact_no:'';
+	            $resturant['resturant_area']                     = ($r->resturant_area!="")?$r->resturant_area:'';
+	            $resturant['resturant_block']                    = ($r->resturant_block!="")?$r->resturant_block:'';
+	            $resturant['resturant_street']                   = ($r->resturant_street!="")?$r->resturant_street:'';
+	            $resturant['resturant_jaada']                    = ($r->resturant_jaada!="")?$r->resturant_jaada:'';
+	            $resturant['resturant_house']                    = ($r->resturant_house!="")?$r->resturant_house:'';
+	            $resturant['resturant_building']                 = ($r->resturant_building!="")?$r->resturant_building:'';
+	            $resturant['resturant_latitude']                 = ($r->resturant_latitude!="")?$r->resturant_latitude:'';
+	            $resturant['resturant_longitude']                = ($r->resturant_longitude!="")?$r->resturant_longitude:'';
+	            $resturant['resturant_preparation']              = $r->resturant_preparation.' Mins';
+	            $la = $this->db->query("SELECT driver_address_latitude,driver_address_longitude FROM driver_address_update WHERE driver_address_driver_id = '".$r->driver_id."' ORDER BY `driver_addressid` DESC LIMIT 1")->row_array();
+                if(is_array($la) && count($la) >0){
+                    $drive['driver_lat']                             = ($la['driver_address_latitude']!="")?$la['driver_address_latitude']:'';
+	                $drive['driver_long']                            = ($la['driver_address_longitude']!="")?$la['driver_address_longitude']:'';
+                }else{
+                    $drive['driver_lat']='';
+	                $drive['driver_long']='';
+                }
 	        }
 	        $r = array(
 	            'total'     =>  $total,
 	            'delivery'  =>  '0'
 	        );
+	        $orderstatus = $this->config->item('orderstatus');
 	        $d = array(
-	            'order_status'  => $this->order_status($results[0]->orderdetails_id),
-	            'address'       => $this->order_address(),
-	            'address_ios'   => $this->order_address_ios(),
-	            'order_list'    => $data,
-	            'driver_details'=> $drive,
-	            'order_amount'  => $r,
+	            'order_id'                  => ($results[0]->order_unique_id)?$results[0]->order_unique_id:'',
+	            'order_count'               => count($results),
+	            'order_date_time'           => date("d-M-Y", strtotime($results[0]->orderstatus_add_date)),
+	            'order_time'                => date("H:i:s a", strtotime($results[0]->orderstatus_add_date)),
+	            'orderdetails_rest_staus'   => ($results[0]->orderdetails_rest_staus)?$results[0]->orderdetails_rest_staus:'',
+	            'resturant_preparation'     => $results[0]->resturant_preparation. 'Mins',
+	            'support_number'            => sitedata('site_support_number'),
+	            'support_email'             => sitedata('site_email'),
+	            'order_status'              => $this->order_status($results[0]->orderdetails_id),
+	            'address'                   => $this->order_address(),
+	            'address_ios'               => $this->order_address_ios(),
+	            'order_list'                => $data,
+	            'driver_details'            => $drive,
+	            'resturant_details'         => $resturant,
+	            'order_amount'              => $r,
 	        );
+	        if(isset($results[0]->orderdetails_rest_staus) && $results[0]->orderdetails_rest_staus == $orderstatus[3] || $results[0]->orderdetails_rest_staus == $orderstatus[4]){
+	            $distance = $this->common_config->GetDrivingDistance(($la['driver_address_latitude']!="")?$la['driver_address_latitude']:'',$results[0]->resturant_latitude,($la['driver_address_longitude']!="")?$la['driver_address_longitude']:'',$results[0]->resturant_longitude);
+                //$data[$key]['dis'] = $distance;
+                $dista='';$time='';
+                if(is_array($distance)){
+                    $dista = $distance['distance'];
+                    $time  = $distance['time'];
+                }
+	            $d['around_time']       = $time;
+	            $d['around_distance']   = $dista;
+	        }
 	    }
 	    return $d;
     }
@@ -659,20 +712,110 @@ class Api_model extends CI_Model{
 	    return $data;
     }
     public function order_status($orderid){
-        $par['whereCondition']  = "orderdetail_restaurant_id LIKE '".$orderid."'";
+        $par['whereCondition']  = "orderdetail_restaurant_id LIKE '".$orderid."' AND (orderdetail_status = 'Order Placed' OR orderdetail_status = 'Preparing' OR orderdetail_status = 'Ready for pickup' OR orderdetail_status = 'Out for delivery' OR orderdetail_status = 'Delivered' OR orderdetail_status = 'Order Cancelled')";
         $par['tipoOrderby']     = "orderstatus_id";
         $par['order_by']        = "ASC";
         $par['group_by']        = "orderdetail_status";
         $res = $this->order_model->viewOrderStatus($par);
         $da = array();
+        $sta =array('Order Placed','Food Preparing','Completed Pickup','Deliverd','Order Cancelled');
         if(is_array($res) && count($res) > 0){
-            foreach($res as $key=>$r){
-                $da[$key]['status'] = $r->orderdetail_status;
-                $da[$key]['time']   = date("H:i:s a", strtotime($r->orderstatus_add_date));
-                $da[$key]['date']   = date("D-m-Y", strtotime($r->orderstatus_add_date));
+           // print_r($res);exit;
+            $k=0;$dsitem ='';
+            $i=0;foreach($res as $key=>$r){
+                if("Order Cancelled" == $r->orderdetail_status){
+                    $da[$i]['status'] = 'Cancel Order';
+                    $da[$i]['time']   = date("H:i:s a", strtotime($r->orderstatus_add_date));
+                    $da[$i]['date']   = date("d-M-Y", strtotime($r->orderstatus_add_date));
+                    $dsitem           = 'Cancel Order';
+                    $k = 1;
+                    $i++;
+                }elseif($r->orderdetail_status == "Order Placed" ){
+                    $da[$i]['order_status'] = '1';
+                    $da[$i]['status']       = 'Order Placed';
+                    $da[$i]['time']         = date("H:i:s a", strtotime($r->orderstatus_add_date));
+                    $da[$i]['date']         = date("d-M-Y", strtotime($r->orderstatus_add_date));
+                    $dsitem                 = 'Order Placed';$i++;
+                }elseif(("Preparing" == $r->orderdetail_status || "Ready for pickup" == $r->orderdetail_status || "Dely Order" == $r->orderdetail_status)){
+                    if($dsitem != 'Food Preparing'){
+                        $da[$i]['order_status'] = '1';
+                        $da[$i]['status']       = 'Food Preparing';
+                        $da[$i]['time']         = date("H:i:s a", strtotime($r->orderstatus_add_date));
+                        $da[$i]['date']         = date("d-M-Y", strtotime($r->orderstatus_add_date));
+                        $dsitem                 = 'Food Preparing';$i++;
+                    }
+                }elseif(("Out for delivery" == $r->orderdetail_status || "arrived order" == $r->orderdetail_status)){
+                    $da[$i]['order_status'] = '1';
+                    $da[$i]['status']       = 'Completed Pickup';
+                    $da[$i]['time']         = date("H:i:s a", strtotime($r->orderstatus_add_date));
+                    $da[$i]['date']         = date("d-M-Y", strtotime($r->orderstatus_add_date));
+                    $dsitem                 = 'Completed Pickup';$i++;
+                }elseif("Delivered" == $r->orderdetail_status){
+                    $da[$i]['order_status'] = '1';
+                    $da[$i]['status']       = 'Deliverd';
+                    $da[$i]['time']         = date("H:i:s a", strtotime($r->orderstatus_add_date));
+                    $da[$i]['date']         = date("d-M-Y", strtotime($r->orderstatus_add_date));
+                    $dsitem                 = 'Deliverd';$i++;
+                }elseif("Order Cancelled" == $r->orderdetail_status){
+                    $da[$i]['order_status'] = '1';
+                    $da[$i]['status']       = 'Cancel Order';
+                    $da[$i]['time']         = date("H:i:s a", strtotime($r->orderstatus_add_date));
+                    $da[$i]['date']         = date("d-M-Y", strtotime($r->orderstatus_add_date));
+                    $dsitem                 = 'Cancel Order';$i++;
+                }else{
+                    $da[$i]['order_status'] = '0';
+                    $da[$i]['status']       = $sta[$i];
+                    $da[$i]['time']         = '';
+                    $da[$i]['date']         = '';
+                    $i++;
+                }
+                
             }
         }
-        return $da;
+        //print_r($da);exit;
+        $ds=array();
+        if($k == 0){
+            $ds[0]['order_status']      = '0';
+            $ds[0]['order_status_name'] = 'Order Placed';
+            $ds[0]['time']              = '';
+            $ds[0]['date']              = '';
+            
+            $ds[1]['order_status']      = '0';
+            $ds[1]['order_status_name'] = 'Food Preparing';
+            $ds[1]['time']              = '';
+            $ds[1]['date']              = '';
+            
+            $ds[2]['order_status']      = '0';
+            $ds[2]['order_status_name'] = 'Completed Pickup';
+            $ds[2]['time']              = '';
+            $ds[2]['date']              = '';
+            
+            $ds[3]['order_status']      = '0';
+            $ds[3]['order_status_name'] = 'Deliverd';
+            $ds[3]['time']              = '';
+            $ds[3]['date']              = '';
+        }
+        $temp       = array_unique(array_column($da, 'status'));
+        $unique_arr = array_intersect_key($da, $temp);
+        $dsty = '';
+        foreach($da as $key=>$dd){
+            $ds[$key]['order_status']       = '1';
+            $ds[$key]['order_status_name']  = $dd['status'];
+            $ds[$key]['time']               = $dd['time'];
+            $ds[$key]['date']               = $dd['date'];
+        }
+        return $ds;
     }
- 
+    public function privacy_policy(){
+        $data = array();
+        $par['whereCondition']     = "page_name LIKE 'Privacy policy'";
+        $res = $this->common_model->getPages($par);
+        if(is_array($res) && count($res) > 0){
+            foreach($res as $r){
+                $data['name']       = $res['page_name'];
+                $data['page_desc']  = $res['page_desc'];
+            }
+        }
+        return $data;
+    }
 }

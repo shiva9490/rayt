@@ -15,7 +15,7 @@
         </div> 
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-3"> 
             <div class="form-group">
-                <input id="rangeCalendarFlatpickr1" class="form-control" type="text"  value="<?php echo str_replace("+"," ",$this->input->get('date'));?>" placeholder="Select Date.." name="date">
+                <input id="rangeCalendarFlatpickr" class="form-control" type="text"  value="<?php echo str_replace("+"," ",$this->input->get('date'));?>" placeholder="Select Date.." name="date">
             </div>
         </div> 
         

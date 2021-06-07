@@ -44,7 +44,7 @@ class Apidriver_model extends CI_Model{
     }
     public function checkdriver(){
         $par['columns']         = 'd.driver_id,driver_name,driver_phone,driver_email,driver_login_username,driver_login_password';
-        $par['whereCondition']  = "lower(driver_login_username) LIKE '".strtolower($this->input->post("empid"))."'";
+        $par['whereCondition']  = "lower(driver_login_username) LIKE '".strtolower($this->input->post("empid"))."' OR driver_login_id LIKE '".strtolower($this->input->post("empid"))."'";
         $vsp    =   $this->drivers_model->getDriverLogin($par);
         if(is_array($vsp) && count($vsp) > 0){
             return $vsp;
@@ -119,9 +119,11 @@ class Apidriver_model extends CI_Model{
         }
         return FALSE;
     }
-    public function logout($id){
+    public function logout(){
+        $emps = $this->checkdriver();
+        $empid = $emps['driver_id'];
         $dat    =   array(
-            "driver_status_driver_id"   =>  $id,
+            "driver_status_driver_id"   =>  $empid,
             "driver_status_on" 	        =>  date("Y-m-d H:i:s"),
             "driver_status_for" 	    =>  'Logout'
         );
@@ -131,8 +133,8 @@ class Apidriver_model extends CI_Model{
             $this->db->update("driver_login_status",array("driver_status_id" => $vsp."DRILS"),array("driver_statusid" => $vsp));
             if($this->db->affected_rows() > 0){
                 $dat    =   array(
-                    "driver_address_driver_id"          =>  $id,
-                    "driver_address_latitude" 	        =>   $this->input->post("latitude"),
+                    "driver_address_driver_id"          =>  $empid,
+                    "driver_address_latitude" 	        =>  $this->input->post("latitude"),
                     "driver_address_longitude" 	        =>  $this->input->post("longitude"),
                     "driver_address_login_status_id"    =>  $vsp."DRILS",
                     "driver_address_time" 	            =>  date("Y-m-d h:i:s")
@@ -187,7 +189,7 @@ class Apidriver_model extends CI_Model{
           	foreach($vsp as $key=>$d){ 
           	    $status='';
           	    if($d->driver_close_time == 1){
-          	        $status = "Holyday";
+          	        $status = "whole day";
           	    }
                 $dta[$key]['weekly']      =  $d->driver_weekly;
                 $dta[$key]['start_time']  =  $d->driver_start_time;
@@ -220,8 +222,9 @@ class Apidriver_model extends CI_Model{
         $par['whereCondition']  =  "drso.driver_id LIKE '".$empid."' $hr";
         $par['tipoOrderby']     =  "drso.driverassignorderid";
         $par['order_by']        =  "DESC";
-        $par['group_by']        =  "ord.orderdetails_id";
+        $par['group_by']        =  "or.order_unique_id";
         $orders = $this->order_model->viewOrderDetails($par);
+        //print_r($orders);exit;
         $data=array();
         if(is_array($orders) && count($orders) > 0){
             foreach($orders as $key=>$ord){

@@ -44,4 +44,44 @@ class Common_model extends CI_Model{
         public function viewCountries($params = array()){
             return $this->queryCountries($params)->result();
         }
+        
+        
+        /*--------------Pages---------------------*/
+        public function viewPages($params = array()){
+            return $this->queryPages($params)->result();
+        }
+        public function getPages($params = array()){
+            return $this->queryPages($params)->row_array();
+        }
+        public function queryPages($params = array()){
+            $dt         =   array(
+                        );
+            $sel        =   "*";
+            if(array_key_exists("cnt",$params)){
+                $sel    =   "count(*) as cnt";
+            }
+            if(array_key_exists("columns",$params)){
+                $sel    =    $params["columns"];
+            }
+            $this->db->select($sel)
+                        ->from("page")
+                        ->where($dt);
+            if(array_key_exists("keywords",$params)){
+                    $this->db->where("(page_name LIKE '%".$params["keywords"]."%')");
+            }
+            if(array_key_exists("whereCondition",$params)){
+                    $this->db->where("(".$params["whereCondition"].")");
+            }
+            if(array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                    $this->db->limit($params['limit'],$params['start']);
+            }elseif(!array_key_exists("start",$params) && array_key_exists("limit",$params)){
+                    $this->db->limit($params['limit']);
+            }
+            if(array_key_exists("tipoOrderby",$params) && array_key_exists("order_by",$params)){
+                    $this->db->order_by($params['tipoOrderby'],$params['order_by']);
+            } 
+//                $this->db->get();echo $this->db->last_query();exit;
+            return  $this->db->get();  
+        }
+        /*--------------Pages---------------------*/
 }

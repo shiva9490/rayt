@@ -97,7 +97,7 @@
 								<div class="col-md-3">
 									<div class="form-group b-grey">
 										<label >Item Price *</label> 
-										<input type="number" class="form-control prince" name="item_price" value="<?php set_value('item_price')?>"  onkeyup="itemamount()" placeholder="Enter Item Price" required />
+										<input type="number" class="form-control prince" name="item_price" value="<?php set_value('item_price')?>"  onkeyup="itemamount()" step="any" placeholder="Enter Item Price" required />
 										<div class="invalid-feedback">
 											Please provide a valid Item Price.
 										</div>
@@ -107,7 +107,7 @@
 								<div class="col-md-3">
 									<div class="form-group b-grey">
 										<label>Packaging </label>
-										<input type="number" class="form-control packing"  name="delivery_fee" value="<?php set_value('delivery_fee')?>" onkeyup="itemamount()" placeholder="Enter Packaging" />
+										<input type="number" class="form-control packing"  name="delivery_fee" value="<?php set_value('delivery_fee')?>" step="any" onkeyup="itemamount()" placeholder="Enter Packaging" />
 										<div class="invalid-feedback">
 											Please provide a valid Packaging.
 										</div>

@@ -1,4 +1,6 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+ob_start();
 class Common extends CI_Controller{
         public function pagenotfound(){
                 $dta    =   array(

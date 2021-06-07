@@ -25,8 +25,13 @@
 					<img width="150px" height="150px" src="<?php echo $imh;?>">
 				</div>
 				<div class="todo-content">
-				<?php echo $view->resturant_items_type;?>
-					<h5 class="todo-heading" data-todoHeading="<?php echo $view->resturant_items_name;?>"><?php echo $view->resturant_items_name;?></h5>
+			    	<?php echo $view->resturant_items_type;?>
+                    <h5 id="item<?php echo $view->resturant_items_id;?>" class="todo-heading" data-todoHeading="<?php echo $view->resturant_items_name;?>">
+						<a class="item<?php echo $view->resturant_items_id;?>" onclick="itemModel('<?php echo $view->resturant_items_id;?>')" >
+							<?php echo $view->resturant_items_name;?>
+						</a>
+						<span class="loader<?php echo $view->resturant_items_id;?>"></span>
+					</h5>
 					<p class="todo-text" data-todoHtml="">
 					    <?php echo number_format((float)$view->resturant_items_price, 3, '.', '');?> KWD
 					</p>
@@ -34,7 +39,7 @@
 				</div>
 				<div class="priority-dropdown custom-dropdown-icon">
 					<label class="switch s-secondary  mb-4 mr-2">
-                        <input type="checkbox" name="itemid" id="itemid<?php echo $view->resturant_items_id;?>" data-status<?php echo $view->resturant_items_id;?>="<?php echo $view->resturant_items_abc;?>" onchange="itemchanges('<?php echo $view->resturant_items_id;?>')" <?php echo $stat;?>>
+                        <input type="checkbox" name="itemid" id="itemid<?php echo $view->resturant_items_id;?>" data-status<?php echo $view->resturant_items_id;?>="<?php echo $view->resturant_items_abc;?>" onchange="itemchanges('<?php echo $view->resturant_items_id;?>')" fields="<?php echo $view->resturant_items_id;?>" title="<?php echo $view->resturant_items_abc;?>" <?php echo $stat;?>>
                         <span class="slider round"></span>
                     </label>
 				</div>

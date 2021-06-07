@@ -1,5 +1,5 @@
-var adminurl    = '/raytt/Rayt-Admin';
-var partnerurl    = '/raytt/Partner-Admin';
+var adminurl    = '/Rayt-Admin';
+var partnerurl    = '/Partner-Admin';
 var formInit    =   function(){
     $(".validform").validate({
         rules: {
@@ -231,8 +231,7 @@ function getdatafiled(event,ids){
         $("#vtipoOrderby").val(event.data("field"));
         $("#vorderby").val(event.data("order"));
         var id = ids;//$('.text-center.list-actions.active').attr('data-type');
-        $('#category').val(id);
-        searchFilter('',event.attr("urlvalue"),'');
+        searchFilter('',event.attr("urlvalue"),id);
 }
 /*
 function menuactive(id){
@@ -255,13 +254,16 @@ function searchFilter(page_num,url,id){
         var classserch  =   $('.classserch option:selected').val();   
         var schoolserch =   $('.schoolserch option:selected').val();   
         var limitvalue  =   $('.limitvalue option:selected').val();   
-        var vspvalue    =   $("#vspvalue").val();   
-        var date        =   $("input[name='date']").val();
+        var vspvalue    =   $("#vspvalue").val();
+        var fromdate    =   $('#fromDate').val();
+        var todate      =   $('#toDate').val();
+        var restaurant  =   $('#restaurant').val();
+        var pay_mode    =   $('#pay_mode').val();
         var vspcalss    =   "postList";
         var orders      =   $("#orders").val();
         var topv        =   $("#tipoOrderby").val();
         var orderby     =   $("#orderby").val();
-		var category 	= 	$('#category').val();//id;//$('#all-list').attr('all-list'+id);
+		var category 	= 	id;//$('#all-list').attr('all-list'+id);
         var clf         =   "pageloaderwrapper";
         if(vspvalue == 1){
             vspcalss    =   "perpostList";
@@ -285,7 +287,10 @@ function searchFilter(page_num,url,id){
                     keywords    :   keywords,
 					category	:	category,
 					orders      :   orders,
-                    date        :   date,
+					fromdate    :   fromdate,
+                    todate      :   todate,
+                    restaurant  :   restaurant,
+                    pay_mode    :   pay_mode,
             },
             beforeSend: function(){
                     $('.'+clf).show();
@@ -297,7 +302,7 @@ function searchFilter(page_num,url,id){
                     initPart();
             }
         });   
-}   
+}  
 function user_role(){
         var vale = [];
         var modiul   =   [];
@@ -357,7 +362,6 @@ function confirmationDelete(anchor, val) {
             $.post(atr,function(data){
                 if(data == 1){
                     loadpage();
-                    location.reload() ;
                     addonslist();
                 }
             });
@@ -1006,32 +1010,6 @@ function addingcategort(){
         }, 3000);
 	});
 }
-function updatecategorys(x){
-    var title = 'Update Category';
-    $.post(adminurl+"/Update-Category/"+x,{title:title},function(data){
-        $('#exampleModalCenter').modal('show');
-		$('.datas').html(data);
-	});
-}
-function updatingcategortss(x){
-    var category = $('.category').val();
-    var category_a = $('.category_a').val();
-    var rastid = $('#rastid').val();
-    $.post(adminurl+"/Updating-Category/"+x,{category:category,category_a:category_a,rastid:rastid},function(data){
-        var html ='<div class="alert alert-success">'+
-                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
-                            '<i class="material-icons">close</i>'+
-                        '</button>'+
-                        data
-                    '</div>';
-		$('.msgs').html(html);
-		$('.categorybutton').css('display','none');
-		$('.loading').css('display','block');
-		setTimeout(function(){
-           window.location.reload(1);
-        }, 3000);
-	});
-}
 function addingcategorts(){
     var category = $('.category').val();
     var category_a = $('.category_a').val();
@@ -1406,6 +1384,8 @@ function itemchanges(eve){
     $.post(adminurl+"/Active-Inactive-Item",{eve:eve,status:status},function(data){
         if(data == 1){
             alertmsg(data);
+        }else if(data == 2){
+            alertmsgs(data);
         }else if(data == 0){
             swal("No permissions ....!!!", '');
         } else {
@@ -1413,17 +1393,26 @@ function itemchanges(eve){
         }
     });
 }
-function alertmsg(eve){
+function alertmsg(eve){ 
     if(eve == 1){
-        var msg = "Item active successfully";
-    }else{
-        var msg = "Item Deactive successfully";
+        $("#snackbar").text("Item actived successfully");
+    }if(eve == 2){
+        $("#snackbar").text("Item Deactived successfully");
     }
-    var x = document.getElementById("snackbar");
-    x.className = "show";
-    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+    document.getElementById("snackbar").className = "show";
+    setTimeout(function() {
+        $("#snackbar").css("display", "none");
+    }, 3000);
 }
-/**
+function alertmsgs(eve){
+    $("#snackbar").text("Item Deactived successfully");
+    document.getElementById("snackbar").className = "show";
+    setTimeout(function() {
+        $("#snackbar").css("display", "none");
+    }, 3000);
+}
+
+/*
 function timer(){
     var i = 60;
     (function timer(){
@@ -1438,11 +1427,58 @@ function timer(){
     })();
 }*/
 
+/*--------------Naresh-------------*/
+function timer(){
+    var counter = 60;
+    var interval = setInterval(function() {
+        counter--;
+        // Display 'counter' wherever you want to display it.
+        if (counter <= 0) {
+                clearInterval(interval);
+                OrderRefresh();
+                timer();
+            return;
+        }else{
+            $('#time').text(counter);
+        //console.log("Timer --> " + counter);
+        }
+    }, 1000);
+}
 
+function counts(){
+        $.ajax({
+            type    :   'POST',
+            url     :   adminurl+'/Counts',
+            data:{
+            }, 
+            success: function (html) { 
+                var d    =   JSON.parse(html);
+                if(d.status=='1'){
+                    d.status_messsage.forEach(coount);
+                    function coount(item, index) {
+                        if(item > 0){
+                            $('#lin'+index).addClass('alrt-danger');
+                        }
+                    }
+                   
+                }   
+            }
+        });   
+}
+function copyId(x){
+    var text = x;
+    navigator.clipboard.writeText(text).then(function() {
+        $('#alert'+x).removeClass('alrt-danger');
+      alert('Copying to clipboard was successful!');
+    }, function(err) {
+      alert('Async: Could not copy text: ', err);
+    });
+}
+/*--------------Naresh-------------*/
 $(document).ready(function() {
     setInterval(function() {
       loadorders();
-      //timer();
+      timer();
     }, 60000);
 });
 
@@ -1478,6 +1514,27 @@ function orderModel(eve,eve1){
 }
 function closeorder(eve){
     $('.orders'+eve).css('visibility','visible');
+    $('.loader'+eve).css('display','none');
+}
+function itemModel(eve){
+//alert(eve);
+    $('.item'+eve).css('visibility','hidden');
+    $('.loader'+eve).css('display','block');
+    $('.loader'+eve).html('<div class="spinner-border text-success  align-self-center"></div>');
+    var types = $('#item'+eve).attr('data-types'+eve);
+    var status = $('#item'+eve).attr('data-status'+eve);
+    $.post(adminurl+"/Item-Details",{eve:eve,types:types,status:status},function(data,status, jqXHR){
+        $('.orders'+eve).css('visibility','visible');
+        $('.loader'+eve).css('display','none');
+        $('.itemModel').modal('show');
+		$('.modal-content.itemModel').html(data);
+		console.log(jqXHR);
+		console.log(status);
+    });
+} 
+
+function closeitem(eve){
+    $('.item'+eve).css('visibility','visible');
     $('.loader'+eve).css('display','none');
 }
 function accectorder(eve){
@@ -1538,166 +1595,51 @@ function zonename(){
         $(".publish").prop("disabled", true);
     }
 }
+function resturantModel(eve){
+     $('.resturant'+eve).css('visibility','hidden');
+     $('.loader'+eve).css('display','block');
+     $('.loader'+eve).html('<div class="spinner-border text-success  align-self-center"></div>');
+     $.post(adminurl+"/Resturant-Details",{eve:eve},
+        function(data,status, jqXHR){
+         $('.resturant'+eve).css('visibility','visible');
+         $('.loader'+eve).css('display','none');
+         $('.resturantModel').modal('show');
+         $('.modal-content.resturantModel').html(data);
+     });
+}
 
+function updatecategorys(x){
+    var title = 'Update Category';
+    $.post(adminurl+"/Update-Categorys/"+x,{title:title},function(data){
+        $('#exampleModalCenter').modal('show');
+		$('.datas').html(data);
+	});
+}
+function updatingcategortss(x){
+    var category = $('.category').val();
+    var category_a = $('.category_a').val();
+    var rastid = $('#rastid').val();
+    $.post(adminurl+"/Updating-Category/"+x,{category:category,category_a:category_a,rastid:rastid},function(data){
+        var html ='<div class="alert alert-success">'+
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                            '<i class="material-icons">close</i>'+
+                        '</button>'+
+                        data
+                    '</div>';
+		$('.msgs').html(html);
+		$('.categorybutton').css('display','none');
+		$('.loading').css('display','block');
+		setTimeout(function(){
+           window.location.reload(1);
+        }, 3000);
+	});
+}
 function updatedriloca(){
     var der = $('.driverid').val();
     $.post(adminurl+"/Update-Drive-Loc",{der:der},function(data){
         $('.maps-update').html(data);
         setInterval(updatedriloca, 20000);
     });
-}
-// setInterval(function(){ 
-//     OrderRefresh();
-// }, 5000);
-function OrderRefresh(){
-    url = $('#urlvalue').val();
-    searchFilter('',url,'');
-    counts();//alert(interval);
-    //clearInterval(interval);
-    //timer();
-   // timer();
-}
-function timer(){
-    var counter = 60;
-    var interval = setInterval(function() {
-        counter--;
-        // Display 'counter' wherever you want to display it.
-        if (counter <= 0) {
-                clearInterval(interval);
-                OrderRefresh();
-                timer();
-            return;
-        }else{
-            $('#time').text(counter);
-        //console.log("Timer --> " + counter);
-        }
-    }, 1000);
-}
-
-function counts(){
-        $.ajax({
-            type    :   'POST',
-            url     :   adminurl+'/Counts',
-            data:{
-            }, 
-            success: function (html) { 
-                var d    =   JSON.parse(html);
-                if(d.status=='1'){
-                    d.status_messsage.forEach(coount);
-                    function coount(item, index) {
-                        if(item > 0){
-                            $('#lin'+index).addClass('alrt-danger');
-                        }
-                    }
-                   
-                }   
-            }
-        });   
-}
-function copyId(x){
-    var text = x;
-    navigator.clipboard.writeText(text).then(function() {
-        $('#alert'+x).removeClass('alrt-danger');
-      alert('Copying to clipboard was successful!');
-    }, function(err) {
-      alert('Async: Could not copy text: ', err);
-    });
-}
-function partneractiveform(evt,page){
-    var fields  =   evt.attr("fields");
-    var status  =   evt.attr("title");
-    swal({
-        title: 'Are you sure?',
-        text: "Are you sure you want to " + status,
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        padding: '2em'
-    }).then(function(result) {
-        if (result.value) {
-            $.post(partnerurl+"/"+page,{status:status,fields:fields},function(data){
-                if(data == 1){
-                    loadpage();
-                }else if(data == 0){
-                    swal("No permissions ....!!!", '');
-                } else {
-                    swal("Not updated any ....!!!", '');
-                }
-            });
-            swal(
-              status,
-              'Your file has been '+status,
-              'success'
-            )
-        }else{
-            swal("Not updated any ....!!!", status);
-        }
-    })
-}
-function discStatusUpdatee(evt){
-    var fields  =   evt.attr("fields");
-    var status  =   $('#discStatusUpdate'+fields+' option:selected').val();
-    swal({
-        title: 'Are you sure?',
-        text: "Are you sure you want to " + status,
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        padding: '2em'
-    }).then(function(result) {
-        if (result.value) {
-            $.post(adminurl+"/Discount-Status-Update",{status:status,fields:fields},function(data){
-                if(data == 1){
-                    loadpage();
-                }else if(data == 0){
-                    swal("No permissions ....!!!", '');
-                } else {
-                    swal("Not updated any ....!!!", '');
-                }
-            });
-            swal(
-              status,
-              'Your file has been '+status,
-              'success'
-            )
-        }else{
-            swal("Not updated any ....!!!", status);
-        }
-    })
-}
-function checkall(cla){
-    var cclass   =cla;
-    var boxes = $('.m'+cclass).is(':checked');
-    if(boxes){
-        $('.'+cclass).prop('checked', true);
-    }else{
-        $('.'+cclass).prop('checked', false);
-    }
-}
-function discType(){
-    var disc =  $("#exampleFormControlSelect1 option:selected").val();
-    if(disc == ''){
-        $('.discc').show();
-    }else if(disc=='Percentage'){
-        $('#basic-addon2').html('<i class="fa fa-percent" aria-hidden="true"></i>');
-        $('.discc').hide();
-    }else if(disc=='Amount'){
-        $('#basic-addon2').html('KD');
-        $('.discc').hide();
-    }
-}
-function typeee(){
-    var type =  $("#tyyy option:selected").val();
-    if(type=='Category Wise'){
-        $("#catt").show();
-        $(".produc").hide();
-    }else if(type=='Product Wise'){
-        $(".produc").show();
-        $("#catt").show();
-    }else{
-        $("#catt").hide();
-        $("#produc").hide();
-    }
 }
 $(function(){ 
         travelthis();
@@ -1707,7 +1649,6 @@ $(function(){
         loadpage();
         initPart();
         //formInit();
-        //timer();
-        counts();
+        timer();
         addonslist();
 });

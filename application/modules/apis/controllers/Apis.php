@@ -1,7 +1,10 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+ob_start();
 class Apis extends CI_Controller{
         public function __construct() {
                 parent::__construct();
+                //header('Content-Type: application/json');
         }
         public function countries(){
             $sv     =   $this->api_model->checkAuthorizationvalid();
@@ -15,7 +18,7 @@ class Apis extends CI_Controller{
             echo ($json);
         }
         
-        public function register(){
+        public function register(){ //&& $this->input->post("country") != ""
             $sv     =   $this->api_model->checkAuthorizationvalid();
             $data   =   $this->api_model->jsonencodevalues("0","Authorization key Invalid");
             if($sv == 1){
@@ -25,25 +28,22 @@ class Apis extends CI_Controller{
                     $this->input->post("email") != "" && 
                     $this->input->post("mobile") != "" && 
                     $this->input->post("password") != "" && 
-                    $this->input->post("cpassword") != "" &&
-                    $this->input->post("country") != ""
+                    $this->input->post("cpassword") != "" 
                 ){
                     $par['whereCondition'] = "customer_email_id like '".$this->input->post("email")."' OR  customer_mobile Like '".$this->input->post("mobile")."'";
                     $vsp    =   $this->customer_model->getCustomer($par);
                     if(is_array($vsp) && count($vsp) > 0){
                         $reg_email_verified     =   $vsp["customer_email_verified"];
                         $reg_mobile_verified    =   $vsp["customer_verified_mobile"];
-                        if($reg_mobile_verified == "0" || $reg_mobile_verified == "0"){
+                        if($reg_mobile_verified == "0" || $reg_email_verified == "0"){
                             if($reg_mobile_verified == "0"){
                                 $data       =   $this->api_model->jsonencodevalues("6","Mobile No. already exists");
-                            }
-                            if($reg_email_verified == "0"){
+                            }elseif($reg_email_verified == "0"){
                                 $data       =   $this->api_model->jsonencodevalues("5","Email Id. already exists");
                             }
                         }else{
                             $data       =   $this->api_model->jsonencodevalues("4","Email Id/Mobile NO. already exists");
                         }
-                        
                     }else{
                         $data   =   $this->api_model->jsonencodevalues("3","Not registered User.");
                         $vsp    =   $this->customer_model->createregister();
@@ -64,14 +64,20 @@ class Apis extends CI_Controller{
                 $data   =   $this->api_model->jsonencodevalues("1","Some Fileds are required");
                 if($this->input->post("email") != "" && $this->input->post("password") != "" ){
                     $data   =   $this->api_model->jsonencodevalues("3","Invalid username and password");
-                    $par['whereCondition'] = "lower(customer_email_id) LIKE '".strtolower($this->input->post("email"))."' OR lower(customer_mobile) LIKE '".strtolower($this->input->post("email"))."' and customer_password = '".$this->input->post("password")."'";
+                    $par['whereCondition'] = "(lower(customer_email_id) LIKE '".strtolower($this->input->post("email"))."' OR lower(customer_mobile) LIKE '".strtolower($this->input->post("email"))."') and customer_password = '".$this->input->post("password")."'";
                     $vsp    =   $this->customer_model->getCustomer($par);
                     //echo '<pre>';print_r($vsp);exit;
                     if(is_array($vsp) && count($vsp) > 0){
                         $reg_mobile_verified    =   $vsp["customer_email_verified"];
                         $reg_email_verified     =   $vsp["customer_verified_mobile"];
+                        $customer_verified      =   $vsp["customer_verified"];
                         $rgcount                =   $vsp["customer_country"];
-                        if($rgcount == sitedata("site_country")){
+                        if($customer_verified == 1 && ($reg_mobile_verified == 1 || $reg_email_verified == 1)){
+                            $vsp = $this->api_model->loginemailsapi();
+                            if($vsp){
+                                $data =  $this->api_model->jsonencodevalues("2",$vsp);
+                            }
+                        }else if($rgcount == "Kuwait" || $rgcount == "COUNT121"){
                             if($reg_mobile_verified == 0){
                                 $this->customer_model->sendotp($this->input->post("email"));
                                 $data = $this->api_model->jsonencodevalues("4","Mobile No. has been not verified");
@@ -80,12 +86,6 @@ class Apis extends CI_Controller{
                             if($reg_email_verified == 0){
                                 $this->customer_model->sendotp($this->input->post("email"));
                                 $data =  $this->api_model->jsonencodevalues("5","Email Id has been not verified");
-                            }
-                        }
-                        if($reg_mobile_verified == 1 || $reg_email_verified == 1){
-                            $vsp = $this->api_model->loginemailsapi();
-                            if($vsp){
-                                $data =  $this->api_model->jsonencodevalues("2",$vsp);
                             }
                         }
                     }
@@ -104,8 +104,13 @@ class Apis extends CI_Controller{
                     $data       =   $this->api_model->jsonencodevalues("2", "OTP has been not verified.Please try again");
                     $jon        =   $this->api_model->verifyotp($otpno,$mobile,"1");
                     if($jon){
-                        $jon = $this->customer_model->update_verification();
-                        $data   =   $this->api_model->jsonencodevalues("3","OTP has been verified successfully");
+                        $user = $this->customer_model->update_verification();
+                        $vsp    =   $this->api_model->getprofile($mobile);
+                        //print_r($vsp);exit;
+                        if($vsp){
+                            $data =  $this->api_model->jsonencodevalues("3",$vsp);
+                        }
+                        //$data   =   $this->api_model->jsonencodevalues("3","OTP has been verified successfully");
                     }
                 }
             }
@@ -115,14 +120,15 @@ class Apis extends CI_Controller{
             $sv     =   $this->api_model->checkAuthorizationvalid();
             $data   =   $this->api_model->jsonencodevalues("0","Authorization key Invalid");
             if($sv == 1){
-                $data       =   $this->api_model->jsonencodevalues("0","Some Fileds are required",'0');
+                $data       =   $this->api_model->jsonencodevalues("1","Some Fileds are required",'0');
                 $mobile     =   $this->input->post("customer_token");
                 if($mobile != ""){
                     $jon        =   $this->api_model->getprofile();
                     $data       =   $this->api_model->jsonencodevalues('1', $jon);
                 }
-            }
-            echo ($data);
+            }   
+            print_r($data);
+            //echo ($data);
         }
         public function update_profile(){
             $sv     =   $this->api_model->checkAuthorizationvalid();
@@ -138,6 +144,37 @@ class Apis extends CI_Controller{
                         $json   =   $this->api_model->jsonencodevalues("4","Customer details has been not updated.Please try again.",'0');
                         if($ins){
                             $json   =   $this->api_model->jsonencodevalues("3","Customer details has been updated succcesfully",'0');
+                        }
+                    }
+                }
+            }
+            echo json_encode($json);
+        }
+        /*
+        
+        $user = $this->api_model->checkcustomer();
+                    if($user){
+                        $data   =   $this->api_model->jsonencodevalues("3","Mobile No. has been blocked.Please contact administrators");
+        */
+        public function update_password(){
+            $sv     =   $this->api_model->checkAuthorizationvalid();
+            $json   =   $this->api_model->jsonencodevalues("0","Authorization key Invalid");
+            if($sv == 1){
+                $json       =   $this->api_model->jsonencodevalues("1","Some fields are required",'0');
+                if($this->input->post("customer_id") && $this->input->post("current_password") !="" && $this->input->post("new_password") != "" && $this->input->post("confirm_password") != ""){
+                    $check      =   $this->api_model->checkcustomer();
+                    $json       =   $this->api_model->jsonencodevalues("2","User Doesn't not exist");
+                    if($check){
+                        $data   =   $this->api_model->jsonencodevalues("3","Mobile No. has been blocked.Please contact administrators");
+                        if($check['customer_abc'] == "Active"){
+                            $json       =   $this->api_model->jsonencodevalues("4","Old Password Incorrect",'0'); 
+                            if($check['customer_password'] == $this->input->post("current_password")){
+                                $ins    =   $this->customer_model->update_customer_password();
+                                $json   =   $this->api_model->jsonencodevalues("5","Customer password has been not updated.Please try again.",'0');
+                                if($ins){
+                                    $json   =   $this->api_model->jsonencodevalues("6","Change password has been updated succcesfully",'0');
+                                }
+                            }
                         }
                     }
                 }
@@ -168,6 +205,7 @@ class Apis extends CI_Controller{
                             }
                         }
                         if($reg_mobile_verified == 1 || $reg_email_verified == 1){
+                            $this->customer_model->sendotp($this->input->post("email"));
                             $data = $this->api_model->jsonencodevalues("5","password reset link has been sent to your email");
                             $this->customer_model->forgotpassword($vsp['customer_id']);
                         }
@@ -200,12 +238,32 @@ class Apis extends CI_Controller{
                 if($this->input->post("lat") != "" && $this->input->post("long") != ""){
                     $json   =   $this->api_model->jsonencodevalues("2","Restaurant not available in your area");
                     $zone = $this->api_model->zone_check();
-                    //print_r($zone);exit;
                     if($zone){
                         $data  = array(
                             'restorent_count'   => $this->api_model->near_restorent_count($zone),
                             'baners'            => $this->api_model->inner_banners(),
                             'myorder'           => $this->api_model->order_deatails(),
+                            'restorent'         => $this->api_model->near_restorent($zone),
+                            'cart_data'         => $this->api_model->view_totalcart(),
+                        );
+                        $json       =  $this->api_model->jsonencodevalues("3",$data);
+                    }
+                }
+            }
+            echo ($json);
+        }
+        public function all_restaurants_list(){
+            $sv     =   $this->api_model->checkAuthorizationvalid();
+            $json   =   $this->api_model->jsonencodevalues("0","Authorization key Invalid");
+            if($sv == 1){
+                $json   =   $this->api_model->jsonencodevalues("1","Some Fileds are required");
+                if($this->input->post("lat") != "" && $this->input->post("long") != ""){
+                    $json   =   $this->api_model->jsonencodevalues("2","Restaurant not available in your area");
+                    $zone = $this->api_model->zone_check();
+                    //print_r($zone);exit;
+                    if($zone){
+                        $data  = array(
+                            'restorent_count'   => $this->api_model->near_restorent_count($zone),
                             'restorent'         => $this->api_model->near_restorent($zone),
                             'cart_data'         => $this->api_model->view_totalcart(),
                         );
@@ -227,10 +285,11 @@ class Apis extends CI_Controller{
                         'restraint_menu_categotry'  => $this->apirestraint_model->restraint_menu_categotry(),
                         'cart_data'                 => $this->api_model->view_totalcart(),
                     );
+                    $data = $this->api_model->jsonencodevalues("2",$dat);
                 }
-                $data = $this->api_model->jsonencodevalues("2",$dat);
             }
-            echo $data;
+            print_r($data);
+            //echo $data;
         }
         public function item_details(){
             $sv     =   $this->api_model->checkAuthorizationvalid();
@@ -358,7 +417,7 @@ class Apis extends CI_Controller{
                             $res = $this->order_model->delete_cart();
                             if($res){
                                 $dta    =   $this->customer_model->view_cart();
-                                if(count($dta) > 0){
+                                if($dta > 0){
                                     $d = array(
                                         'cart_data'     =>  $this->customer_model->view_cart(),
                                         'cart_total'    =>  $this->api_model->view_totalcart(),    
@@ -601,6 +660,26 @@ class Apis extends CI_Controller{
                         }
                     }
                 }
+            }
+            echo $data;
+        }
+        public function custmre_support(){
+            $sv     =   $this->api_model->checkAuthorizationvalid();
+            $data   =   $this->api_model->jsonencodevalues("0","Authorization key Invalid");
+            if($sv == 1){
+                $data = $this->api_model->jsonencodevalues('1',array('mobile_no'=>sitedata('site_support_number'),'email'=>sitedata('site_email')));
+            }
+            echo $data;
+        }
+        public function privacy_policy(){
+            $sv     =   $this->api_model->checkAuthorizationvalid();
+            $data   =   $this->api_model->jsonencodevalues("0","Authorization key Invalid");
+            if($sv == 1){
+                $data   =   $this->api_model->jsonencodevalues("1","Some occurred error");
+                $orderhis = $this->api_model->privacy_policy();
+                if($orderhis){
+                    $data = $this->api_model->jsonencodevalues('2',$orderhis);
+                }    
             }
             echo $data;
         }

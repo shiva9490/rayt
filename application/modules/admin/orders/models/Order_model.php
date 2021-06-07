@@ -313,7 +313,7 @@ class Order_model extends CI_Model{
                         ->join("customer_address as cadd","cadd.customeraddress_id = or.customeraddress_id","INNER")
                         ->where($dta);
                 if(array_key_exists("keywords", $params)){
-                    $this->db->where("(order_unique_id LIKE '%".$params["keywords"]."%' or customer_name LIKE '%".$params["keywords"]."%' or customer_mobile LIKE '%".$params["keywords"]."%' or order_type LIKE '%".$params["keywords"]."%' or orderdetails_rest_staus LIKE '%".$params["keywords"]."%')");
+                    $this->db->where("(or.order_type LIKE '%".$params["keywords"]."%') OR (or.order_unique_id LIKE '%".$params["keywords"]."%') OR (rt.resturant_name LIKE '%".$params["keywords"]."%') OR (or.order_amount LIKE '%".$params["keywords"]."%') OR (cadd.customeraddress_area LIKE '%".$params["keywords"]."%') ");
                 }
                 if(array_key_exists("whereCondition", $params)){
                     $this->db->where("(".$params["whereCondition"].")");
@@ -407,6 +407,7 @@ class Order_model extends CI_Model{
                 return $this->db->get();
         }
         public function order_accect($param = array()){
+            //print_r($param);exit;
             $orderstatus = $this->config->item('orderstatus');
             $ds = array();$k= 0;
             foreach($orderstatus as $key=>$oct){
@@ -426,23 +427,39 @@ class Order_model extends CI_Model{
             $parse['whereCondition']    =   "or.order_unique_id LIKE '".$param[0]->order_unique_id."' and ord.orderdetail_restaurant_id LIKE '".$param[0]->resturant_id."'";
             $ordst = $this->getOrderDetails($parse);
             //echo '<pre>';print_r($ordst);exit;
+            $derv='';
             if($d == "Preparing"){
                 if(is_array($ordst) && count($ordst) > 0){
-                    $data = array(
-                        'order_id'              => ($ordst['orderids']!="")?$ordst['orderids']:'',
-                        'restaurant_id'         => $ordst['resturant_id'],
-                        'driver_id'             => '1DRIVER',
-                        'custmore_id'           => $ordst['orderdetail_customer_id'],
-                        'custmore_adder_id'     => $ordst['customeraddress_id'],
-                        'driverassign_add_by'   => ($this->input->post("restrant_id")!="")?$this->input->post("restrant_id"):$this->session->userdata("restraint_id"),
-                        'driverassign_add_date' => date('Y-m-d H:i:s a')
-                    );
-                    //print_r($data);exit;
-                    $this->db->insert('driver_assign_order',$data);
-                    $id = $this->db->insert_id();
-                    $this->db->where('driverassignorderid',$id)->update('driver_assign_order',array('driverassignorder_id' => 'ORDAST'.$id));
-                    $derv = 'ORDAST'.$id;
+                    $driver = $this->drivers_model->find_driver($ordst['resturant_id'],$param[0]->resturant_zone,$param[0]->resturant_subzone);
+                    //print_r($driver);exit;
+                    if($driver!=""){
+                        $data = array(
+                            'order_id'              => ($ordst['orderids']!="")?$ordst['orderids']:'',
+                            'restaurant_id'         => $ordst['resturant_id'],
+                            'driver_id'             => $driver,//'1DRIVER',
+                            'custmore_id'           => $ordst['orderdetail_customer_id'],
+                            'custmore_adder_id'     => $ordst['customeraddress_id'],
+                            'driverassign_add_by'   => ($this->input->post("restrant_id")!="")?$this->input->post("restrant_id"):$this->session->userdata("restraint_id"),
+                            'driverassign_add_date' => date('Y-m-d H:i:s a')
+                        );
+                        //print_r($data);exit;
+                        $this->db->insert('driver_assign_order',$data);
+                        $id = $this->db->insert_id();
+                        $this->db->where('driverassignorderid',$id)->update('driver_assign_order',array('driverassignorder_id' => 'ORDAST'.$id));
+                        $derv = 'ORDAST'.$id;
+                    }
                 }
+            }
+            if($d == "Delivered" || $d == "Order Cancelled"){
+                $dsss = array(
+                    'driverassign_abc'          => 'Inactive',
+                    'driverassign_modify_by'    => ($this->input->post("restrant_id")!="")?$this->input->post("restrant_id"):$this->session->userdata("restraint_id"),
+                    'driverassign_modifty_date' => date('Y-m-d H:i:s a')
+                );
+                $this->db
+                ->where('order_id',($ordst['orderids']!="")?$ordst['orderids']:'')
+                ->where('restaurant_id',$ordst['resturant_id'])
+                ->update('driver_assign_order',$dsss);
             }
             /*-*/
             $updart='';
@@ -614,7 +631,9 @@ class Order_model extends CI_Model{
                 //$this->db->get();echo $this->db->last_query();exit;
                 return $this->db->get();
         }
-
+        
+        /*----------------------/orderassons ------------------------*/
+        
         public function download_autogen_excel($conditions = array()){
             $filename = $conditions['file_name'];
             $usersData = $this->order_model->viewOrders($conditions); 
@@ -659,6 +678,7 @@ class Order_model extends CI_Model{
                             </tr>';
                 foreach($usersData as $q)
                 {
+                   // $q = (array) $q;
                     $html_string .= '<tr>';
                     $html_string .= '<td>'.$q->order_unique_id.'</td>';
                     $html_string .= '<td>'.$q->customer_name.'</td>';
@@ -674,15 +694,36 @@ class Order_model extends CI_Model{
             else{
                 $html_string="<p>No data available</p>";
             }
-            //print_r($html_string);
-            $mpdf = $this->mpdf->indexval();
+      //  print_r($html_string);
+            $mpdf = $this->mpdftest->indexval();
             $html   =   $html_string;
-            $logo_url	=base_url().'upload/favrayt.png';
+            $logo_url	=base_url().'upload/reportrayt.png';
             $mpdf->WriteHTML('<img src="'.$logo_url.'" height="50px"></img> <h2 style="text-align:center;">Order Reports</h2>');
             $mpdf->WriteHTML($html);
             $mpdf->Output($filename, 'D');
             exit; 
         }
-        
-        /*----------------------/orderassons ------------------------*/
+        /*-------------------Naresh-----------------------------*/
+        public function counts(){
+            $time	=	"-1 minutes";
+			$datediff1 = date("Y-m-d H:i:s", strtotime($time));
+            $time	=	"-5 minutes";
+			$datediff5 = date("Y-m-d H:i:s", strtotime($time));
+            $data = $this->db->query("
+                        SELECT  
+                            order_unique_id,
+                            COUNT(IF(o.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Order Placed'  AND ost.orderstatus_add_date <= '".$datediff1."',1,null)) as order_placed,
+                            COUNT(IF(ord.orderdetails_rest_staus LIKE 'Ready for pickup'  AND ost.orderstatus_add_date <= '".$datediff1."',1,null)) as pickup,
+                            COUNT(IF(ord.orderdetails_rest_staus LIKE 'arrived order' AND ost.orderstatus_add_date <= '".$datediff5."',1,null)) as arrived
+                        FROM order_details as ord
+                        INNER join orders as o ON ord.order_id = o.order_id
+                        INNER JOIN resturant_items as rt ON ord.orderdetail_restaurant_item_id = rt.resturant_items_id
+                        INNER JOIN resturant as res ON res.resturant_id = rt.resturant_id
+                        LEFT JOIN order_status as ost ON ost.order_id = ord.order_id AND ost.orderdetail_status = ord.orderdetails_rest_staus
+                        WHERE o.order_status LIKE 'Active'
+                        GROUP BY o.order_id
+                        ");
+            return $data->result();
+        }
+        /*-------------------Naresh-----------------------------*/
 }

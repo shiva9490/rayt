@@ -1,4 +1,6 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+ob_start();
 class Orders extends CI_Controller{
 	public function __construct() {
 		parent::__construct();
@@ -12,66 +14,6 @@ class Orders extends CI_Controller{
 			"content"   =>  'orders',
 			"urlvalue"	=>	adminurl('viewOrders/')
 		);
-		if($this->input->get()){
-			$keywords   =   $this->input->get('keywords');
-			$ids        =   $this->input->get('category');
-			if(!empty($keywords)){
-				$conditions['keywords'] = $keywords;
-			}
-			$group  = "or.order_id";
-			$ht = "or.order_status LIKE 'Active'";
-			if($ids == "Today Orders"){
-				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
-			}elseif($ids == "Unassigned"){
-				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Order Placed'";
-			}elseif($ids == "Pending"){
-				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Preparing'";
-			}elseif($ids == "Received" || $ids == "Ready for Pickup"){
-				$ht  = "ord.orderdetails_rest_staus LIKE 'Ready for pickup'";
-			}elseif($ids == "Completed Pickup"){
-				$ht  = "ord.orderdetails_rest_staus LIKE 'Completed Pickup'";
-			}elseif($ids == "Arraived at customes"){
-				$ht  = "ord.orderdetails_rest_staus LIKE 'arrived order'";
-			   //$group  = "or.order_id";
-			}elseif($ids == "Delivered"){
-				$ht  = "ord.orderdetails_rest_staus LIKE 'Delivered'";
-			}else{
-				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
-			}
-			$date	= explode(" to ",$this->input->get('date'));
-			if($this->input->post('date')){
-			if(is_array($date) && count($date)>1){
-				$ht	.=	" AND orderdetail_created_on >= '$date[0]' AND orderdetail_created_on <='$date[1]'";
-			}else if(count($date)>0){
-				$ht	.=	" AND orderdetail_created_on >= '$date[0]' AND orderdetail_created_on <='$date[0]'";
-			}}
-			$orderstatus = $this->config->item('orderstatus');
-			$conditions['whereCondition']   = $ht;
-			$conditions['group_by']         = $group;
-			$orders   =   $this->input->get('orders');   
-			$orderby        =    $this->input->get('orderby')?$this->input->get('orderby'):"DESC";
-			$tipoOrderby    =    $this->input->get('tipoOrderby')?str_replace("+"," ",$this->input->post('tipoOrderby')):"orderid";
-			$conditions['columns']	=	'count(distinct order_unique_id) as cnt';
-			$totalRec               =   count($this->order_model->viewOrders($conditions));
-			$conditions['columns']	=	'';
-			if(!empty($orderby) && !empty($tipoOrderby)){
-				$dta['orderby']        =   $conditions['order_by']      =   $orderby;
-				$dta['tipoOrderby']    =   $conditions['tipoOrderby']   =   $tipoOrderby; 
-			}
-			if($this->input->get('excel') ){
-				$this->session->set_flashdata("suc"," Check Downloads for Excel");
-				$conditions['file_name']   =   'Orders Report ['.date("YmdHis").'].csv';
-				$conditions['columns'] = "order_unique_id,customer_name,customer_mobile,order_type,order_amount,orderdetails_rest_staus,orderdetail_created_on";
-				$this->order_model->download_autogen_excel($conditions);
-			}
-			if($this->input->get('pdf') ){
-				$this->session->set_flashdata("suc"," Check Downloads for Excel");
-				$conditions['file_name']   =   'Orders Report ['.date("YmdHis").'].pdf';
-				$conditions['columns'] = "order_unique_id,customer_name,customer_mobile,order_type,order_amount,orderdetails_rest_staus,orderdetail_created_on";
-				$this->order_model->download_pdf($conditions);
-			}
-			
-		}
 		$this->load->view("admin/inner_template",$dta);
 	}
 	public function viewOrders(){
@@ -88,30 +30,20 @@ class Orders extends CI_Controller{
 		    $ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
 		}elseif($ids == "Unassigned"){
 		    $ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Order Placed'";
-			$dta["delay"]	="1"; 
 		}elseif($ids == "Pending"){
 		    $ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Preparing'";
 		}elseif($ids == "Received" || $ids == "Ready for Pickup"){
 		    $ht  = "ord.orderdetails_rest_staus LIKE 'Ready for pickup'";
-			$dta["delay"]	="1"; 
 		}elseif($ids == "Completed Pickup"){
 		    $ht  = "ord.orderdetails_rest_staus LIKE 'Completed Pickup'";
 		}elseif($ids == "Arraived at customes"){
 		    $ht  = "ord.orderdetails_rest_staus LIKE 'arrived order'";
-			$dta["delay"]	="5"; 
 		   //$group  = "or.order_id";
 		}elseif($ids == "Delivered"){
 		    $ht  = "ord.orderdetails_rest_staus LIKE 'Delivered'";
 		}else{
 		    $ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
 		}
-		$date	= explode(" to ",$this->input->post('date'));
-		if($this->input->post('date')){
-		if(is_array($date) && count($date)>1){
-			$ht	.=	" AND orderdetail_created_on >= '$date[0]' AND orderdetail_created_on <='$date[1]'";
-		}else if(count($date)>0){
-			$ht	.=	" AND orderdetail_created_on >= '$date[0]' AND orderdetail_created_on <='$date[0]'";
-		}}
 		$orderstatus = $this->config->item('orderstatus');
 		$conditions['whereCondition']   = $ht;
 		$conditions['group_by']         = $group;
@@ -119,9 +51,7 @@ class Orders extends CI_Controller{
 		$perpage        =    $this->input->post("limitvalue")?$this->input->post("limitvalue"):'30';    
 		$orderby        =    $this->input->post('orderby')?$this->input->post('orderby'):"DESC";
 		$tipoOrderby    =    $this->input->post('tipoOrderby')?str_replace("+"," ",$this->input->post('tipoOrderby')):"orderid";
-		$conditions['columns']	=	'count(distinct order_unique_id) as cnt';
-		$totalRec               =   count($this->order_model->viewOrders($conditions));
-		$conditions['columns']	=	'';
+		$totalRec               =   $this->order_model->cntviewOrders($conditions);
 		if(!empty($orderby) && !empty($tipoOrderby)){
 			$dta['orderby']        =   $conditions['order_by']      =   $orderby;
 			$dta['tipoOrderby']    =   $conditions['tipoOrderby']   =   $tipoOrderby; 
@@ -235,63 +165,43 @@ class Orders extends CI_Controller{
         header('Location:'.$server_output['paymentURL']); // PHP
 	}
 	public function counts(){
-		$group  = "or.order_id";
+		$view	= $this->order_model->counts();
+		$unassign=0;
+		$pending=0;
+		$rfp=0;
+		$c=0;
+		$a=0;
+		foreach($view as $v){
+			if($v->order_placed >0){
+				$unassign++;
+			}
+			if($v->pickup >0){
+				$rfp++;
+			}
+			if($v->arrived >0){
+				$a++;
+			}
+		} 
+		$group  = "or.order_id ";
 		$ht = "or.order_status LIKE 'Active'";
-		$i=0;
-		$ids=array("Today Orders","Unassigned","Pending","Ready for Pickup","Completed Pickup","Arraived at customes");
-		$ht="";
-		foreach($ids as $ids){
-			if($ids == "Today Orders"){
-				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
-			}elseif($ids == "Unassigned"){
-				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Order Placed'";
-				$time	=	"-1 minutes";
-				$datediff = date("Y-m-d H:i:s", strtotime($time));
-				$ht		.=	" AND ost.orderstatus_add_date <= '".$datediff."'";
-			}elseif($ids == "Pending"){
-				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Preparing'";
-				//$ht		.=	" AND ost.orderstatus_add_date <= 'now() - interval 30 minute'";
-			}elseif($ids == "Received" || $ids == "Ready for Pickup"){
-				$ht  = "ord.orderdetails_rest_staus LIKE 'Ready for pickup'";
-				$time	=	"-1 minutes";
-				$datediff = date("Y-m-d H:i:s", strtotime($time));
-				$ht		.=	" AND ost.orderstatus_add_date <= '".$datediff."'";
-			}elseif($ids == "Completed Pickup"){
-				$ht  = "ord.orderdetails_rest_staus LIKE 'Completed Pickup'";
-			}elseif($ids == "Arraived at customes"){
-				$ht  = "ord.orderdetails_rest_staus LIKE 'arrived order'";
-				$time	=	"-5 minutes";
-				$datediff = date("Y-m-d H:i:s", strtotime($time));
-				$ht		.=	" AND ost.orderstatus_add_date <= '".$datediff."'";
+		$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Preparing'";
+		$ht 	.= " AND ost.orderdetail_status = ord.orderdetails_rest_staus";
+		$conditions['whereCondition']   = $ht;
+		$conditions['group_by']         = $group;
+		$conditions['columns']	=	'res.resturant_preparation as time , ost.orderstatus_add_date as date';
+		$view	= $this->order_model->viewOrderDetails($conditions);
+		$pending=0;
+		foreach($view as $v){
+			$min = preg_replace('/[^0-9.]+/', '', $v->time);
+			$time	=	"-".$min." minutes";
+			$datediff = date("Y-m-d H:i:s", strtotime($time));
+			if($v->date<= $datediff){
+				$pending= $pending+1;
 			}
-			$ht 	.= " AND ost.orderdetail_status = ord.orderdetails_rest_staus";
-			$conditions['whereCondition']   = $ht;
-			$conditions['group_by']         = $group;
-			if($ids == "Pending"){
-				$conditions['columns']	=	'res.resturant_preparation as time , ost.orderstatus_add_date as date';
-				$view	= $this->order_model->viewOrderDetails($conditions);
-				$totalRec[$i]=0;
-				foreach($view as $v){
-					$min = preg_replace('/[^0-9.]+/', '', $v->time);
-					$time	=	"-".$min." minutes";
-					$datediff = date("Y-m-d H:i:s", strtotime($time));
-					//echo $min.'<br>'.$v->date.'<br>'.$datediff;
-					if($v->date<= $datediff){
-						$totalRec[$i]= $totalRec[$i]+1;
-					}
-				}
-				$totalRec[$i]               =   count($this->order_model->viewOrderDetails($conditions));
-			}else{
-				$conditions['columns']	=	'count(distinct order_unique_id) as cnt';
-				$totalRec[$i]               =   count($this->order_model->viewOrderDetails($conditions));
-			}
-			
-
-			$i++;
 		}
+		$totalRec	= array(0,$unassign,$pending,$rfp,0,$a,0);
 		$data =  $this->api_model->jsonencodevalues("1",$totalRec);
 		echo ($data);
 	}
-	
 }
 ?>

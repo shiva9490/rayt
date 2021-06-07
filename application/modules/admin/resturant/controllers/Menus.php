@@ -1,4 +1,6 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+ob_start();
 class Menus extends CI_Controller{
 	public function __construct(){
 		parent::__construct();
@@ -252,8 +254,8 @@ class Menus extends CI_Controller{
 			if($this->form_validation->run() == TRUE){
                 $res = $this->menu_model->additem();
                 if($res){
-                    $this->session->set_flashdata("suc","item Updated sucessfully");
-				    redirect(adminurl('Menus/'.$dta['resturant_id']));
+                    $this->session->set_flashdata("suc","image deleted sucessfully");
+				    redirect(adminurl('Menus/'.$this->input->post('resturant_id')));
                 }
 			}
 		}
@@ -364,26 +366,6 @@ class Menus extends CI_Controller{
             }
 		}
 	}
-	public function update_category($str){
-		$par['whereCondition']	= "resturant_category_id = '".$str."'";
-	    $dat = array(
-	        'title' =>$this->input->post('title'),
-			"view"		=>  $this->menus_model->getCategory($par),
-			"id"	=> $str
-	    );
-	    $this->load->view('update_category',$dat);
-	}
-	public function updating_category($str){
-	    if($this->input->post()){
-			$res = $this->menus_model->updatecategory($str);
-            if($res != ''){
-                echo "Updated category successfully.";
-            }else{
-				echo "failed.";
-            }
-		}
-	}
-	
 	public function checkcategory($str){
         $vsp    =   $this->menu_model->checkcategory($str); 
         if(!$vsp){
@@ -412,7 +394,7 @@ class Menus extends CI_Controller{
             }
         }
     }
-    public function active_inactive_item(){
+   public function active_inactive_item(){
         if($this->input->post()!=""){
             $status = $this->input->post('status');
             $uri = $this->input->post('eve');
@@ -420,11 +402,13 @@ class Menus extends CI_Controller{
             $res = $this->menu_model->getItems($par);
             if(is_array($res) && count($res) >0){
                 $vsp = $this->menu_model->active_inactive_item($uri,$status);
-                if($vsp){
+			if($vsp){
+                if($status == "Active"){
                     echo 1;
-                }else{
+                }elseif($status == "Deactive"){
                     echo 2;
                 }
+			}
             }else{
                 echo 2;
             }
@@ -480,5 +464,44 @@ class Menus extends CI_Controller{
         $da['tempid'] = $this->input->post('tempid');
         $this->load->view('variantslist',$da);
     }
+    public function update_category($str){
+		$par['whereCondition']	= "resturant_category_id = '".$str."'";
+	    $dat = array(
+	        'title'  =>  $this->input->post('title'),
+			"view"	 =>  $this->menu_model->getCategory($par),
+			"id"	 =>  $str
+	    );
+	    $this->load->view('update_category',$dat);
+	}
+	public function updating_category($str){
+	    if($this->input->post()){
+			$res = $this->menu_model->updatecategory($str);
+            if($res != ''){
+                echo "Updated category successfully.";
+            }else{
+				echo "failed.";
+            }
+		}
+	}
+	public function item_details(){
+	    //print_r($this->input->post());exit;
+	    if($this->input->post('eve')!=""){
+	        // if($this->input->post('restraint_id')!=""){
+	        //    $restraint_id = $this->input->post('restraint_id');
+	        // }else{
+	        //     $restraint_id = $this->session->userdata("restraint_id");
+	        // }
+	       $par['whereCondition'] = "resturant_items_id LIKE '".$this->input->post('eve')."' ";
+	       $res =$this->menu_model->viewItems($par);
+	     // echo "<pre>";print_r($res);exit;
+	       $data = array(
+	            'title' =>$this->input->post('eve'),
+	            'types' =>$this->input->post('types'),
+	            'status' =>$this->input->post('status'),
+	            'data'  => $res,
+	       );
+	    }
+	    $this->load->view('ajax_itempopup',$data);
+	}
 }
 ?>

@@ -29,7 +29,7 @@
     <link href="<?php echo $this->config->item('admin_assets');?>plugins/sweetalerts/sweetalert.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo $this->config->item('admin_assets');?>assets/css/components/custom-sweetalert.css" rel="stylesheet" type="text/css" />
 	<?php } if($this->uri->segment(2) =="Add-Res-Image-Doc" || $this->uri->segment(2) =="Update-Res-Image-Doc" || $this->uri->segment(2) =="Update-Resturant-Document" || $this->uri->segment(2) =="Create-Resturant" || $this->uri->segment(2) =="Update-Resturant" || $this->uri->segment(2) =="Create-Drivers"  || $this->uri->segment(2) =="Update-Driver" || $this->uri->segment(2) =="Banner" 
-	        || $this->uri->segment(2) =="Update-Banner" || $this->uri->segment(2) =="Resturant-Banner" || $this->uri->segment(2) =="Update-Resturant-Banner" || $this->uri->segment(2) =="Update-Dri-Image-Doc" || $this->uri->segment(2) =="Add-Dri-Image-Doc" || $this->uri->segment(2) =="Add-Items" || $this->uri->segment(2) =="Update-Items" || $this->uri->segment(2) =="Orders"){?>
+	        || $this->uri->segment(2) =="Update-Banner" || $this->uri->segment(2) =="Resturant-Banner" || $this->uri->segment(2) =="Update-Resturant-Banner" || $this->uri->segment(2) =="Update-Dri-Image-Doc" || $this->uri->segment(2) =="Add-Dri-Image-Doc" || $this->uri->segment(2) =="Add-Items" || $this->uri->segment(2) =="Update-Items" || $this->uri->segment(2) =="Create-Users" || $this->uri->segment(2) =="Update-Users" || $this->uri->segment(2) =="Update-Cuisine" || $this->uri->segment(2) =="Cuisine"){?>
 	<link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 	<link href="<?php echo $this->config->item('admin_assets');?>assets/css/scrollspyNav.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo $this->config->item('admin_assets');?>plugins/file-upload/file-upload-with-preview.min.css" rel="stylesheet" type="text/css" />
@@ -43,9 +43,7 @@
 	  <link href="<?php echo $this->config->item('admin_assets');?>assets/css/components/tabs-accordian/custom-tabs.css" rel="stylesheet" type="text/css" />
 	 <?php }if($this->uri->segment(2) =="Menus"){ ?>
 	 <link href="<?php echo $this->config->item('admin_assets');?>assets/css/apps/todolist.css" rel="stylesheet" type="text/css" />
-	 <?php } if($this->uri->segment(2) =="Update-Discount" || $this->uri->segment(2) =="Create-Discount"){?>
-    <link href="<?php echo $this->config->item('admin_assets');?>assets/css/elements/custom-tree_view.css" rel="stylesheet" type="text/css" />
-    <?php } ?>
+	 <?php } ?>
 	 	<link href="<?php echo $this->config->item('admin_assets');?>assets/css/custom.css" rel="stylesheet" type="text/css" />
 	 <style>
     #snackbar {
@@ -150,7 +148,22 @@
             </div>
         </div>
     </div>
-    <div id="snackbar">Some text some message..</div>
+    <div class="modal right fade resturantModel" id="myModal" data-backdrop="static" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content resturantModel">
+                      
+            </div>
+        </div>
+    </div>
+    <div id="snackbar"></div>
+    <div id="snackbars">Some text some message..</div>
+    <div class="modal right fade itemModel" id="myModal" data-backdrop="static" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content itemModel">
+                      
+            </div>
+        </div>
+    </div>
     <script>
     function copy(element){
       var copyText = $('.copy'+element).attr('data-tap'+element).select();
@@ -179,7 +192,7 @@
     <script src="<?php echo $this->config->item('admin_assets');?>plugins/sweetalerts/sweetalert2.min.js"></script>
     <script src="<?php echo $this->config->item('admin_assets');?>plugins/sweetalerts/custom-sweetalert.js"></script>
 	<?php }else if($this->uri->segment(1) !=""){?>
-    <?php } if($this->uri->segment(2) =="Add-Res-Image-Doc" || $this->uri->segment(2) =="Update-Res-Image-Doc" || $this->uri->segment(2) =="Update-Resturant-Document" || $this->uri->segment(2) =="Create-Resturant" || $this->uri->segment(2) =="Update-Resturant" || $this->uri->segment(2) =="Create-Drivers" || $this->uri->segment(2) =="Update-Driver" || $this->uri->segment(2) =="Banner" || $this->uri->segment(2) =="Update-Banner" || $this->uri->segment(2) =="Resturant-Banner" || $this->uri->segment(2) =="Update-Resturant-Banner" || $this->uri->segment(2) =="Update-Dri-Image-Doc" || $this->uri->segment(2) =="Add-Dri-Image-Doc"|| $this->uri->segment(2) =="Add-Items"|| $this->uri->segment(2) =="Update-Items" || $this->uri->segment(2) =="Orders"){?>
+    <?php } if($this->uri->segment(2) =="Add-Res-Image-Doc" || $this->uri->segment(2) =="Update-Res-Image-Doc" || $this->uri->segment(2) =="Update-Resturant-Document" || $this->uri->segment(2) =="Create-Resturant" || $this->uri->segment(2) =="Update-Resturant" || $this->uri->segment(2) =="Create-Drivers" || $this->uri->segment(2) =="Update-Driver" || $this->uri->segment(2) =="Banner" || $this->uri->segment(2) =="Update-Banner" || $this->uri->segment(2) =="Resturant-Banner" || $this->uri->segment(2) =="Update-Resturant-Banner" || $this->uri->segment(2) =="Update-Dri-Image-Doc" || $this->uri->segment(2) =="Add-Dri-Image-Doc"|| $this->uri->segment(2) =="Add-Items"|| $this->uri->segment(2) =="Update-Items" || $this->uri->segment(2) =="Create-Users" || $this->uri->segment(2) =="Update-Users" || $this->uri->segment(2) =="Update-Cuisine" || $this->uri->segment(2) =="Cuisine"){?>
 	<script src="<?php echo $this->config->item('admin_assets');?>plugins/file-upload/file-upload-with-preview.min.js"></script>
 	<script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
     <script>
@@ -266,9 +279,7 @@
     <script src="<?php echo $this->config->item('admin_assets');?>plugins/select2/select2.min.js"></script>
     <script src="<?php echo $this->config->item('admin_assets');?>plugins/select2/custom-select2.js"></script>
     <script src="<?php echo $this->config->item('admin_assets');?>assets/js/authentication/form-2.js"></script>
-	<?php } if($this->uri->segment(2) =="Update-Discount" || $this->uri->segment(2) =="Create-Discount"){?>
-    <script src="<?php echo $this->config->item('admin_assets');?>plugins/treeview/custom-jstree.js"></script>
-    <?php }if($this->uri->segment(2) == "Zones"){?>
+	<?php }if($this->uri->segment(2) == "Zones"){?>
 	<script>
         function initMap() {
             var macc = {lat: 29.378586, lng: 47.990341};
@@ -286,7 +297,15 @@
         addons();
     </script>
      
-    <?php }elseif($this->uri->segment(2) == "Driver-Details"){?> ?>
+    <?php }elseif($this->uri->segment(2) == "Orders"){?>
+    <script>
+        function OrderRefresh(){
+            url = $('#urlvalue').val();
+            searchFilter('',url,'');
+            counts();
+        }
+    </script>
+    <?php }elseif($this->uri->segment(2) == "Driver-Details"){?>
     <script>
         $(function(){
             updatedriloca();
@@ -309,10 +328,29 @@
                 }
             });
         });
-        <?php if($this->uri->segment(2) =="Orders"){ ?>
-            timer();
-        <?php } ?>
 </script>
-    
+    <script>
+    function timeFunction() {     
+        if ($("#same").is(':checked')){  
+                   
+            var start = $('.pristrtime0').val();
+            var end   = $('.priendtime0').val();      
+            for (i = 1; i <= 6 ; i++) {
+                $('.pristrtime'+i).val(start);
+                $('.priendtime'+i).val(end);   
+            }
+         }
+         else{
+            for (i = 0; i <= 6 ; i++) {
+                $('.pristrtime'+i).val('');
+                $('.priendtime'+i).val('');   
+            }
+         }
+    }
+</script>
+<script src="//cdn.ckeditor.com/4.15.1/standard/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace( 'page-description' );  
+</script>
 </body>
 </html>

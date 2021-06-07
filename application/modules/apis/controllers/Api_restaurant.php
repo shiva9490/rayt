@@ -1,4 +1,6 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+ob_start();
 class Api_restaurant extends CI_Controller{
         public function __construct() {
                 parent::__construct();
@@ -74,7 +76,7 @@ class Api_restaurant extends CI_Controller{
             if($sv == 1){
                 $data   =   $this->api_model->jsonencodevalues("1","Some Fileds are required");
                 if($this->input->post("restrant_id") != ""){
-                    $data   =   $this->api_model->jsonencodevalues("2","No Orders Neworder");
+                    $data   =   $this->api_model->jsonencodevalues("2","No new orders");
                     $vsp = $this->apirestraint_model->neworders();
                     if($vsp){
                         $data   =   $this->api_model->jsonencodevalues("3",$vsp);
@@ -90,7 +92,7 @@ class Api_restaurant extends CI_Controller{
                 $data   =   $this->api_model->jsonencodevalues("1","Some Fileds are required");
                 if($this->input->post("restrant_id") != ""){
                     $orderstatus = $this->config->item('orderstatus');
-                    $data   =   $this->api_model->jsonencodevalues("2","No Orders in preparing");
+                    $data   =   $this->api_model->jsonencodevalues("2","No orders in preparing");
                     $vsp = $this->apirestraint_model->neworders($orderstatus[1]);
                     if($vsp){
                         $data   =   $this->api_model->jsonencodevalues("3",$vsp);
@@ -106,7 +108,7 @@ class Api_restaurant extends CI_Controller{
                 $data   =   $this->api_model->jsonencodevalues("1","Some Fileds are required");
                 if($this->input->post("restrant_id") != ""){
                     $orderstatus = $this->config->item('orderstatus');
-                    $data   =   $this->api_model->jsonencodevalues("2","no Orders in Ready for oder");
+                    $data   =   $this->api_model->jsonencodevalues("2","No orders in ready for pickup");
                     $vsp = $this->apirestraint_model->neworders($orderstatus[2]);
                     if($vsp){
                         $data   =   $this->api_model->jsonencodevalues("3",$vsp);
@@ -122,7 +124,7 @@ class Api_restaurant extends CI_Controller{
                 $data   =   $this->api_model->jsonencodevalues("1","Some Fileds are required");
                 if($this->input->post("restrant_id") != ""){
                     $orderstatus = $this->config->item('orderstatus');
-                    $data   =   $this->api_model->jsonencodevalues("2","no Orders in out for delivery");
+                    $data   =   $this->api_model->jsonencodevalues("2","No orders in out for delivery");
                     $vsp = $this->apirestraint_model->neworders($orderstatus[3]);
                     if($vsp){
                         $data   =   $this->api_model->jsonencodevalues("3",$vsp);

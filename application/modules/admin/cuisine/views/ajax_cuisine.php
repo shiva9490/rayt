@@ -14,6 +14,8 @@ if($ur  == 1 || $dr == '1' || $sr == 1){
             <tr id="filters">
                 <th>S.No</th>
                 <th><a href="javascript:void(0);" data-type="order" data-field="cuisine_name" urlvalue="<?php echo adminurl('viewCuisine/');?>" onclick="getdatafiled($(this))">Cuisine Name <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
+                <th><a href="javascript:void(0);" data-type="order" data-field="cuisine_name_a" urlvalue="<?php echo adminurl('viewCuisine/');?>" onclick="getdatafiled($(this))">Cuisine Arbic <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
+                <th><a href="javascript:void(0);" data-type="order"  >Image <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
                 <th><a href="javascript:void(0);" data-type="order" data-field="cuisine_acde" urlvalue="<?php echo adminurl('viewCuisine/');?>" onclick="getdatafiled($(this))">Status <i class="zmdi font-14 zmdi-sort pull-right"></i></a> </th>
                 <?php if($ct == '1'){?>
                 <th>Action</th>
@@ -40,6 +42,8 @@ if($ur  == 1 || $dr == '1' || $sr == 1){
             <tr>
                 <td><?php echo $limit++;?></td>
                 <td><?php echo $ve->cuisine_name;?></td>
+                <td><?php echo $ve->cuisine_name_a;?></td>
+                <td><img src="<?php echo base_url('upload/cuisine/'.$ve->cuisine_image_path) ?>" width="100px"/></td>
                 <td><?php echo $vdata;?></td>
                 <?php if($ct == '1'){?>
                     <td> 
@@ -52,7 +56,7 @@ if($ur  == 1 || $dr == '1' || $sr == 1){
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                         </a>
                     <?php } if($dr == '1'){?>
-                    <a href="javascript:void(0);" onclick="confirmationDelete($(this),'Cuisines')" data-toggle='tooltip' attrvalue="<?php echo adminurl("Delete-Cuisine/".$ve->cuisine_id);?>" data-original-title="Delete country" class="text-danger">
+                    <a href="javascript:void(0);" onclick="confirmationDelete($(this),'Cuisine')" data-toggle='tooltip' attrvalue="<?php echo adminurl("Delete-Cuisine/".$ve->cuisine_id);?>" data-original-title="Delete Cuisine" class="text-danger">
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-octagon table-cancel"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
 					</a>
                     <?php }  ?>

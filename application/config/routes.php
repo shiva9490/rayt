@@ -100,7 +100,7 @@ $route['Rayt-Admin/Create-Resturant']       			    = 	'resturant/create';
 $route['Rayt-Admin/Resturant']              			    = 	'resturant';
 $route['Rayt-Admin/Resturant-Menu/(:any)']                  = 	'menu/index';
 $route['Rayt-Admin/Create-Orders']          			    = 	'orders/create';
-    
+
 /*------------------------------------------------------    ---*/
 $route['Rayt-Admin/Menus/(:any)']      			 		    =   'resturant/menus/index/$1';
 $route['Rayt-Admin/ViewItems/(:any)/(:any)']                =   'resturant/menus/ViewItems/$1/$2';
@@ -114,8 +114,6 @@ $route['Rayt-Admin/Variant-model']                 		    =   'resturant/menus/va
 $route['Rayt-Admin/Min-Selection']                 		    =   'resturant/menus/min_selection';
 $route['Rayt-Admin/Add-Category']                 		    =   'resturant/menus/add_category';
 $route['Rayt-Admin/Adding-Category']                 	    =   'resturant/menus/adding_category';
-$route['Rayt-Admin/Update-Category/(:any)']            	    =   'resturant/menus/update_category/$1';
-$route['Rayt-Admin/Updating-Category/(:any)']               =   'resturant/menus/updating_category/$1';
 $route['Rayt-Admin/Adding-variant']                 	    =   'resturant/menus/adding_variant';
 $route['Rayt-Admin/Adding-variants']                        =   'resturant/menus/adding_variants';
 $route['Rayt-Admin/Active-Inactive-Item']                   =   'resturant/menus/active_inactive_item';
@@ -125,13 +123,16 @@ $route['Rayt-Admin/Addons-List']                            =   'resturant/menus
 $route['Rayt-Admin/variants-List']                          =   'resturant/menus/variants_list';
 $route['Rayt-Admin/Update-Category-Menu/(:any)']            =   'resturant/menus/update_category_menu/$1';
 $route['Rayt-Admin/Category-Rest-Delete/(:any)']            =   'resturant/menus/category_rest_delete/$1';
-    
+$route['Rayt-Admin/Update-Categorys/(:any)']            	=   'resturant/menus/update_category/$1';
+$route['Rayt-Admin/Updating-Category/(:any)']               =   'resturant/menus/updating_category/$1';
+$route['Rayt-Admin/Item-Details']                           = 	'resturant/menus/item_details';
+
 /*------------------------------------------------------    ---*/
 $route['Rayt-Admin/Orders']                 			    = 	'orders';
 $route['Rayt-Admin/payment']                 			    = 	'orders/payment';
 $route['Rayt-Admin/viewOrders/(:any)']                 	    = 	'orders/viewOrders/$1';
 $route['Rayt-Admin/Counts']                 	            = 	'orders/counts';
-    
+
 $route['Rayt-Admin/Drivers']                			    = 	'drivers';
 $route['Rayt-Admin/Home']                   			    = 	'home';
 $route['Rayt-Admin/Address-Evalution']      			    = 	'address';
@@ -147,6 +148,22 @@ $route['Rayt-Admin/Update-Zone/(:any)']                     =   'zones/update_zo
 $route['Rayt-Admin/validation-Zonename']                    =   'zones/validation_name'; 
 /*---------------Zones------------------------------*/
 
+/*----------------------------Reports-----------------------------*/
+$route['Rayt-Admin/Sales-Reports']                 			= 	'reports/salesreport';
+$route['Rayt-Admin/Reports']                 		    	= 	'reports';
+$route['Rayt-Admin/viewReports/(:any)']                 	= 	'reports/viewReports/$1';
+$route['Rayt-Admin/viewsalesReports/(:any)']                = 	'reports/viewsalesReports/$1';
+/*---------------Reports------------------------------*/
+
+/*---------------Content pages------------------------------*/  
+$route['Rayt-Admin/Content-Pages']                  	    = 	'content_pages';
+$route['Rayt-Admin/Add-Content']                  	        = 	'content_pages/add_content';
+$route['Rayt-Admin/viewContent/(:any)']                  	= 	'content_pages/viewContent/$1';
+$route['Rayt-Admin/Active-Deactive-Content']                =   'content_pages/activedeactive';
+$route['Rayt-Admin/Delete-Content/(:any)']                  =   'content_pages/delete_content/$1'; 
+$route['Rayt-Admin/Update-Content/(:any)']                  =   'content_pages/update_content/$1'; 
+$route['Rayt-Admin/validation-Content']                     =   'content_pages/validation_content';
+/*---------------Content pages------------------------------*/  
 /*-------customer restaurant------------------------*/
 $route['Country-list']                       			    = 	'apis/countries';
 $route['Api-Register']                       			    = 	'apis/register';
@@ -172,7 +189,10 @@ $route['Api-Cart-payment']                        		    = 	'apis/payment';
 $route['Api-Checkout']                  		            = 	'apis/checkout';
 $route['Api-Order-History']              		            = 	'apis/order_history';
 $route['Api-Order-Details']              		            = 	'apis/order_details';
-
+$route['Api-customer-Support']              		        = 	'apis/custmre_support';
+$route['Api-All-Restaurants-list']              		    = 	'apis/all_restaurants_list';
+$route['Api-Update-Password']              		            = 	'apis/update_password';
+$route['Api-Privacy-Policy']              		            = 	'apis/privacy_policy';
 /*-------customer 	----------*/
 
 $route['Rayt-Admin/viewResturant/(:any)']                   =   'resturant/viewResturant/$1';
@@ -184,7 +204,7 @@ $route['Rayt-Admin/Update-Res-Image-Doc/(:any)']            =   'resturant/updat
 $route['Rayt-Admin/Delete-Res-Image-Doc/(:any)']            =   'resturant/delete_res_image_doc/$1'; 
 $route['Rayt-Admin/Add-Res-Image-Doc/(:any)']               =   'resturant/add_res_image_doc/$1'; 
 $route['Rayt-Admin/Update-Res-Images']                      =   'resturant/update_res_images';
-    
+$route['Rayt-Admin/Resturant-Details']                      = 	'resturant/resturant_details';
 /*----------- customer------------*/    
 $route['Rayt-Admin/Customers']                              =   'customers';
 $route['Rayt-Admin/viewCustomers/(:any)']                   =   'customers/viewCustomers/$1';
@@ -209,7 +229,6 @@ $route['Rayt-Admin/Driver-Details/(:any)']                  = 	'drivers/driver_d
 $route['Rayt-Admin/Update-Drive-Loc']                       = 	'drivers/update_drive_loc';
 
 /*----------- country------------*/
-
 $route['Rayt-Admin/Country']                               =   'country';
 $route['Rayt-Admin/viewCountry/(:any)']                    =   'country/viewCountry/$1';
 $route['Rayt-Admin/Ajax-Country-Active']                   =   'country/ajax_country_active';
@@ -219,7 +238,6 @@ $route['Rayt-Admin/coutry_img']                            =   'country/coutry_i
 $route['Rayt-Admin/coutry_names']                          =   'country/coutry_names';
 
 /*----------- cuisine------------*/
-
 $route['Rayt-Admin/Cuisine']                               =   'cuisine';
 $route['Rayt-Admin/viewCuisine/(:any)']                    =   'cuisine/viewCuisine/$1';
 $route['Rayt-Admin/Ajax-Cuisine-Active']                   =   'cuisine/activedeactive';
@@ -227,7 +245,6 @@ $route['Rayt-Admin/Update-Cuisine/(:any)']                 =   'cuisine/update/$
 $route['Rayt-Admin/Delete-Cuisine/(:any)']                 =   'cuisine/delete_cuisine/$1'; 
 
 /*----------- banner------------*/
-
 $route['Rayt-Admin/Banner']                               =   'banner';
 $route['Rayt-Admin/viewBanner/(:any)']                    =   'banner/viewBanner/$1';
 $route['Rayt-Admin/Ajax-Banner-Active']                   =   'banner/activedeactive';
@@ -244,6 +261,7 @@ $route['Rayt-Admin/Delete-Resturant_banner/(:any)']       =   'resturant_banner/
 /*----------- Category------------*/
 $route['Rayt-Admin/Category']                             =   'category/index';
 $route['Rayt-Admin/viewcategory/(:any)']                  =   'category/viewcategory/$1';
+$route['Rayt-Admin/Update-Category/(:any)']               =   'category/update_category/$1';
 $route['Rayt-Admin/Delete-Category/(:any)']               =   'category/delete_category/$1';
 $route['Rayt-Admin/Ajax-Category-Active']                 =   'category/ajax_category_active';
 
@@ -256,6 +274,14 @@ $route['Rayt-Admin/Ajax-Addon-Active']                    =   'addon/activedeact
 $route['Rayt-Admin/Update-Addon/(:any)']                  =   'addon/update/$1';
 $route['Rayt-Admin/Delete-Addon/(:any)']                  =   'addon/delete_addon/$1'; 
  
+/*-------users 	----------*/
+$route['Rayt-Admin/User']                		           =   'users';
+$route['Rayt-Admin/Create-Users']       			       =   'users/create';
+$route['Rayt-Admin/viewUsers/(:any)']                      =   'users/viewUsers/$1';
+$route['Rayt-Admin/Active-Deactive-Users']                 =   'users/ajax_users_active';
+$route['Rayt-Admin/Delete-Users/(:any)']                   =   'users/delete_users/$1'; 
+$route['Rayt-Admin/Update-Users/(:any)']                   =   'users/update_users/$1';
+
 /*----------- variant------------*/
 
 $route['Rayt-Admin/Variant']                               =   'variant';
@@ -263,15 +289,6 @@ $route['Rayt-Admin/viewVariant/(:any)']                    =   'variant/viewVari
 $route['Rayt-Admin/Ajax-Variant-Active']                   =   'variant/activedeactive';
 $route['Rayt-Admin/Update-Variant/(:any)']                 =   'variant/update/$1';
 $route['Rayt-Admin/Delete-Variant/(:any)']                 =   'variant/delete_variant/$1';
-
-/*-------Discount 	----------*/
-$route['Rayt-Admin/Discount/(:any)']                		= 	'discounts/index/$1';
-$route['Rayt-Admin/Create-Discount']       			        = 	'discounts/create';
-$route['Rayt-Admin/ViewDiscount/(:any)']                    =   'discounts/viewDiscount/$1';
-$route['Rayt-Admin/Ajax-Discount-Active']                   =   'discounts/ajax_discount_active';
-$route['Rayt-Admin/Update-Discount/(:any)']                 =   'discounts/update_discount/$1';
-$route['Rayt-Admin/Delete-Discount/(:any)']                 =   'discounts/delete_discount/$1';
-$route['Rayt-Admin/Discount-Status-Update']                 =   'discounts/status_update';
 
 /*---------------restaurant---------------------*/
 $route['Partner-Admin']                  	 			 	=   'pdashboard/index';
@@ -303,10 +320,6 @@ $route['Partner-Admin/Order-Accect']                        = 	'order/order_acce
 /*-------Discount 	----------*/
 $route['Partner-Admin/Discount']                			= 	'discount/index';
 $route['Partner-Admin/Create-Discount']       			    = 	'discount/create';
-$route['Partner-Admin/ViewDiscount/(:any)']                 =   'discount/viewDiscount/$1';
-$route['Partner-Admin/Ajax-Discount-Active']                =   'discount/ajax_discount_active';
-$route['Partner-Admin/Update-Discount/(:any)']              =   'discount/update_discount/$1';
-$route['Partner-Admin/Delete-Discount/(:any)']              =   'discount/delete_discount/$1';
 
 /*-------Time 	----------*/
 $route['Partner-Admin/Time']                			    = 	'time/index';
@@ -334,7 +347,6 @@ $route['Change-Status']                 	                =   'apis/api_restauran
 $route['View-Orders']                 	                    =   'apis/api_restaurant/vieworders';
 $route['Delay-Order']                 	                    =   'apis/api_restaurant/delay_order';
 /*---------------End Api restaurant---------------------*/
-
 /*--------------------Driver Apis----------------------------------*/
 $route['Api-Driver-Login']                       	        = 	'apis/api_driver/loginapi';
 $route['Api-Driver-Forget']                       	        = 	'apis/api_driver/forget';
@@ -351,10 +363,11 @@ $route['Api-takeit-Order']                 	                =   'apis/api_driver
 $route['Api-Arrived-Order']                 	            =   'apis/api_driver/takeitorder';
 $route['Api-Delivery-Order']                 	            =   'apis/api_driver/deliveryorder';
 $route['Api-today-Order-Amount']                 	        =   'apis/api_driver/today_order_amount';
+$route['Api-check-view-orders']                 	        =   'apis/api_driver/check_view_orders';
+
 /*---------------------Driver Apis---------------------------------*/
 
 $route['Driver-Map-Point']                 	                =   'apis/map/driverpoint';
-
 
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

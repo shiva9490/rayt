@@ -680,13 +680,16 @@ class Drivers_model extends CI_Model{
         }
         return FALSE;
     }
+    public function viewDriverupdate($params = array()){
+         return $this->queryDriverupdate($params)->result();
+    }
     public function getDriverupdate($params = array()){
         return $this->queryDriverupdate($params)->row_array();
     }
     public function queryDriverupdate($params = array()){
         $dt =   array(
-            "driver_open"  => '1',
-            "driver_login_open" => '1'
+            //"driver_open"  => '1',
+            //"driver_login_open" => '1',
         );
         $sel        =   "*";
         if(array_key_exists("cnt",$params)){
@@ -697,8 +700,10 @@ class Drivers_model extends CI_Model{
         }
         $this->db->select($sel)
                     ->from("driver_address_update as dau")
-                    ->join("drivers as d","dau.driver_address_driver_id =d.driver_id","inner")
-                    ->join("driver_login as dl","dl.driver_id =d.driver_id","inner")
+                    ->join("drivers as d","dau.driver_address_driver_id =d.driver_id","LEFT")
+                    ->join("driver_login as dl","dl.driver_id =d.driver_id","LEFT")
+                    ->join("driver_login_status as dls","dls.driver_status_driver_id = d.driver_id","LEFT")
+                   // ->join("driver_assign_order as dso","dso.driver_id = d.driver_id","LEFT")
                     ->where($dt);
         if(array_key_exists("keywords",$params)){
                 $this->db->where("(driver_name LIKE '%".$params["keywords"]."%')");
@@ -717,8 +722,64 @@ class Drivers_model extends CI_Model{
         if(array_key_exists("tipoOrderby",$params) && array_key_exists("order_by",$params)){
                 $this->db->order_by($params['tipoOrderby'],$params['order_by']);
         }
-        // $this->db->get();echo $this->db->last_query();exit;
+        if(array_key_exists("group_by", $params)){
+            $this->db->group_by($params["group_by"]);
+        }
+        //$this->db->get();echo $this->db->last_query();exit;
         return  $this->db->get();
+    }
+    public function find_driver($resturant_id,$zone,$subzone){
+         /*-=--------------------------------------------------------*/
+        $par['tipoOrderby']     = "dau.driver_addressid";
+        $par['order_by']        = 'DESC';//RAND()
+        $par['group_by']        = "d.driver_id";
+        $par['whereCondition']  = "d.driver_resturant_alloc LIKE '%".$resturant_id."%' 
+                                AND (d.driver_zone LIKE '".$zone."' OR d.driver_sub_zone LIKE '".$subzone."')
+                                AND (dls.driver_status_for LIKE 'Login' OR dls.driver_status_for LIKE 'Online')";
+        $drive = $this->viewDriverupdate($par);
+        /*-=--------------------------------------------------------*/
+        /*-=--------------------------------------------------------*/
+        $pars['tipoOrderby']     = "dau.driver_addressid";
+        $pars['order_by']        = 'DESC';
+        $pars['group_by']        = "d.driver_id";
+        $pars['whereCondition']  = "(d.driver_zone LIKE '".$zone."' OR d.driver_sub_zone LIKE '".$subzone."')
+                                    AND (dls.driver_status_for LIKE 'Login' OR dls.driver_status_for LIKE 'Online')";
+        $drives = $this->viewDriverupdate($pars);
+        /*-=--------------------------------------------------------*/
+        $drivertcount =array();
+        if(is_array($drive) && count($drive) > 0){
+            foreach($drive as $key=>$d){
+                $search_zone = $this->find_driver_zone($subzone,$d->driver_address_latitude,$d->driver_address_longitude);
+                if($search_zone > 0){
+                    return $d->driver_id;
+                }
+            }
+        }else if(is_array($drives) && count($drives) > 0){
+            foreach($drive as $key=>$d){
+                $search_zone = $this->find_driver_zone($subzone,$d->driver_address_latitude,$d->driver_address_longitude);
+                if($search_zone > 0){
+                    return $d->driver_id;
+                }
+            }
+        }
+    }
+    public function find_driver_zone($zone,$lag,$lon){
+        $p['whereCondition'] = "zone_id LIKE '".$zone."'";
+        $ponts = $this->zone_model->viewZoneList($p);
+        //print_r($ponts);exit;
+        $s = array();
+        foreach($ponts as $k=>$p){
+            $s[$k] = $p->zonelist_lat.' '.$p->zonelist_lng;
+        }
+        $point       = array($lag.' '.$lon);
+        $longitude_x = $lon;
+        $latitude_y  = $lag;    
+        $d           = $this->api_model->pointInPolygon($point,$s);
+        if($d == "inside"){
+            return true;
+        }else{
+            return false;
+        }
     }
 }
 ?>

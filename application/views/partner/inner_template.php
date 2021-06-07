@@ -21,7 +21,7 @@
     <link href="<?php echo $this->config->item('admin_assets');?>plugins/sweetalerts/sweetalert2.min.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo $this->config->item('admin_assets');?>plugins/sweetalerts/sweetalert.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo $this->config->item('admin_assets');?>assets/css/components/custom-sweetalert.css" rel="stylesheet" type="text/css" />
-	<?php } if($this->uri->segment(2) =="Regular-Time"  || $this->uri->segment(2) =="Helpdesk" || $this->uri->segment(2) =="Discount" || $this->uri->segment(2) =="Menu" || $this->uri->segment(2) =="Add-Items"  || $this->uri->segment(2) =="Update-Items" ||$this->uri->segment(2) !="Orders-List" || $this->uri->segment(2) =="Create-Discount" || $this->uri->segment(2) =="Update-Discount"){?>
+	<?php } if($this->uri->segment(2) =="Regular-Time"  || $this->uri->segment(2) =="Helpdesk" || $this->uri->segment(2) =="Discount" || $this->uri->segment(2) =="Menu" || $this->uri->segment(2) =="Add-Items"  || $this->uri->segment(2) =="Update-Items" ||$this->uri->segment(2) !="Orders-List"){?>
 	<link rel="stylesheet" type="text/css" href="<?php echo $this->config->item('admin_assets');?>assets/css/forms/theme-checkbox-radio.css">
 	<link rel="stylesheet" type="text/css" href="<?php echo $this->config->item('admin_assets');?>assets/css/forms/theme-checkbox-radio.css">
 	<link rel="stylesheet" type="text/css" href="<?php echo $this->config->item('admin_assets');?>assets/css/forms/switches.css">
@@ -40,9 +40,7 @@
 	<link href="<?php echo $this->config->item('admin_assets');?>plugins/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
 	<?php }elseif($this->uri->segment(2) =="Orders-List" || $this->uri->segment(2) =="Dashboard" ){ ?>
 	<link href="<?php echo $this->config->item('admin_assets');?>assets/css/components/tabs-accordian/custom-tabs.css" rel="stylesheet" type="text/css" />
-	<?php } if($this->uri->segment(2) =="Update-Discount" || $this->uri->segment(2) =="Create-Discount"){?>
-    <link href="<?php echo $this->config->item('admin_assets');?>assets/css/elements/custom-tree_view.css" rel="stylesheet" type="text/css" />
-    <?php } ?>
+	<?php } ?>
 	<link href="<?php echo $this->config->item('admin_assets');?>assets/css/custom.css" rel="stylesheet" type="text/css" />
 </head>
 <style>
@@ -249,12 +247,10 @@
 		<script src="<?php echo $this->config->item('admin_assets');?>assets/js/ie11fix/fn.fix-padStart.js"></script>
 		<script src="<?php echo $this->config->item('admin_assets');?>plugins/editors/quill/quill.js"></script>
 		<script src="<?php echo $this->config->item('admin_assets');?>assets/js/apps/todoList.js"></script>
-	<?php } if($this->uri->segment(2) =="Update-Discount" || $this->uri->segment(2) =="Create-Discount"){?>
-    <script src="<?php echo $this->config->item('admin_assets');?>plugins/treeview/custom-jstree.js"></script>
-    <?php } ?>
+	<?php } ?>
 	<script src="<?php echo $this->config->item('admin_assets');?>assets/js/scrollspyNav.js"></script>
     <script src="<?php echo $this->config->item('admin_assets');?>plugins/flatpickr/flatpickr.js"></script>
-    <?php  if($this->uri->segment(2) =="Orders-List" || $this->uri->segment(2) =="Dashboard" || $this->uri->segment(2) =="Create-Discount" || $this->uri->segment(2) =="Update-Discount"){?>
+    <?php  if($this->uri->segment(2) =="Orders-List" || $this->uri->segment(2) =="Dashboard"){?>
     <script src="<?php echo $this->config->item('admin_assets');?>plugins/flatpickr/custom-flatpickr.js"></script>
     <?php } ?>
     <script src="<?php echo $this->config->item('admin_assets');?>assets/js/customs.js"></script>

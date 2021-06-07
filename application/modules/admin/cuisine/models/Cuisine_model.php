@@ -1,11 +1,43 @@
 <?php
 class Cuisine_model extends CI_Model{
     public function create_cuisine(){
+           
+        $direct = "upload/cuisine";
+        if (file_exists($direct)){
+        }else{mkdir("upload/cuisine");}
+        $picture3= '';
+        if(!empty($_FILES['cuisine_image_path']['name'])){
+                $config['upload_path'] = $direct.'/';
+                $config['allowed_types'] = 'jpg|jpeg|png|gif';
+                $config['file_name'] = $_FILES['cuisine_image_path']['name']; 
+                $config['encrypt_name'] = TRUE;
+                $this->load->library('upload',$config);
+                $this->upload->initialize($config);   
+                if($this->upload->do_upload('cuisine_image_path')){
+                        $uploadData = $this->upload->data();
+                        $picture3 = $uploadData['file_name'];
+                        $data = array('upload_data' => $this->upload->data());
+                        $img=$data['upload_data']['file_name'];
+                        $config['image_library'] = 'gd2';
+                        $config['source_image'] = $direct.'/'.$img;
+                        $config['new_image'] = 'upload/';
+                        $config['maintain_ratio'] = TRUE;
+                        $config['width']    = 300;
+                        $config['height']   = 300;
+                        $this->load->library('image_lib', $config); 
+                        if (!$this->image_lib->resize()) {
+                                echo $this->image_lib->display_errors();
+                        }
+                }
+        }
             $dta    =   array(
                             "cuisine_name"           =>  ucwords($this->input->post("cuisine_name")),
+                            "cuisine_name_a"           =>  ucwords($this->input->post("cuisine_name_a")),
+                            "cuisine_image_path"           =>  $picture3,
                             "cuisine_created_on"     =>  date("Y-m-d h:i:s"),
                             "cuisine_created_by"     =>  $this->session->userdata("login_id")
                         );
+                       // echo "<pre>";print_r($dta);exit;
             $this->db->insert("cuisine",$dta);
             $vps    =   $this->db->insert_id();
             if($vps >  0){ 
@@ -63,11 +95,42 @@ class Cuisine_model extends CI_Model{
             return  $this->query_cuisines($params)->result();
     }
     public function update_cuisine($uri) {
+        $direct = "upload/cuisine";
+        if (file_exists($direct)){
+        }else{mkdir("upload/cuisine");}
+        $picture3= '';
+        if(!empty($_FILES['cuisine_image_path']['name'])){
+                $config['upload_path'] = $direct.'/';
+                $config['allowed_types'] = 'jpg|jpeg|png|gif';
+                $config['file_name'] = $_FILES['cuisine_image_path']['name']; 
+                $config['encrypt_name'] = TRUE;
+                $this->load->library('upload',$config);
+                $this->upload->initialize($config);   
+                if($this->upload->do_upload('cuisine_image_path')){
+                        $uploadData = $this->upload->data();
+                        $picture3 = $uploadData['file_name'];
+                        $data = array('upload_data' => $this->upload->data());
+                        $img=$data['upload_data']['file_name'];
+                        $config['image_library'] = 'gd2';
+                        $config['source_image'] = $direct.'/'.$img;
+                        $config['new_image'] = 'upload/';
+                        $config['maintain_ratio'] = TRUE;
+                        $config['width']    = 300;
+                        $config['height']   = 300;
+                        $this->load->library('image_lib', $config); 
+                        if (!$this->image_lib->resize()) {
+                                echo $this->image_lib->display_errors();
+                        }
+                }
+        }
             $dta    =   array( 
                     "cuisine_name"            =>      ucwords($this->input->post("cuisine_name")),
+                    "cuisine_name_a"          =>  ucwords($this->input->post("cuisine_name_a")),
+                    "cuisine_image_path"           =>  $picture3,
                     "cuisine_modified_on"     =>      date("Y-m-d h:i:s"),
                     "cuisine_modified_by"     =>      $this->session->userdata("login_id")
             );    
+             // echo "<pre>";print_r($dta);exit;
             $this->db->update("cuisine",$dta,array("cuisine_id" => $uri));
             if($this->db->affected_rows() >  0){
                     return TRUE;

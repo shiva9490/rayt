@@ -1,4 +1,6 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+ob_start();
 class Resturant extends CI_Controller{
 	public function __construct() {
 		parent::__construct();
@@ -56,7 +58,6 @@ class Resturant extends CI_Controller{
         // }
         return TRUE; 
     }
-    
 	public function viewResturant($str){
 	    $conditions =   array();
 		$page       =   $this->uri->segment('3');
@@ -105,7 +106,6 @@ class Resturant extends CI_Controller{
 		}
 		echo $vsp;
 	}
-	
 	public function update_resturant($str){
 		if($this->session->userdata("update-resturant") != '1'){
 			redirect(sitedata("site_admin")."/Dashboard");
@@ -175,10 +175,7 @@ class Resturant extends CI_Controller{
 		    $this->load->view("admin/inner_template",$dta); 
         }
 	}
-
 	public function update_res_image_doc($str){	
-
-		
 		if($this->session->userdata("update-resturant") != '1'){
 			redirect(sitedata("site_admin")."/Dashboard");
 			}
@@ -209,8 +206,7 @@ class Resturant extends CI_Controller{
 		$this->load->view("admin/inner_template",$dta); 
 		}
 	}
-	public function add_res_image_doc($str){	
-			
+	public function add_res_image_doc($str){
 		if($this->session->userdata("update-resturant") != '1'){
 			redirect(sitedata("site_admin")."/Dashboard");
 			}
@@ -248,7 +244,6 @@ class Resturant extends CI_Controller{
 		//print_r($vsp['images']);exit;
 		$this->load->view('update_resturant_documents',$vsp);
 	}
-	
 	public function delete_resturant(){
 		$uri    =   $this->uri->segment("3");
 		$params["whereCondition"]   =   "resturant_id = '".$uri."'";
@@ -263,9 +258,7 @@ class Resturant extends CI_Controller{
 		} 
 		echo $vsp;
 	}
-	
 	public function delete_res_image_doc(){
-	
 		$uri    =   $this->uri->segment("3");
 		$params["whereCondition"]   =   "resturant_images_id = '".$uri."'";
 		$vue    =   $this->resturant_model->getResImages($params);
@@ -283,7 +276,18 @@ class Resturant extends CI_Controller{
 		} 
 		echo $vsp;
 	}
-
-	
+	public function resturant_details(){
+	    if($this->input->post('eve')!=""){
+	    	$restraint_id = $this->input->post('eve');
+	        $par['whereCondition'] = "resturantid LIKE '".$this->input->post('eve')."' ";
+	        //$par['group_by'] = "ord.orderdetail_restaurant_item_id";
+	        $res = $this->resturant_model->getResturant($par);
+	        $data = array(
+	             'title' =>$this->input->post('eve'),
+	             'data'  => $res,
+	        );
+	        $this->load->view('ajax_popup',$data);
+	    }
+	}
 }
 ?>

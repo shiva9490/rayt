@@ -17,6 +17,17 @@ class Apirestraint_model extends CI_Model{
             if(@getimagesize($target_dir)){
                 $imsg   =   $target_dir;
             }
+            $cuisine = explode(",",$details['resturant_cuisine']);
+            $datas = [];
+            if(is_array($cuisine) && count($cuisine) > 0){
+                foreach($cuisine as $keys=>$ce){
+                    if($keys >= 3){
+                        $p['whereCondition'] = "cuisine_id LIKE '".$ce."' AND cuisine_acde LIKE 'Active'";
+                        $cuisines = $this->cuisine_model->get_cuisine($p);
+                        $datas[$keys] = $cuisines[0]->cuisine_name;
+                    }
+                }
+            }
             $dta['resturant_name']        = $details['resturant_name'];
             $dta['resturant_image']       = base_url().'upload/resturants/'.$details['resturant_image'];
             $dta['resturant_logo']        = $imsg;
@@ -38,10 +49,30 @@ class Apirestraint_model extends CI_Model{
             $dta['resturant_landmark_a']  = $details['resturant_landmark_a'];
             $dta['resturant_zone_time']   = $details['resturant_zone_time'];
             $dta['resturant_openclose']   = $details['resturant_openclose'];
+            $dta['resturant_rating']      = $details['resturant_rating'];
+            $dta['resturant_cuisine']     = implode(",",$datas);
+            $dta['resturant_delivery']    = number_format((float)$details['resturant_delivery'], 3, '.', '');
+            $dta['resturant_minorder']    = number_format((float)$details['resturant_minorder'], 3, '.', '');
             $dta['distance']              = ($dista!="")?$dista:'';
             $dta['time']                  = ($time!="")?$time:'';
+            $dta['resturant_working']     = $this->resttimes($details['resturant_id']);
         }
         return $dta;
+    }
+    public function resttimes($id){
+        $par['whereCondition'] = "resturant_id LIKE '".$id."'";
+        $res = $this->resturant_model->viewResTime($par);
+        $da=array();
+        if(is_array($res) && count($res) >0){
+            foreach($res as $key=>$r){
+                if($r->resturant_close_time==1){$stat =  'Close';}else{$stat= 'Open';}
+                $da[$key]['week']         = $r->resturant_weekly;
+                $da[$key]['start_time']   = $r->resturant_start_time;
+                $da[$key]['end_time']     = $r->resturant_end_time;
+                $da[$key]['status']       = $stat;
+            }
+        }
+        return $da;
     }
     public function restraint_menu(){
         $par['whereCondition'] ="resturant_id LIKE  '".$this->input->post("restrant_id")."'";
@@ -81,14 +112,14 @@ class Apirestraint_model extends CI_Model{
         return $dta;
     }
     public function menu_items($resturant_id,$category_id){
-        $par['whereCondition'] ="resturant_id LIKE  '".$resturant_id."' AND resturant_category_id LIKE '".$category_id."' AND resturant_items_abc = 'Active'";
+        $par['whereCondition'] ="resturant_id LIKE  '".$resturant_id."' AND resturant_category_id LIKE '".$category_id."' AND resturant_items_abc LIKE 'Active'";
         $item = $this->menu_model->viewItems($par);
         $dta = array();
         if(is_array($item) && count($item) > 0 ){
             foreach($item as $key=>$c){
                 $deflet = $this->apirestraint_model->item_variants($resturant_id,$c->resturant_items_id);
                 $defprince='0';
-                if(is_array($deflet) && count($deflet) >0){
+                if(is_array($deflet) && count($deflet) > 0){
                     foreach($deflet as $de){
                         if(is_array($de) && count($de)){
                             foreach($de['variant_list'] as $dss){
@@ -260,10 +291,10 @@ class Apirestraint_model extends CI_Model{
         $conditions['limit']            = sitedata("site_pagination");
         $conditions['group_by']         = "or.order_unique_id";
         $res = $this->order_model->viewOrderDetails($conditions);
-        //print_r($res);exit;
         $data = array();
         if(is_array($res) && count($res) > 0){
             foreach($res as $key=>$r){
+                //print_r($r->order_created_by);exit;
                 $data[$key]['unique_id']            = $r->order_unique_id;
                 $data[$key]['status']               = $r->orderdetails_rest_staus;
                 $data[$key]['customer_id']          = $r->customer_id;
@@ -287,6 +318,10 @@ class Apirestraint_model extends CI_Model{
         if($status !=""){
             $statu = $status;
         }
+        $par['columns'] ="or.order_id,or.order_unique_id,or.order_created_by,or.order_type,or.order_amount,ord.orderdetail_customer_id,ord.orderdetails_rest_staus,drso.driver_view_order,res.resturant_id,res.resturant_name,res.resturant_image,res.resturant_logo_image,res.resturant_contact,
+                        res.resturant_position,res.resturant_contact_no,res.resturant_area,res.resturant_block,res.resturant_street,res.resturant_jaada,res.resturant_house,res.resturant_building,res.resturant_landmark,res.resturant_latitude,res.resturant_longitude,
+                        cadd.customeraddress_fullname,cadd.customeraddress_mobile,cadd.customeraddress_add_type,cadd.customeraddress_area,cadd.customeraddress_blockno,cadd.customeraddress_streetno,cadd.customeraddress_jadda,cadd.customeraddress_buildingno,cadd.customeraddress_floorno,
+                        cadd.customeraddress_landmark,cadd.customeraddress_current_loc,cadd.customeraddress_add_lat,cadd.customeraddress_add_lot,cadd.customeraddress_landline";
         $par['whereCondition']  =  "or.order_unique_id LIKE '".$usn."' AND ord.orderdetail_restaurant_id LIKE '".$this->input->post("restrant_id")."' AND orderdetails_rest_staus LIKE '".$statu."'";
 	    $par['group_by']        =  "ost.orderdetail_status";
 	    $results = $this->order_model->viewOrderDetails($par);
@@ -341,6 +376,7 @@ class Apirestraint_model extends CI_Model{
 	        foreach($results as $key=>$r){
 	            $this->vieworder($r->orderdetails_id);
 	            $add = explode(",",json_decode($r->orderdetail_addons));
+	            //print_r($add);exit;
                 $addons = array();$addonss= '0';
                 if(is_array($add) && count($add) > 0){
                     foreach($add as $k=>$add){
@@ -350,8 +386,8 @@ class Apirestraint_model extends CI_Model{
                         $addons['name'][$k] = $res['orderassons'];
                         $addonss = $addonss+$res['orderassons_amount'];
                     }
+                    $addons = implode(",",$addons['name']);
                 }
-                $addons = implode(",",$addons['name']);
 	            $variants = explode(",",json_decode($r->orderdetail_variants));
                 $var = array();
                 $variantam = '0';
@@ -363,9 +399,10 @@ class Apirestraint_model extends CI_Model{
                         $variantam = $variantam+$ress['orderassons_amount'];
                         $var['name'][$k] = $ress['orderassons'];
                     }
+                    $var  = implode(",",$var['name']);
                 }
-                $total = $total+($r->orderdetail_quantity * $r->orderdetail_price)+$addonss+$variantam;
-                $variants  = implode(",",$var['name']);
+                
+                $total = $total+($r->orderdetail_quantity * ($r->orderdetail_price+$addonss+$variantam));
 	            $data['order_list'][$key]['order_unique_id']   = $r->orderdetails_unique_id;
 	            $data['order_list'][$key]['items_name']        = $r->resturant_items_name;
 	            $data['order_list'][$key]['items_name_a']      = $r->resturant_items_name_a;
@@ -373,7 +410,7 @@ class Apirestraint_model extends CI_Model{
 	            $data['order_list'][$key]['quantity']          = $r->orderdetail_quantity;
 	            $data['order_list'][$key]['price']             = $r->orderdetail_price;
 	            $data['order_list'][$key]['addons']            = $addons;
-	            $data['order_list'][$key]['variants']          = $variants;
+	            $data['order_list'][$key]['variants']          = $var;
 	            $data['order_payments']['total']               = $total;
 	            $data['order_payments']['delivery']            = '0';
 	        }
@@ -430,7 +467,6 @@ class Apirestraint_model extends CI_Model{
 	    if(is_array($results) && count($results) > 0){
 	        foreach($results as $d){
 	            $pa['whereCondition'] = "dau.driver_address_driver_id LIKE '".$results['driver_id']."'";
-	            $la = $this->db->query("SELECT driver_address_latitude,driver_address_longitude FROM driver_address_update WHERE driver_address_driver_id = '".$results['driver_id']."' ORDER BY `driver_addressid` DESC LIMIT 1")->row_array();
 	            $da['driver_name']              = $results['driver_name'];
 	            $da['driver_name_last']         = $results['driver_name_last'];
 	            $da['driver_name_a']            = $results['driver_name_a'];
@@ -443,9 +479,16 @@ class Apirestraint_model extends CI_Model{
 	            $da['driver_vehicle_number']    = $results['driver_vehicle_number'];
 	            $da['driver_vehicle_type']      = $results['driver_vehicle_type'];
 	            $da['driver_profile_image']     = base_url().'upload/drivers/'.$results['driver_profile_image'];
-	            $da['driver_lat']               = ($la['driver_address_latitude']!="")?$la['driver_address_latitude']:'';
-	            $da['driver_lon']               = ($la['driver_address_longitude']!="")?$la['driver_address_longitude']:'';
 	        }
+            $la = $this->db->query("SELECT driver_address_latitude,driver_address_longitude FROM driver_address_update WHERE driver_address_driver_id = '".$results['driver_id']."' ORDER BY `driver_addressid` DESC LIMIT 1")->row_array();
+            if(is_array($la) && count($la) >0){
+                $da['driver_lat']               = ($la['driver_address_latitude']!="")?$la['driver_address_latitude']:'';
+                $da['driver_lon']               = ($la['driver_address_longitude']!="")?$la['driver_address_longitude']:'';
+            }else{
+                 $da['driver_lat']  ='';
+                 $da['driver_lon']  ='';
+            }
+	        
 	    }
         return $da;
     }
@@ -465,7 +508,6 @@ class Apirestraint_model extends CI_Model{
         $par['columns']          =  "ord.order_id AS orderids,or.*,ord.*,rt.*,res.*,cs.*,ost.*,cadd.*,drso.*,dr.*";
         $par['whereCondition']   =  "order_unique_id LIKE '".$this->input->post("unique_id")."' AND ord.orderdetail_restaurant_id LIKE '".$this->input->post("restrant_id")."' AND orderdetails_rest_staus LIKE '".$this->input->post("status")."'";
         $results = $this->order_model->viewOrderDetails($par);
-       // echo '<pre>';print_r($results);exit;
         if(is_array($results) && count($results) > 0){
 	        $res = $this->order_model->order_accect($results);
 	        if($res >0){

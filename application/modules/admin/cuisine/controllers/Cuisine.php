@@ -1,4 +1,6 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+ob_start();
 class Cuisine extends CI_Controller{
 	public function __construct() {
 		parent::__construct();
@@ -15,6 +17,7 @@ class Cuisine extends CI_Controller{
 					); 
 		if($this->input->post("submit")){
 			$this->form_validation->set_rules("cuisine_name","Cuisine Name","required|callback_cuisine_name");
+			$this->form_validation->set_rules("cuisine_name_a","Cuisine Name Arabic","required|callback_cuisine_name");
 			if($this->form_validation->run() == TRUE){
 				$bt     =   $this->cuisine_model->create_cuisine();
 				if($bt > 0){
@@ -32,23 +35,23 @@ class Cuisine extends CI_Controller{
 			$dta['orderby']        =   $orderby;
 			$dta['tipoOrderby']    =   $tipoOrderby; 
 		} 
-		$dta["urlvalue"]     =   adminurl('viewCuisine/');
+		$dta["urlvalue"]     =   adminurl('viewCuisine/');		
 		$this->load->view("admin/inner_template",$dta);
-}
-public function cuisine_name($str){
-	$vsp	=	$this->cuisine_model->check_unique_cuisine($str); 
-	if($vsp){
-		$this->form_validation->set_message("cuisine_name","Cuisine Name already exists.");
-		return FALSE;
-	}
-	return TRUE;
-}
-public function delete_cuisine(){
+    }
+    public function cuisine_name($str){
+    	$vsp	=	$this->cuisine_model->check_unique_cuisine($str); 
+    	if($vsp){
+    		$this->form_validation->set_message("cuisine_name","Cuisine Name already exists.");
+    		return FALSE;
+    	}
+    	return TRUE;
+    }
+    public function delete_cuisine(){
 		$vsp    =   "0";
 		if($this->session->userdata("delete-cuisine") != '1'){
 			$vsp    =   "0";
 		}else {
-			$uri    =   $this->uri->segment("3");echo $uri;
+			$uri    =   $this->uri->segment("3");
 		$p['whereCondition'] = "cuisine_id = '".$uri."'";
 		$vue    =   $this->cuisine_model->get_cuisine($p);
 			if(count($vue) > 0){
@@ -61,14 +64,15 @@ public function delete_cuisine(){
 			} 
 		} 
 		echo $vsp;
-}
-public function update(){
+    }
+    public function update(){
 		if($this->session->userdata("update-cuisine") != '1'){
 				redirect(sitedata("site_admin")."/Dashboard");
 		}
 		$uri    =   $this->uri->segment("3"); 
 		$p['whereCondition'] = "cuisine_id = '".$uri."'";
 		$vue    =   $this->cuisine_model->get_cuisine($p);
+	//	echo "<pre>";print_r($vue);exit;
 		if(count($vue) > 0){
 				$dt     =   array(
 						"title"     =>  "Update Cuisine",
@@ -79,6 +83,7 @@ public function update(){
 				); 
 				if($this->input->post("submit")){
 						$this->form_validation->set_rules("cuisine_name","Cuisine Name","required|xss_clean|trim|max_length[50]");
+						$this->form_validation->set_rules("cuisine_name_a","Cuisine Name Arabic","required");
 						if($this->form_validation->run() == TRUE){
 								$bt     =   $this->cuisine_model->update_cuisine($uri);
 								if($bt > 0){
@@ -95,8 +100,8 @@ public function update(){
 				$this->session->set_flashdata("war","Cuisine does not exists."); 
 				redirect(sitedata("site_admin")."/Cuisine");
 		}
-}
-public function viewCuisine(){ 
+    }
+    public function viewCuisine(){ 
 		$conditions =   array();
 		$page       =   $this->uri->segment('3');
 		$offset     =   (!$page)?"0":$page;
@@ -125,8 +130,8 @@ public function viewCuisine(){
 		$dta["limit"]           =   $offset+1;
 		$dta["view"]            =   $this->cuisine_model->view_cuisine($conditions); 
 		$this->load->view("ajax_cuisine",$dta);
-}
-public function activedeactive(){
+    }
+    public function activedeactive(){
 		$vsp    =   "0";
 		if($this->session->userdata("active-deactive-cuisine") != '1'){
 			$vsp    =   "0";
@@ -145,10 +150,10 @@ public function activedeactive(){
 			} 
 		} 
 		echo $vsp;
-}
-public function __destruct() {
-		$this->db->close();
-}
+    }
+    public function __destruct() {
+    		$this->db->close();
+    }
 	
 }
 ?>

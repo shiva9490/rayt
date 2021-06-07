@@ -1,4 +1,6 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+ob_start();
 class Api_driver extends CI_Controller{
         public function __construct() {
             parent::__construct();
@@ -112,9 +114,9 @@ class Api_driver extends CI_Controller{
                 $data   =   $this->api_model->jsonencodevalues("1","Some Fileds are required");
                 if($this->input->post("empid") != "" && $this->input->post("latitude") != "" && $this->input->post("longitude") != ""){
                     $data   =   $this->api_model->jsonencodevalues("2","Invalid Employee Id");
-                    $vsp    = $this->apidriver_model->checkdriver();
+                    $vsp    =   $this->apidriver_model->checkdriver();
                     if($vsp){
-                        $vd =   $this->apidriver_model->logout($vsp['driver_login_id']);
+                        $vd =   $this->apidriver_model->logout();
                         if($vd){
                             $data   =   $this->api_model->jsonencodevalues("3","Logout Successfull");
                         }
@@ -175,6 +177,26 @@ class Api_driver extends CI_Controller{
             }
             echo ($data);
         }
+        public function check_view_orders(){
+            $sv     =   $this->api_model->checkAuthorizationvalid();
+            $data   =   $this->api_model->jsonencodevalues("0","Authorization key Invalid");
+            if($sv == 1){
+                $data   =   $this->api_model->jsonencodevalues("1","Some Fileds are required");
+                if($this->input->post("empid") != ""){
+                    $data   =   $this->api_model->jsonencodevalues("2","Invalid Employee Id");
+                    $vsp    = $this->apidriver_model->checkdriver();
+                    if($vsp){
+                        $vd =   $this->apidriver_model->update_order_status();
+                        if($vd){
+                            $data   =   $this->api_model->jsonencodevalues("3","View order updated successfully");
+                        }else{
+                            $data   =   $this->api_model->jsonencodevalues("4","View order updated failed");
+                        }
+                    }
+                } 
+            }
+            echo ($data);
+        }
         public function restarent_details(){
             $sv     =   $this->api_model->checkAuthorizationvalid();
             $data   =   $this->api_model->jsonencodevalues("0","Authorization key Invalid");
@@ -191,7 +213,7 @@ class Api_driver extends CI_Controller{
                             $data   =   $this->api_model->jsonencodevalues("4","No new orders received");
                         }
                     }
-                } 
+                }
             }
             echo ($data);
         }
