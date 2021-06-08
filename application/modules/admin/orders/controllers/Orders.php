@@ -14,6 +14,68 @@ class Orders extends CI_Controller{
 			"content"   =>  'orders',
 			"urlvalue"	=>	adminurl('viewOrders/')
 		);
+		if($this->input->get()){
+			$keywords   =   $this->input->get('keywords');
+			$ids        =   $this->input->get('category');
+			if(!empty($keywords)){
+				$conditions['keywords'] = $keywords;
+			}
+			$group  = "or.order_id";
+			$ht = "or.order_status LIKE 'Active'";
+			if($ids == "Today Orders"){
+				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
+			}elseif($ids == "Unassigned"){
+				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Order Placed'";
+			}elseif($ids == "Pending"){
+				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Preparing'";
+			}elseif($ids == "Received" || $ids == "Ready for Pickup"){
+				$ht  = "ord.orderdetails_rest_staus LIKE 'Ready for pickup'";
+			}elseif($ids == "Completed Pickup"){
+				$ht  = "ord.orderdetails_rest_staus LIKE 'Completed Pickup'";
+			}elseif($ids == "Arraived at customes"){
+				$ht  = "ord.orderdetails_rest_staus LIKE 'arrived order'";
+			   //$group  = "or.order_id";
+			}elseif($ids == "Delivered"){
+				$ht  = "ord.orderdetails_rest_staus LIKE 'Delivered'";
+			}elseif($ids == "Order Cancelled"){
+				$ht  = "ord.orderdetails_rest_staus LIKE 'Order Cancelled'";
+			}else{
+				$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
+			}
+			$date	= explode(" to ",$this->input->get('date'));
+			if($this->input->post('date')){
+			if(is_array($date) && count($date)>1){
+				$ht	.=	" AND orderdetail_created_on >= '$date[0]' AND orderdetail_created_on <='$date[1]'";
+			}else if(count($date)>0){
+				$ht	.=	" AND orderdetail_created_on >= '$date[0]' AND orderdetail_created_on <='$date[0]'";
+			}}
+			$orderstatus = $this->config->item('orderstatus');
+			$conditions['whereCondition']   = $ht;
+			$conditions['group_by']         = $group;
+			$orders   =   $this->input->get('orders');   
+			$orderby        =    $this->input->get('orderby')?$this->input->get('orderby'):"DESC";
+			$tipoOrderby    =    $this->input->get('tipoOrderby')?str_replace("+"," ",$this->input->post('tipoOrderby')):"orderid";
+			$conditions['columns']	=	'count(distinct order_unique_id) as cnt';
+			$conditions['total']    =   count($this->order_model->viewOrders($conditions));
+			$conditions['columns']	=	'';
+			if(!empty($orderby) && !empty($tipoOrderby)){
+				$dta['orderby']        =   $conditions['order_by']      =   $orderby;
+				$dta['tipoOrderby']    =   $conditions['tipoOrderby']   =   $tipoOrderby; 
+			}
+			if($this->input->get('excel') ){
+				$this->session->set_flashdata("suc"," Check Downloads for Excel");
+				$conditions['file_name']   =   'Orders Report ['.date("YmdHis").'].csv';
+				$conditions['columns'] = "order_unique_id,concat(customeraddress_fullname,', ',customeraddress_mobile,', ',customeraddress_landline,', ',customeraddress_area,', ',customeraddress_blockno,', ',customeraddress_streetno,', ',customeraddress_jadda,', ',customeraddress_buildingno,', ',customeraddress_floorno,', ',customeraddress_landmark,', ',customeraddress_add_type) as customer,concat(resturant_name,', ',resturant_contact,', ',resturant_position,', ',resturant_area,', ',resturant_block,', ',resturant_street,', ',resturant_jaada,', ',resturant_house,', ',resturant_building,', ',resturant_contact_no) as resturant,concat(or.order_id,',',cs.customer_id,',',cadd.customeraddress_id,',',resturant_id) as driver,order_type,order_amount,orderdetails_rest_staus,orderdetail_created_on";
+				$this->order_model->download_autogen_excel($conditions);
+			}
+			if($this->input->get('pdf') ){
+				$this->session->set_flashdata("suc"," Check Downloads for Excel");
+				$conditions['file_name']   =   'Orders Report ['.date("YmdHis").'].pdf';
+				$conditions['columns'] = "order_unique_id,concat(customeraddress_fullname,', ',customeraddress_mobile,', ',customeraddress_landline,', ',customeraddress_area,', ',customeraddress_blockno,', ',customeraddress_streetno,', ',customeraddress_jadda,', ',customeraddress_buildingno,', ',customeraddress_floorno,', ',customeraddress_landmark,', ',customeraddress_add_type) as customer,concat(resturant_name,', ',resturant_contact,', ',resturant_position,', ',resturant_area,', ',resturant_block,', ',resturant_street,', ',resturant_jaada,', ',resturant_house,', ',resturant_building,', ',resturant_contact_no) as resturant,concat(or.order_id,',',cs.customer_id,',',cadd.customeraddress_id,',',resturant_id) as driver,order_type,order_amount,orderdetails_rest_staus,orderdetail_created_on";
+				$this->order_model->download_pdf($conditions);
+			}
+			
+		}
 		$this->load->view("admin/inner_template",$dta);
 	}
 	public function viewOrders(){
@@ -30,20 +92,32 @@ class Orders extends CI_Controller{
 		    $ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
 		}elseif($ids == "Unassigned"){
 		    $ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Order Placed'";
+			$dta["delay"]	="1"; 
 		}elseif($ids == "Pending"){
 		    $ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%' AND ord.orderdetails_rest_staus LIKE 'Preparing'";
 		}elseif($ids == "Received" || $ids == "Ready for Pickup"){
 		    $ht  = "ord.orderdetails_rest_staus LIKE 'Ready for pickup'";
+			$dta["delay"]	="1"; 
 		}elseif($ids == "Completed Pickup"){
 		    $ht  = "ord.orderdetails_rest_staus LIKE 'Completed Pickup'";
 		}elseif($ids == "Arraived at customes"){
 		    $ht  = "ord.orderdetails_rest_staus LIKE 'arrived order'";
+			$dta["delay"]	="5"; 
 		   //$group  = "or.order_id";
 		}elseif($ids == "Delivered"){
 		    $ht  = "ord.orderdetails_rest_staus LIKE 'Delivered'";
+		}elseif($ids == "Order Cancelled"){
+		    $ht  = "ord.orderdetails_rest_staus LIKE 'Order Cancelled'";
 		}else{
 		    $ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
 		}
+		$date	= explode(" to ",$this->input->post('date'));
+		if($this->input->post('date')){
+		if(is_array($date) && count($date)>1){
+			$ht	.=	" AND orderdetail_created_on >= '$date[0]' AND orderdetail_created_on <='$date[1]'";
+		}else if(count($date)>0){
+			$ht	.=	" AND orderdetail_created_on >= '$date[0]' AND orderdetail_created_on <='$date[0]'";
+		}}
 		$orderstatus = $this->config->item('orderstatus');
 		$conditions['whereCondition']   = $ht;
 		$conditions['group_by']         = $group;
@@ -51,7 +125,9 @@ class Orders extends CI_Controller{
 		$perpage        =    $this->input->post("limitvalue")?$this->input->post("limitvalue"):'30';    
 		$orderby        =    $this->input->post('orderby')?$this->input->post('orderby'):"DESC";
 		$tipoOrderby    =    $this->input->post('tipoOrderby')?str_replace("+"," ",$this->input->post('tipoOrderby')):"orderid";
-		$totalRec               =   $this->order_model->cntviewOrders($conditions);
+		$conditions['columns']	=	'count(distinct order_unique_id) as cnt';
+		$totalRec               =   count($this->order_model->viewOrderDetails($conditions));
+		$conditions['columns']	=	'';
 		if(!empty($orderby) && !empty($tipoOrderby)){
 			$dta['orderby']        =   $conditions['order_by']      =   $orderby;
 			$dta['tipoOrderby']    =   $conditions['tipoOrderby']   =   $tipoOrderby; 
@@ -68,7 +144,7 @@ class Orders extends CI_Controller{
 		$dta["orders"]          =   $this->input->post('orders')?$this->input->post('orders'):'';
 		$dta["limit"]           =   $offset+1;
 		$dta["urlvalue"]        =   adminurl("viewOrders/");
-		$dta["view"]            =   $this->order_model->viewOrders($conditions); 
+		$dta["view"]            =   $this->order_model->viewOrderDetails($conditions); 
 		
 		$this->load->view("ajax_orders",$dta);
 	}

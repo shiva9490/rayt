@@ -1,4 +1,16 @@
-<div class="row layout-top-spacing">
+<div class="widget-content widget-content-area border-top-tab  mt-3">        
+    <div class="tab-content" id="borderTopContent">
+        <div class="tab-pane fade show active" id="border-top-home" role="tabpanel" aria-labelledby="border-top-home-tab">
+            <?php $this->load->view("search");?>
+            <input type="hidden" id="orders" name="orders" value="<?php echo 'orders';?>"> 
+            <input type="hidden" id="urlvalue" name="urlvalue" value="<?php echo $urlvalue;?>"> 
+            <input type="hidden" id="orderby" name="orderby" value="<?php echo isset($orderby)?$orderby:'';?>">
+            <input type="hidden" id="tipoOrderby" name="tipoOrderby" value="<?php echo isset($tipoOrderby)?$tipoOrderby:'';?>">
+        </div>
+    </div>
+</div>
+
+<!-- <div class="row layout-top-spacing">
     <div class="col-lg-12">
       <div class="card">           
          <div class="card-body">
@@ -47,8 +59,7 @@
                         <div class="form-group">
                             <button type="submit" class="btn btn-xs btn-raised btn-warning waves-effect" name="pdf" value="submit"> <i class="mdi mdi-search-web"></i> PDF </button>
                         </div>
-                    </div>
-                    -->
+                    </div>---
                     <div class="col-lg-1 col-md-1 pt-3"> 
                         <div class="form-group">
                             <button type="submit" class="btn btn-xs btn-raised btn-info waves-effect" name="excel" value="submit"> <i class="mdi mdi-search-web"></i> Excel </button>
@@ -66,4 +77,4 @@
          </div>
       </div>
    </div>
-</div>
+</div> -->

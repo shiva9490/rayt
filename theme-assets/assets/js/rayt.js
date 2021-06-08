@@ -1,5 +1,5 @@
-var adminurl    = '/Rayt-Admin';
-var partnerurl    = '/Partner-Admin';
+var adminurl    = '/rayt/Rayt-Admin';
+var partnerurl    = '/rayt/Partner-Admin';
 var formInit    =   function(){
     $(".validform").validate({
         rules: {
@@ -231,7 +231,8 @@ function getdatafiled(event,ids){
         $("#vtipoOrderby").val(event.data("field"));
         $("#vorderby").val(event.data("order"));
         var id = ids;//$('.text-center.list-actions.active').attr('data-type');
-        searchFilter('',event.attr("urlvalue"),id);
+        $('#category').val(id);
+        searchFilter('',event.attr("urlvalue"),'');
 }
 /*
 function menuactive(id){
@@ -263,7 +264,7 @@ function searchFilter(page_num,url,id){
         var orders      =   $("#orders").val();
         var topv        =   $("#tipoOrderby").val();
         var orderby     =   $("#orderby").val();
-		var category 	= 	id;//$('#all-list').attr('all-list'+id);
+		var category 	= 	$('#category').val();//id;//$('#all-list').attr('all-list'+id);
         var clf         =   "pageloaderwrapper";
         if(vspvalue == 1){
             vspcalss    =   "perpostList";
@@ -1469,7 +1470,19 @@ function copyId(x){
     var text = x;
     navigator.clipboard.writeText(text).then(function() {
         $('#alert'+x).removeClass('alrt-danger');
-      alert('Copying to clipboard was successful!');
+        const toast = swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            padding: '2em'
+          });
+        
+          toast({
+            type: 'success',
+            title: 'Copied Id Successfull',
+            padding: '1em',
+          })
     }, function(err) {
       alert('Async: Could not copy text: ', err);
     });
@@ -1478,7 +1491,7 @@ function copyId(x){
 $(document).ready(function() {
     setInterval(function() {
       loadorders();
-      timer();
+      //timer();
     }, 60000);
 });
 
@@ -1649,6 +1662,6 @@ $(function(){
         loadpage();
         initPart();
         //formInit();
-        timer();
+        //timer();
         addonslist();
 });

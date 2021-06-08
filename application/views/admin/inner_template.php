@@ -297,15 +297,7 @@
         addons();
     </script>
      
-    <?php }elseif($this->uri->segment(2) == "Orders"){?>
-    <script>
-        function OrderRefresh(){
-            url = $('#urlvalue').val();
-            searchFilter('',url,'');
-            counts();
-        }
-    </script>
-    <?php }elseif($this->uri->segment(2) == "Driver-Details"){?>
+    <?php } elseif($this->uri->segment(2) == "Driver-Details"){?>
     <script>
         $(function(){
             updatedriloca();
@@ -329,6 +321,16 @@
             });
         });
 </script>
+<?php if($this->uri->segment(2) == "Orders"){?>
+    <script>
+        timer();
+        function OrderRefresh(){
+            url = $('#urlvalue').val();
+            searchFilter('',url,'');
+            counts();
+        }
+    </script>
+    <?php }?>
     <script>
     function timeFunction() {     
         if ($("#same").is(':checked')){  

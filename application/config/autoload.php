@@ -58,7 +58,7 @@ $autoload['packages'] = array();
 |
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
-$autoload['libraries'] = array('database','session','email','ajax_pagination','form_validation','common_config');
+$autoload['libraries'] = array('database','session','email','ajax_pagination','form_validation','common_config','mpdftest');
 
 /*
 | -------------------------------------------------------------------
@@ -132,4 +132,4 @@ $autoload['language'] = array();
 |
 |	$autoload['model'] = array('first_model' => 'first');
 *///,'discount/discount_model','discounts/discounts_model'
-$autoload['model'] = array("helpdesk/rest_helpdesk_model","common/helpdesk_model",'drivers/drivers_model','resturant/resturant_model','role/role_model',"common/common_model","common/vat_model","login/login_model","permissions/permission_model","apis/api_model","country/country_model","customer/customer_model","customers/customers_model","plogin/plogin_model","menu/menu_model",'cuisine/cuisine_model','addon/addon_model','variant/variant_model','banner/banner_model','resturant_banner/resturant_banner_model','zones/zone_model','category/category_model','apis/apirestraint_model','orders/order_model','apis/apidriver_model','resturant/menus_model','users/users_model','content_pages/pages_model');
+$autoload['model'] = array("helpdesk/rest_helpdesk_model","common/helpdesk_model",'drivers/drivers_model','resturant/resturant_model','role/role_model',"common/common_model","common/vat_model","login/login_model","permissions/permission_model","apis/api_model","country/country_model","customer/customer_model","customers/customers_model","plogin/plogin_model","menu/menu_model",'cuisine/cuisine_model','addon/addon_model','variant/variant_model','banner/banner_model','resturant_banner/resturant_banner_model','zones/zone_model','category/category_model','apis/apirestraint_model','orders/order_model','apis/apidriver_model','resturant/menus_model','users/users_model','content_pages/pages_model','reports/reports_model');

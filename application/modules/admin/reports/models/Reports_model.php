@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-class Report_model extends CI_Model{    
+class Reports_model extends CI_Model{    
 	public function queryorders($params = array()){
 		$sel    =   "*";
 			if(array_key_exists("columns", $params)){
@@ -202,14 +202,14 @@ class Report_model extends CI_Model{
 	}
     public function download_autogen_excel($conditions = array()){
 		$filename = $conditions['file_name'];
-        $usersData = $this->report_model->vieworders($conditions);
+        $usersData = $this->order_model->viewOrders($conditions); //echo '<pre>';echo $this->db->last_query();print_r($usersData);exit;
         header("Content-Description: File Transfer"); 
 		header("Content-Disposition: attachment; filename=$filename"); 
 		header("Content-Type: application/csv; ");
 		// file creation 
 		//print_r($usersData);exit;
 		$file = fopen('php://output','w');
-		$header = array("Order Id","Mobile","Customer","Order Total","Order Date","Order Payment Mode","Status");
+		$header = array("Resturant Name","COD total","Online Total" ,"Total");
 		fputcsv($file, $header);
 		foreach ($usersData as $key=>$line){
             $line=  (array) $line;
@@ -220,7 +220,7 @@ class Report_model extends CI_Model{
     }
 	public function download_pdf($conditions = array()){
 		$filename = $conditions['file_name'];
-        $usersData = $this->report_model->vieworders($conditions);
+        $usersData = $this->order_model->viewOrders($conditions);
 		$html_string="";
         if($usersData!=null)
 		{
@@ -228,38 +228,32 @@ class Report_model extends CI_Model{
                 $html_string.='';
                 $html_string.='
                         <tr  style=font-weight:bold>
-                        <th>Order Id</th>
-                        <th>Mobile</th>
-                        <th>Customer</th>
-						<th>Order Total</th>
-                        <th>Order Date</th>
-                        <th>Order Payment Mode</th>
-                        <th>Status</th>
+                        <th>Resturant Name</th>
+                        <th>Cash Payment</th>
+                        <th>Online Payment</th>
+						<th>Total</th>
                         </tr>';
 			foreach($usersData as $q)
 			{
 				$html_string .= '<tr>';
-				$html_string .= '<td>'.$q->order_unique.'</td>';
-				$html_string .= '<td>'.$q->customer_mobile.'</td>';
-				$html_string .= '<td>'.$q->customer_name.'</td>';
-				$html_string .= '<td>'.$q->order_total.'</td>';
-				$html_string .= '<td>'.$q->order_date.'</td>';
-				$html_string .= '<td>'.$q->order_payment_mode.'</td>';
-				$html_string .= '<td>'.$q->order_acde.'</td>';
+				$html_string .= '<td>'.$q->resturant_name.'</td>';
+				$html_string .= '<td>'.$q->cod.'</td>';
+				$html_string .= '<td>'.$q->online.'</td>';
+				$html_string .= '<td>'.$q->total.'</td>';
 				$html_string .= '</tr>';
 			}
-			$html_string.='</table>';
+			$html_string.='</table> <br><p>total entries : '.$conditions['total'].'</p>';
 		}
 		else{
 			$html_string="<p>No data available</p>";
 		}
 		//print_r($html_string);
-		$mpdf = $this->mpdf->indexval();
+		$mpdftest = $this->mpdftest->indexval();
 		$html   =   $html_string;
 		$logo_url	=base_url().'uploads/'.sitedata("site_logo");
-		$mpdf->WriteHTML('<img src="'.$logo_url.'" height="50px"></img> <h2 style="text-align:center;">Order Reports</h2>');
-		$mpdf->WriteHTML($html);
-		$mpdf->Output($filename, 'D');
+		$mpdftest->WriteHTML('<img src="'.$logo_url.'" height="50px"></img> <h2 style="text-align:center;">Order Reports</h2>');
+		$mpdftest->WriteHTML($html);
+		$mpdftest->Output($filename, 'D');
 		exit; 
     }
 	public function download_autogen_excel_customer($conditions = array()){

@@ -24,6 +24,9 @@
                 <li class="nav-item">
                     <a class="nav-link <?php if($this->input->get('category')=="Delivered"){echo 'active';}?>" id="lin6" data-toggle="tab" href="#border-top-setting" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Delivered')" role="tab" aria-controls="border-top-setting" aria-selected="false">Delivered</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php if($this->input->get('category')=="Order Cancelled"){echo 'active';}?>" id="lin6" data-toggle="tab" href="#border-top-setting" urlvalue="<?php echo $urlvalue;?>" onclick="getdatafiled($(this),'Order Cancelled')" role="tab" aria-controls="border-top-setting" aria-selected="false">Order Cancelled</a>
+                </li>
             </ul>
             <div class="tab-content" id="borderTopContent">
                 <div class="tab-pane fade show active" id="border-top-home" role="tabpanel" aria-labelledby="border-top-home-tab">

@@ -23,7 +23,7 @@
         </div> 
         <div class="col-md-2 form-group">
             <label>Restaurant Name </label>
-            <select class="form-control" id="restaurant" name="status"  onchange="searchFilter('','<?php echo adminurl('viewsalesReports/');?>')">               
+            <select class="form-control" id="restaurant" name="restaurant"  onchange="searchFilter('','<?php echo $urlvalue;?>')">               
                 <option value=''>select Restaurant name</option>               
                 <?php
                 	$res['whereCondition'] = 'resturant_status LIKE "Active" AND resturant_open LIKE "1"';
@@ -34,7 +34,7 @@
                 <?php } ?>
             </select>
         </div>
-        <div class="col-md-2 form-group">
+        <div class="col-md-2 form-group" style="<?php if($this->uri->segment('2')=="Reports"){ echo 'display:none;';}?>">
             <label>Pay Mode</label>
             <select class="form-control" id="pay_mode" name="pay_mode"  onchange="searchFilter('','<?php echo adminurl('viewsalesReports/');?>')">
                 <option value=''>select Payment Mode</option>         
@@ -70,6 +70,11 @@
         <div class="col-lg-1 col-md-1 pt-3"> 
             <div class="form-group">
                 <button type="submit" class="btn btn-xs btn-raised btn-info waves-effect" name="excel" value="submit"> <i class="mdi mdi-search-web"></i> Excel </button>
+            </div>
+        </div> 
+        <div class="col-lg-1 col-md-1 pt-3"> 
+            <div class="form-group">
+                <button type="submit" class="btn btn-xs btn-raised btn-info waves-effect" name="pdf" value="submit"> <i class="mdi mdi-search-web"></i> PDF</button>
             </div>
         </div>       
     </div>

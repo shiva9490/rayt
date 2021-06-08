@@ -643,7 +643,7 @@ class Order_model extends CI_Model{
             // file creation 
             //print_r($usersData);exit;
             $file = fopen('php://output','w');
-            $header = array("Order Id","Customer","Mobile","Payment","Amount","Status","Order Placed");
+            $header = array("Order Id","Customer Details","Resturant Details","Driver Details","Payment","Amount","Status","Order Placed");
             fputcsv($file, $header);
             foreach ($usersData as $key=>$line){
                 $line=  (array) $line;
@@ -652,6 +652,23 @@ class Order_model extends CI_Model{
                 }if($line['order_amount']!=''){
                     $line['order_amount']   =   number_format((float) $line['order_amount'], 3, '.', '');
                 }
+                if($line['driver']!=''){
+                    $dri    =explode(',',$line['driver']);
+                    $p['whereCondition'] = "drso.order_id LIKE '".$dri[0]."' AND drso.custmore_id LIKE '".$dri[1]."' AND drso.custmore_adder_id LIKE '".$dri[2]."' AND drso.restaurant_id LIKE '".$dri[3]."'";
+                    $driver = $this->order_model->getOrderDetails($p);
+                    if(is_array($driver) && count($driver) >0){
+                        $line['driver'] = $driver['driver_given_id'].'<br>'.
+                                        $driver['driver_name'].'<br>'.
+                                        $driver['driver_name_last'].'<br>'.
+                                        $driver['driver_gender'].'<br>'.
+                                        $driver['driver_vehicle_type'].'<br>'.
+                                        $driver['driver_company'].'<br>'.
+                                        $driver['driver_phone'];
+                    }else{
+                        $line['driver'] =  '-';
+                    }
+                }
+
                 
                 fputcsv($file,$line); 
             }
@@ -664,13 +681,31 @@ class Order_model extends CI_Model{
             $html_string="";
             if($usersData!=null)
             {
+                if($q->driver!=''){
+                    $dri    =explode(',',$q->driver);
+                    $p['whereCondition'] = "drso.order_id LIKE '".$dri[0]."' AND drso.custmore_id LIKE '".$dri[1]."' AND drso.custmore_adder_id LIKE '".$dri[2]."' AND drso.restaurant_id LIKE '".$dri[3]."'";
+                    $driver = $this->order_model->getOrderDetails($p);
+                    if(is_array($driver) && count($driver) >0){
+                        $driver_details = $driver['driver_given_id'].'<br>'.
+                                        $driver['driver_name'].'<br>'.
+                                        $driver['driver_name_last'].'<br>'.
+                                        $driver['driver_gender'].'<br>'.
+                                        $driver['driver_vehicle_type'].'<br>'.
+                                        $driver['driver_company'].'<br>'.
+                                        $driver['driver_phone'];
+                    }else{
+                        $driver_details =  '-';
+                    }
+                }
+
                 $html_string ='<table border="1">';
                     $html_string.='';
                     $html_string.='
                             <tr  style=font-weight:bold>
                             <th>Order Id</th>
-                            <th>Customer</th>
-                            <th>Mobile</th>
+                            <th>Customer Details</th>
+                            <th>Resturant Details</th>
+                            <th>Driver Details</th>
                             <th>Payment</th>
                             <th>Amount</th>
                             <th>Status</th>
@@ -681,20 +716,20 @@ class Order_model extends CI_Model{
                    // $q = (array) $q;
                     $html_string .= '<tr>';
                     $html_string .= '<td>'.$q->order_unique_id.'</td>';
-                    $html_string .= '<td>'.$q->customer_name.'</td>';
-                    $html_string .= '<td>'.$q->customer_mobile.'</td>';
+                    $html_string .= '<td>'.$q->customer.'</td>';
+                    $html_string .= '<td>'.$q->resturant.'</td>';
+                    $html_string .= '<td>'.$driver_details.'</td>';
                     $html_string .= '<td>'.($q->order_type!="")?$q->order_type:'Online Payment'.'</td>';
                     $html_string .= '<td>'.number_format((float)$q->order_amount, 3, '.', '').'</td>';
                     $html_string .= '<td>'.$q->orderdetails_rest_staus.'</td>';
                     $html_string .= '<td>'.$q->orderdetail_created_on.'</td>';
                     $html_string .= '</tr>';
                 }
-                $html_string.='</table>';
+                $html_string.='</table><br><p>total entries : '.$conditions['total'].'</p>';
             }
             else{
                 $html_string="<p>No data available</p>";
             }
-      //  print_r($html_string);
             $mpdf = $this->mpdftest->indexval();
             $html   =   $html_string;
             $logo_url	=base_url().'upload/reportrayt.png';

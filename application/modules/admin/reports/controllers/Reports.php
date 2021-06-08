@@ -13,31 +13,55 @@ class Reports extends CI_Controller{
 			"content"   =>  'reports',
 			"urlvalue"	=>	adminurl('viewReports/')
 		);
-	
-			$ht  = "or.order_created_by LIKE '%".date('Y-m-d')."%'";
-			$conditions['whereCondition']   = $ht;
-			$orderby        =    $this->input->get('orderby')?$this->input->get('orderby'):"DESC";
-			$tipoOrderby    =    $this->input->get('tipoOrderby')?str_replace("+"," ",$this->input->post('tipoOrderby')):"orderid";
-			$conditions['columns']	=	'count(distinct order_unique_id) as cnt';
-			$totalRec               =   count($this->order_model->viewOrders($conditions));
-			$conditions['columns']	=	'';
-       
-			if(!empty($orderby) && !empty($tipoOrderby)){
-				$dta['orderby']        =   $conditions['order_by']      =   $orderby;
-				$dta['tipoOrderby']    =   $conditions['tipoOrderby']   =   $tipoOrderby; 
+		if($this->input->get()){
+			$group 		= "ord.orderdetail_restaurant_id";
+			$ht 		= "or.order_status LIKE 'Active'";
+			$fromDate   =   $this->input->get('fromDate');
+			$toDate   	=   $this->input->get('toDate');
+			$status     =   $this->input->get('status');
+			$restaurant = $this->input->get('restaurant'); 
+			$keywords = $this->input->get('keywords'); 
+			
+			$ht = "order_status LIKE 'Active'";
+			if(!empty($keywords)){
+				$conditions['keywords'] = $keywords;
 			}
-			if($this->input->get('excel') ){
+			if(!empty($status)){
+				$ht .= " AND orderdetails_rest_staus LIKE '".$status."'";
+			} 
+			if(!empty($pay_mode)){
+				$ht.= "AND order_type LIKE '".$pay_mode."'";
+			}
+			if(!empty($restaurant)){
+				$ht.= "AND ord.orderdetail_restaurant_id LIKE '".$restaurant."'";
+			} 
+			if(!empty($fromDate) && !empty($toDate)){
+				$ht.= "AND order_created_by >= '".$fromDate."' AND order_created_by <= '".$toDate."'";
+			}
+			$conditions['whereCondition']   = $ht;
+			$conditions['group_by']         = $group;
+			$orderby        =    $this->input->get('orderby')?$this->input->get('orderby'):"DESC";
+			$tipoOrderby    =    $this->input->get('tipoOrderby')?str_replace("+"," ",$this->input->get('tipoOrderby')):"orderid";
+			$conditions['columns']	=	'count(distinct order_unique_id) as cnt';
+			$conditions['total']  =   count($this->order_model->viewOrders($conditions));
+			$conditions['columns']	=	'resturant_name,SUM(CASE WHEN or.order_type like"COD" THEN order_amount ELSE 0 END) as cod ,SUM(CASE WHEN or.order_type LIKE "Online Payment" THEN order_amount ELSE 0 END) as online'; 
+			if(!empty($orderby) && !empty($tipoOrderby)){
+				$conditions['order_by']      =   $orderby;
+				$conditions['tipoOrderby']   =   $tipoOrderby; 
+			}
+			if($this->input->get('excel')){
 				$this->session->set_flashdata("suc"," Check Downloads for Excel");
 				$conditions['file_name']   =   'Orders Report ['.date("YmdHis").'].csv';
-				$conditions['columns'] = "order_unique_id,customer_name,customer_mobile,order_type,order_amount,orderdetails_rest_staus,orderdetail_created_on";
-				$this->order_model->download_autogen_excel($conditions);
+				$conditions['columns']	=	'resturant_name,,SUM(CASE WHEN or.order_type like"COD" THEN order_amount ELSE 0 END) as cod ,SUM(CASE WHEN or.order_type LIKE "Online Payment" THEN order_amount ELSE 0 END) as online,SUM(order_amount) as total'; 
+				$this->reports_model->download_autogen_excel($conditions);
 			}
 			if($this->input->get('pdf') ){
 				$this->session->set_flashdata("suc"," Check Downloads for Excel");
 				$conditions['file_name']   =   'Orders Report ['.date("YmdHis").'].pdf';
-				$conditions['columns'] = "order_unique_id,customer_name,customer_mobile,order_type,order_amount,orderdetails_rest_staus,orderdetail_created_on";
-				$this->order_model->download_pdf($conditions);
+				$conditions['columns']	=	'resturant_name,,SUM(CASE WHEN or.order_type like"COD" THEN order_amount ELSE 0 END) as cod ,SUM(CASE WHEN or.order_type LIKE "Online Payment" THEN order_amount ELSE 0 END) as online,SUM(order_amount) as total'; 
+				$this->reports_model->download_pdf($conditions);
 			}
+		}
 		$this->load->view("admin/inner_template",$dta);
 	}
 
@@ -79,7 +103,7 @@ class Reports extends CI_Controller{
 		$tipoOrderby            =    $this->input->post('tipoOrderby')?str_replace("+"," ",$this->input->post('tipoOrderby')):"orderid";
 		$conditions['columns']	=	'count(distinct order_unique_id) as cnt';
 		$totalRec               =   count($this->order_model->viewOrders($conditions));   
-		$conditions['columns']	=	'';
+		$conditions['columns']	=	'resturant_name,,SUM(CASE WHEN or.order_type like"COD" THEN order_amount ELSE 0 END) as cod ,SUM(CASE WHEN or.order_type LIKE "Online Payment" THEN order_amount ELSE 0 END) as online'; 
 		if(!empty($orderby) && !empty($tipoOrderby)){
 			$dta['orderby']        =   $conditions['order_by']      =   $orderby;
 			$dta['tipoOrderby']    =   $conditions['tipoOrderby']   =   $tipoOrderby; 
